@@ -1,0 +1,62 @@
+#+startup: showeverything
+
+* Latex Setup
+** Setup paragraphs
+#+latex_header: \usepackage{parskip}
+
+** Use colored links instead of boxes
+#+latex_header: \hypersetup{colorlinks=true}
+
+** Change default font
+Note that fontspec works with only xelatex (not pdflatex).
+#+latex_header: \usepackage{fontspec}
+#+latex_header: \setsansfont[Ligatures=TeX]{Dank Mono}
+#+latex_header: \setmainfont{Lato}
+#+latex_header: \setmonofont[Scale=0.8]{Ubuntu Mono}
+
+** Sans serif fonts for section titles
+#+latex_header: \usepackage{sectsty}
+#+latex_header: \allsectionsfont{\sffamily\itshape}
+
+[[http://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/sectsty/sectsty.pdf][Reference]]
+
+** Customize left margin indentation of itemize lists
+[[http://tex.stackexchange.com/a/91128/52678][Reference]]
+#+latex_header: \usepackage{enumitem}
+# #+latex_header: \setlist[itemize]{leftmargin=*} % No identation
+#+latex_header: \setlist[itemize]{leftmargin=0.2in}
+
+*** Increase the max depth of lists to prevent the "Too deeply nested" error
+[[http://stackoverflow.com/a/13120787/1219634][Reference]]
+#+latex_header: \setlistdepth{9}
+
+*** Customize the bullets used for each level in itemized list
+#+latex_header: \setlist[itemize, 1 ]{label=$\bullet$}
+#+latex_header: \setlist[itemize, 2 ]{label=$\circ$}
+#+latex_header: \setlist[itemize, 3 ]{label=$\diamond$}
+#+latex_header: \setlist[itemize, 4 ]{label=$\ast$}
+#+latex_header: \setlist[itemize, 5 ]{label=$\cdot$}
+#+latex_header: \setlist[itemize, 6 ]{label=$\cdot$}
+#+latex_header: \setlist[itemize, 7 ]{label=$\cdot$}
+#+latex_header: \setlist[itemize, 8 ]{label=$\cdot$}
+#+latex_header: \setlist[itemize, 9 ]{label=$\cdot$}
+#+latex_header: \renewlist{itemize}{itemize}{9}
+
+** Customizing the title of =\listoflistings= and the caption headers for the listings
+#+latex_header: \renewcommand\listingscaption{Code Snippet}
+#+latex_header: \renewcommand\listoflistingscaption{List of Code Snippets}
+
+** Allow multi-page code listings by wrapping the =minted= environment with =mdframed= environment
+[[http://tex.stackexchange.com/a/30524/52678][Reference]]
+#+latex_header: \usepackage{mdframed}
+#+latex_header: \mdfsetup{%
+#+latex_header: topline=true, bottomline=true,leftline=true, rightline=true, %
+# #+latex_header: topline=true, bottomline=true,leftline=false, rightline=false, %
+#+latex_header: innerleftmargin=15pt, %
+#+latex_header: leftmargin=-5pt, %
+#+latex_header: rightmargin=-5pt, %
+#+latex_header: linewidth=1pt, backgroundcolor=yellow!20!white %
+#+latex_header: }
+If the below 2 lines are not included, the mdframed config above will not be effective.
+#+latex_header: \BeforeBeginEnvironment{minted}{\begin{mdframed}}
+#+latex_header: \AfterEndEnvironment{minted}{\end{mdframed}}

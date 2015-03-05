@@ -1,0 +1,9 @@
+[push]
+        default = simple
+[core]
+        editor = emacsclient -c
+	excludesfile = /Users/nate/.gitignore_global
+[diff]
+	tool = opendiff
+[merge]
+	tool = opendiff

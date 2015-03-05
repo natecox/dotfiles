@@ -1,0 +1,40 @@
+# freshshell.com
+#
+# Examples:
+#
+#   fresh twe4ked/dotfiles shell/functions/\*
+#   fresh jasoncodes/dotfiles shell/aliases/rails.sh
+#   fresh jasoncodes/dotfiles config/tmux.conf --file
+#
+# See http://freshshell.com/readme for documentation.
+
+FRESH_BIN_PATH=$HOME/.local/bin
+
+fresh freshshell/fresh bin/fresh --bin
+
+# Import all simple rcfiles
+fresh 'config/*' --file
+
+# Emacs config
+fresh emacs/emacs.d --file='~/.emacs.d/'
+
+# Git config
+fresh-options --file='~/.gitconfig' --marker
+  if [[ "$(hostname -s)" == "$(pass hostnames/work)" ]]; then
+    fresh git/work
+  fi
+
+  if [[ "$(hostname -s)" == "$(pass hostnames/personal)" ]]; then
+    fresh git/personal
+  fi
+
+  fresh git/base
+fresh-options
+
+# Generate an alias file from multiple sources
+fresh-options --file='~/.aliases' --marker
+  fresh 'aliases/*'
+fresh-options
+
+# PyPI config, with secure password
+fresh config/secure/pypirc --file --filter='sed "s/_DEFAULT_/$(pass pypi/default)/; s/_TESTING_/$(pass pypi/testing)/"'

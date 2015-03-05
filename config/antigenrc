@@ -1,0 +1,16 @@
+antigen use oh-my-zsh
+
+antigen bundles <<EOBUNDLES
+  kiurchv/asdf.plugin.zsh
+  git
+  heroku
+  brew
+  zsh-users/zsh-syntax-highlighting
+  mafredri/zsh-async
+  thefuck
+  fzf
+EOBUNDLES
+
+# antigen theme https://github.com/denysdovhan/spaceship-zsh-theme spaceship
+
+antigen apply

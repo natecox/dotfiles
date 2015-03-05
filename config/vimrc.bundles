@@ -1,0 +1,7 @@
+Plug 'tpope/vim-sensible'
+Plug 'othree/yajs.vim'
+Plug 'othree/html5.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'mhartington/oceanic-next'
+Plug 'trevordmiller/nova-vim'

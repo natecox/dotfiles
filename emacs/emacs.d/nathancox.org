@@ -1,0 +1,792 @@
+#+TITLE: Nathan Cox's Emacs Configuration
+#+STARTUP: content
+#+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
+
+* Configuration
+** About this file
+This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
+
+All configuration should be done via =use-package= for performance and consistency.
+
+** Initialization
+Require packages, add melpa to the available repos, and set a custom file
+
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/") t)
+
+  (package-initialize)
+
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+    (setenv "SHELL" "/usr/local/bin/zsh")
+    (setq exec-path-from-shell-variables '("PATH"))
+    (exec-path-from-shell-initialize))
+
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file t)
+
+  (setq default-directory "~/")
+  (setq suggest-key-bindings nil)
+
+  (server-start)
+#+END_SRC
+
+** Personal information
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Nathan Cox"
+	user-mail-address "tsuujin@icloud.com")
+#+END_SRC
+
+** General configuration
+*** Allow risky local vars
+#+BEGIN_SRC emacs-lisp
+(advice-add 'risky-local-variable-p :override #'ignore)
+#+END_SRC
+*** Improve speed of next-line
+#+BEGIN_SRC emacs-lisp
+(setq auto-window-vscroll nil)
+#+END_SRC
+
+*** Mac Specific
+I use macs exclusively, where alt is moderately difficult to hit.
+
+#+BEGIN_SRC emacs-lisp
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'super)
+  (setq mac-control-modifier 'control)
+  (setq ns-function-modifier 'hyper)
+
+  (setq insert-directory-program "gls" dired-use-ls-dired t)
+  (setq dired-listing-switches "-al --group-directories-first")
+
+  (toggle-scroll-bar -1)
+
+  (if (fboundp 'mac-auto-operator-composition-mode)
+      (mac-auto-operator-composition-mode))
+
+  (global-set-key (kbd "s-SPC") 'just-one-space)
+#+END_SRC
+
+*** Tramp Defaults
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-default-method "ssh")
+#+END_SRC
+
+*** Backups
+Create a backup directory to store auto-saves, instead of the current file directory
+
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+END_SRC
+
+*** History
+From http://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html:
+
+#+BEGIN_SRC emacs-lisp
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode 1)
+  (setq history-length t)
+  (setq history-delete-duplicates t)
+  (setq savehist-save-minibuffer-history 1)
+  (setq savehist-additional-variables
+	'(kill-ring
+	  search-ring
+	  regexp-search-ring))
+#+END_SRC
+
+*** Interface configuration
+**** Typography
+#+BEGIN_SRC emacs-lisp
+  ;; (set-face-attribute 'default nil :font "Dank Mono-15")
+  (set-face-attribute 'default nil :font "JetBrains Mono 14")
+#+END_SRC
+
+**** Theme
+My currently selected theme, and a list of possibilities.
+
+In an effort to not pollute the config too much, unused themes are commented out once they've been
+rejected for any given reason, but kept for posterity.
+
+#+CAPTION: Theme Rejections
+| Theme     | Reason                                         |
+|-----------+------------------------------------------------|
+| Nimbus    | Poor support for other modes, e.g., ace window |
+| Seti      | Poor support for rainbow delimiters            |
+| Chocolate | Not enough contrast with background            |
+| Nord      | Not enough contrast in highlighting            |
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package gruvbox-theme
+  ;;   :ensure t
+  ;;   :init (load-theme 'gruvbox-dark-hard t))
+
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq doom-themes-enable-bold t
+  ;;         doom-themes-enable-italic t)
+  ;;   (load-theme 'doom-one t)
+  ;;   (doom-themes-org-config))
+
+  (use-package snazzy-theme
+    :ensure t
+    :init
+    (load-theme 'snazzy))
+#+END_SRC
+
+**** Toolbar Config
+Remove the icon toolbar from the top of the GUI
+
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+  (use-package centered-window :ensure t)
+#+END_SRC
+
+**** File Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t
+    :init
+    (unless (member "all-the-icons" (font-family-list))
+      (all-the-icons-install-fonts t)))
+
+  (use-package all-the-icons-ivy
+    :ensure t
+    :after (projectile all-the-icons ivy)
+    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window))
+    :config
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
+    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
+    (all-the-icons-ivy-setup))
+#+END_SRC
+
+**** Modeline
+#+BEGIN_SRC emacs-lisp
+  (display-time-mode 1)
+  (setq display-time-24hr-format t)
+
+  (setq column-number-mode t)
+
+  ;; (use-package spaceline
+  ;;   :ensure t
+  ;;   :pin melpa
+  ;;   :init
+  ;;   (require 'spaceline-config))
+
+  ;; (use-package spaceline-all-the-icons
+  ;;   :ensure t
+  ;;   :pin melpa
+  ;;   :after spaceline
+  ;;   :config (spaceline-all-the-icons-theme))
+
+  (use-package smart-mode-line-powerline-theme
+    :ensure t)
+
+  (use-package smart-mode-line
+    :ensure t
+    :after smart-mode-line-powerline-theme
+    :hook (after-init-hook sml/setup)
+    :init (add-hook 'after-init-hook 'sml/setup)
+    :config (sml/apply-theme 'powerline))
+
+  ;; (use-package moody
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq x-underline-at-descent-line t)
+  ;;   (moody-replace-mode-line-buffer-identification)
+  ;;   (moody-replace-vc-mode))
+#+END_SRC
+
+*** Switch to standard single space sentences
+Emacs assumes, for some reason, that sentences should end with puncutation followed by two spaces or a new line.
+This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump paragraphs.
+
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
+*** Indentation
+#+BEGIN_SRC emacs-lisp
+  (electric-indent-mode +1)
+
+  (use-package highlight-indent-guides
+    :ensure t
+    :hook (prog-mode . highlight-indent-guides-mode)
+    :config
+    (setq highlight-indent-guides-method 'character
+          highlight-indent-guides-character ?\｜
+          highlight-indent-guides-responsive 'stack))
+
+  (use-package aggressive-indent
+    :ensure t
+    :init
+    (global-aggressive-indent-mode 1))
+#+END_SRC
+
+*** Search
+#+BEGIN_SRC emacs-lisp
+  (use-package ag
+    :ensure t)
+
+  (use-package avy
+    :ensure t
+    :bind ("C-:" . 'avy-goto-char)
+    :init
+    (avy-setup-default)
+    (global-set-key (kbd "C-c C-j") 'avy-resume))
+#+END_SRC
+
+*** Remove trailing whitespace on save
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+*** Disable system bell
+#+BEGIN_SRC emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+*** Multi-term
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :ensure t
+    :config
+    (setq multi-term-program "/usr/local/bin/zsh"))
+#+END_SRC
+
+*** vterm
+#+BEGIN_SRC emacs-lisp
+  (use-package vterm
+    :ensure t)
+#+END_SRC
+* Org Mode
+** Setup for macOS
+1. Install macTEX with `brew install cask mactex`
+2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
+3. Ensure Lato font is installed
+
+** Config
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mode
+    :bind (("C-c a" . org-agenda)
+           ("C-c l" . org-store-link)
+           ("C-c c" . org-capture))
+    :custom
+    (org-directory "~/org")
+    (org-agenda-files (list org-directory))
+    :init
+    (setq org-default-notes-file (concat org-directory "/notes.org"))
+    (setq org-startup-indented t)
+    (setq org-log-done t)
+    (setq org-agenda-window-setup 'current-window)
+    (setq org-confirm-babel-evaluate nil)
+    (add-to-list 'exec-path "/Library/TeX/texbin")
+    (setq org-latex-logfiles-extensions
+          (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
+                  "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
+                  "ps" "spl" "bbl" "xdv")))
+    (setq org-latex-compiler "xelatex")
+    (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
+    (setq-default TeX-engine 'xetex)
+    (setq-default TeX-PDF-mode t)
+
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((ruby . t))))
+
+
+  (use-package org-bullets
+    :ensure t
+    :init
+    (setq org-bullets-bullet-list	'("◉" "◎" "⚫" "○" "►" "◇"))
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  (use-package project-shells
+    :ensure t
+    :init
+    (global-project-shells-mode))
+#+END_SRC
+
+** JIRA
+#+BEGIN_SRC emacs-lisp
+    (use-package org-jira
+      :ensure t
+      :config
+      (setq jiralib-url "https://jira.covermymeds.com")
+      (setq org-jira-working-dir "~/org/jira"))
+#+END_SRC
+
+* RSS Reader
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package elfeed
+  ;;   :ensure t
+  ;;   :init
+  ;;   (global-set-key (kbd "C-x w") 'elfeed))
+
+  ;; (use-package elfeed-org
+  ;;   :ensure t
+  ;;   :after elfeed
+  ;;   :config
+  ;;   (elfeed-org)
+  ;;   (setq rmh-elfeed-org-files (list "~/org/elfeed.org")))
+#+END_SRC
+
+* Development Configuration
+** Electric Pair
+#+BEGIN_SRC emacs-lisp
+(electric-pair-mode +1)
+#+END_SRC
+
+** Toggle quotes
+#+BEGIN_SRC emacs-lisp
+  (use-package toggle-quotes
+    :ensure t
+    :bind ("C-'" . toggle-quotes))
+#+END_SRC
+
+** Origami
+Provides intelligent code folding.
+#+BEGIN_SRC emacs-lisp
+  (use-package origami
+    :ensure t
+    :bind (("C-c o t" . origami-toggle-node))
+    :init
+    (global-origami-mode +1))
+#+END_SRC
+
+** Ansi term in compilation mode
+#+BEGIN_SRC emacs-lisp
+  (require 'ansi-color)
+  (defun natecox/colorize-compilation ()
+    "Colorize from `compilation-filter-start' to `point'."
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region
+       compilation-filter-start (point))))
+
+  (add-hook 'compilation-filter-hook
+            #'natecox/colorize-compilation)
+#+END_SRC
+
+** Completion
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :defer t
+    :init
+    (global-company-mode))
+#+END_SRC
+
+** Flycheck
+#+BEGIN_SRC emacs-lisp
+     (use-package flycheck
+       :ensure t
+       :init
+       (global-flycheck-mode))
+
+     (use-package flycheck-package
+       :ensure t)
+#+END_SRC
+
+** LSP Integration
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook (ruby-mode . lsp)
+    :hook (elpy-mode . lsp)
+    :hook (elm-mode . lsp)
+    :bind (("C-c k D" . lsp-describe-thing-at-point)
+           ("C-c k f" . lsp-format-buffer)
+           ("C-c k R" . lsp-rename))
+    :commands lsp)
+
+  (use-package lsp-ui
+    :ensure t
+    :after lsp-mode
+    :hook (lsp-mode . lsp-ui-mode)
+    :bind(("C-c k d" . lsp-ui-peek-find-definitions)
+          ("C-c k r" . lsp-ui-peek-find-references))
+    :commands lsp-ui-mode)
+
+  (use-package company-lsp
+    :ensure t
+    :after lsp-mode
+    :commands company-lsp)
+
+  (use-package dap-mode
+    :ensure t)
+
+  (use-package dap-ruby
+    :after dap-mode)
+#+END_SRC
+
+** Rest client
+#+BEGIN_SRC emacs-lisp
+  (use-package restclient
+    :ensure t
+    :mode ("\\.http\\'" . restclient-mode))
+
+  (use-package ob-restclient
+    :ensure t
+    :after restclient
+    :init
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 (append org-babel-load-languages
+                                         '((restclient . t))))
+    )
+#+END_SRC
+
+** Highlighting
+*** Parentheis
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode +1)
+
+  (use-package rainbow-delimiters
+    :ensure t
+    :init
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+#+END_SRC
+
+*** Gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :after magit
+    :init
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+    (global-diff-hl-mode))
+#+END_SRC
+
+** Web mode
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode :ensure t)
+
+  (use-package web-mode
+    :ensure t
+    :init
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+    (add-hook 'web-mode-hook 'emmet-mode)
+    (setq web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          web-mode-enable-css-colorization t)
+    (setq web-mode-extra-snippets
+          '(("erb" . (("content_for" . "<% content_for :| do %>\n\n<% end %>")
+                      ("content_for_if" . "<% if content_for?(:|) %>\n<% yield : %>\n<% end %>")
+                      ("var" . "<%= :| %>"))))))
+#+END_SRC
+
+** Language Support
+*** Elixir
+#+BEGIN_SRC emacs-lisp
+  (use-package alchemist
+    :ensure t)
+#+END_SRC
+*** Elm
+#+BEGIN_SRC emacs-lisp
+  (use-package elm-mode
+    :ensure t
+    :init
+    (add-to-list 'company-backends 'company-elm))
+#+END_SRC
+
+*** Ruby
+**** Bundler
+#+BEGIN_SRC emacs-lisp
+      (use-package bundler :ensure t)
+#+END_SRC
+
+**** Yard
+#+BEGIN_SRC emacs-lisp
+  (use-package yard-mode
+    :ensure t
+    :after ruby-mode
+    :hook ruby-mode)
+#+END_SRC
+
+**** Rails
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile-rails
+    :ensure t
+    :after projectile
+    :init
+    (projectile-rails-global-mode)
+    (setq projectile-rails-vanilla-command "bin/rails"))
+    ;; (setq projectile-rails-custom-server-command "heroku local")
+    ;; (setq projectile-rails-javascript-dirs '("app/frontend/"))
+    ;; (setq projectile-rails-javascript-re "\\.(js|ts)")
+    ;; (setq projectile-rails-stylesheet-dirs '("app/frontend/")))
+#+END_SRC
+
+**** Rspec-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package inf-ruby
+    :ensure t)
+
+  (use-package rspec-mode
+    :ensure t
+    :hook (after-init . inf-ruby-switch-setup))
+#+END_SRC
+*** Javascript
+#+BEGIN_SRC emacs-lisp
+  (setq js-indent-level 2)
+#+END_SRC
+
+*** Typescript
+#+BEGIN_SRC emacs-lisp
+  (defun setup-tide-mode()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    (company-mode +1))
+
+  (use-package typescript-mode
+    :ensure t
+    :config
+    (setq typescript-indent-level 2))
+
+  (use-package tide
+    :ensure t
+    :after (typescript-mode company flycheck)
+    :hook ((typescript-mode . 'setup-tide-mode)
+           (before-save . tide-format-before-save)))
+#+END_SRC
+
+*** Python
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
+#+END_SRC
+
+*** Yaml
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :ensure t
+    :init
+    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+#+END_SRC
+
+*** Rust
+#+BEGIN_SRC emacs-lisp
+  (use-package toml-mode
+    :ensure t)
+
+  (use-package rust-mode
+    :after (lsp-mode)
+    :hook (rust-mode . lsp))
+
+  (use-package cargo
+    :hook (rust-mode . cargo-minor-mode))
+
+  (use-package flycheck-rust
+    :ensure t
+    :hook (flycheck-mode . flycheck-rust-setup))
+#+END_SRC
+* Project Management
+** Magit
+#+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :pin melpa
+      :bind (("C-c g s" . magit-status))
+      :init
+      (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line)
+            git-commit-summary-max-length 50))
+
+    (use-package forge
+      :ensure t
+      :after magit
+      :config
+      (add-to-list 'forge-alist '("git.innova-partners.com" "git.innova-partners.com/api"
+                                  "git.innova-partners.com" forge-github-repository)))
+
+    ;; (use-package magit-town)
+#+END_SRC
+
+** Projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (projectile-global-mode)
+    (counsel-projectile-mode)
+    (setq projectile-enable-caching nil
+          projectile-completion-system 'ivy))
+#+END_SRC
+
+* Usability Improvements
+** Discover.el
+#+BEGIN_SRC emacs-lisp
+  (use-package discover
+    :ensure t
+    :init (global-discover-mode 1))
+#+END_SRC
+
+** Which Key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+END_SRC
+
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-startup-banner 'logo)
+    (setq dashboard-items '((projects . 5)
+                            (recents . 5)
+                            (agenda . 5)
+                            (bookmarks . 5)
+                            (registers . 5))))
+#+END_SRC
+
+** Ivy
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :ensure t
+    :bind (("C-s" . swiper)
+           ("M-x" . counsel-M-x)
+           ("C-x C-f" . counsel-find-file)
+           ("C-x b" . counsel-switch-buffer))
+    :init
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t)
+    (ivy-mode 1))
+
+  (use-package ivy-hydra
+    :ensure t
+    :after ivy)
+
+    (use-package flx
+      :ensure t
+      :after ivy
+      :init
+      (setq ivy-re-builders-alist '((t . ivy--regex-plus))))
+
+  (use-package counsel-projectile
+    :ensure t)
+#+END_SRC
+
+** Zoom
+#+BEGIN_SRC emacs-lisp
+  (use-package zoom
+    :ensure t
+    :init
+    (zoom-mode t)
+    (global-set-key (kbd "C-x +") 'zoom))
+#+END_SRC
+
+** Frog Jump Buffer
+#+BEGIN_SRC emacs-lisp
+  (use-package frog-jump-buffer
+    :ensure t
+    :bind ("s-b" . frog-jump-buffer))
+#+END_SRC
+
+* Buffer Navigation
+** iBuffer
+#+BEGIN_SRC emacs-lisp
+  (use-package ibuffer
+    :ensure nil
+    :functions (all-the-icons-icon-for-file
+                all-the-icons-icon-for-mode
+                all-the-icons-auto-mode-match?
+                all-the-icons-faicon)
+    :commands ibuffer-find-file
+    :bind ("C-x C-b" . ibuffer)
+    :config
+    (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
+
+    ;; Display buffer icons on GUI
+    (when (display-graphic-p)
+      ;; To be correctly aligned, the size of the name field must be equal to that
+      ;; of the icon column below, plus 1 (for the tab I inserted)
+      (define-ibuffer-column icon (:name "   ")
+        (let ((icon (if (and (buffer-file-name)
+                             (all-the-icons-auto-mode-match?))
+                        (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)) :v-adjust -0.05)
+                      (all-the-icons-icon-for-mode major-mode :v-adjust -0.05))))
+          (if (symbolp icon)
+              (setq icon (all-the-icons-faicon "file-o" :face 'all-the-icons-dsilver :height 0.8 :v-adjust 0.0))
+            icon)))
+
+      (let ((tab-width 1))
+        (setq ibuffer-formats '((mark modified read-only locked
+                                      ;; Here you may adjust by replacing :right with :center or :left
+                                      ;; According to taste, if you want the icon further from the name
+                                      " " (icon 1 -1 :left :elide) "\t" (name 18 18 :left :elide)
+                                      " " (size 9 -1 :right)
+                                      " " (mode 16 16 :left :elide) " " filename-and-process)
+                                (mark " " (name 16 -1) " " filename)))))
+
+    (with-eval-after-load 'counsel
+      (defun my-ibuffer-find-file ()
+        (interactive)
+        (let ((default-directory (let ((buf (ibuffer-current-buffer)))
+                                   (if (buffer-live-p buf)
+                                       (with-current-buffer buf
+                                         default-directory)
+                                     default-directory))))
+          (counsel-find-file default-directory)))
+      (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))
+
+    ;; Group ibuffer's list by project root
+    (use-package ibuffer-projectile
+      :ensure t
+      :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
+      :hook ((ibuffer . (lambda ()
+                          (ibuffer-projectile-set-filter-groups)
+                          (unless (eq ibuffer-sorting-mode 'alphabetic)
+                            (ibuffer-do-sort-by-alphabetic)))))
+      :config
+      (setq ibuffer-projectile-prefix
+            (if (display-graphic-p)
+                (concat
+                 (all-the-icons-octicon "file-directory"
+                                        :face ibuffer-filter-group-name-face
+                                        :v-adjust -0.05
+                                        :height 1.25)
+                 " ")
+              "Project: "))))
+#+END_SRC
+
+** Ace Window
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :init
+    (global-set-key (kbd "M-o") 'ace-window))
+#+END_SRC
+
+** Eyebrowse
+#+BEGIN_SRC emacs-lisp
+  (use-package eyebrowse
+    :ensure t
+    :init (eyebrowse-mode t))
+#+END_SRC
+
+* Blogging
+** Hugo
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+#+END_SRC

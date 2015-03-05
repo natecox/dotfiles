@@ -1,0 +1,29 @@
+setopt HIST_FIND_NO_DUPS
+
+# Fresh shell
+source ~/.fresh/build/shell.sh
+
+# Antigen (https://github.com/zsh-users/antigen)
+# Install with `brew install antigen`
+source $(brew --prefix)/share/antigen/antigen.zsh
+antigen init $HOME/.antigenrc
+
+# ASDF
+. $HOME/.asdf/asdf.sh
+. $HOME/.asdf/completions/asdf.bash
+
+# Yarn (https://yarnpkg.com/)
+export PATH="$(brew --prefix yarn)/bin:$PATH"
+
+# Import personal aliases
+[[ -f ~/.aliases ]] && source ~/.aliases
+
+export PLATFORM_DEV=$HOME/src/platform/dev
+shovel() ( $PLATFORM_DEV/script/run shovel "$@"; )
+
+mit() ( ssh mit"$@"n1.cmmint.net; )
+mitd() ( ssh deployer@mit"$@"n1.cmmint.net; )
+
+eval "$(starship init zsh)"
+
+export PATH="$HOME/.bin:$PATH"
