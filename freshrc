@@ -17,6 +17,8 @@ fresh 'config/*' --file
 
 # Emacs config
 ln -sf ~/.dotfiles/emacs/emacs.d ~/.emacs.d
+fresh emacs/org/setupfile.org --file=~/org/setupfile.org
+fresh emacs/org/elfeed.org --file=~/org/elfeed.org
 
 # Git config
 fresh-options --file='~/.gitconfig' --marker
