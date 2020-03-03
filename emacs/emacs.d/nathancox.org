@@ -174,27 +174,30 @@ Remove the icon toolbar from the top of the GUI
 
   (setq column-number-mode t)
 
-  ;; (use-package spaceline
-  ;;   :ensure t
-  ;;   :pin melpa
-  ;;   :init
-  ;;   (require 'spaceline-config))
+  (use-package spaceline
+    :ensure t
+    :pin melpa
+    :init
+    (scroll-bar-mode -1)
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme))
 
+  ;; Pending the fix [[https://github.com/domtronn/all-the-icons.el/pull/157][here]]
   ;; (use-package spaceline-all-the-icons
   ;;   :ensure t
   ;;   :pin melpa
   ;;   :after spaceline
   ;;   :config (spaceline-all-the-icons-theme))
 
-  (use-package smart-mode-line-powerline-theme
-    :ensure t)
+  ;; (use-package smart-mode-line-powerline-theme
+  ;;   :ensure t)
 
-  (use-package smart-mode-line
-    :ensure t
-    :after smart-mode-line-powerline-theme
-    :hook (after-init-hook sml/setup)
-    :init (add-hook 'after-init-hook 'sml/setup)
-    :config (sml/apply-theme 'powerline))
+  ;; (use-package smart-mode-line
+  ;;   :ensure t
+  ;;   :after smart-mode-line-powerline-theme
+  ;;   :hook (after-init-hook sml/setup)
+  ;;   :init (add-hook 'after-init-hook 'sml/setup)
+  ;;   :config (sml/apply-theme 'powerline))
 
   ;; (use-package moody
   ;;   :ensure t
@@ -221,13 +224,8 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     :hook (prog-mode . highlight-indent-guides-mode)
     :config
     (setq highlight-indent-guides-method 'character
-          highlight-indent-guides-character ?\｜
+          highlight-indent-guides-character ?|
           highlight-indent-guides-responsive 'stack))
-
-  (use-package aggressive-indent
-    :ensure t
-    :init
-    (global-aggressive-indent-mode 1))
 #+END_SRC
 
 *** Search
@@ -527,12 +525,22 @@ Provides intelligent code folding.
 
 **** Rspec-mode
 #+BEGIN_SRC emacs-lisp
+  (setq compilation-scroll-output t)
+  (setenv "PAGER" (executable-find "cat"))
+
   (use-package inf-ruby
     :ensure t)
 
   (use-package rspec-mode
     :ensure t
-    :hook (after-init . inf-ruby-switch-setup))
+    :hook (after-init . inf-ruby-switch-setup)
+    :hook (compilation-filter-hook . inf-ruby-auto-enter))
+#+END_SRC
+
+**** Rubocop
+#+BEGIN_SRC emacs-lisp
+  (use-package rubocop
+    :ensure t)
 #+END_SRC
 *** Javascript
 #+BEGIN_SRC emacs-lisp
@@ -594,6 +602,16 @@ Provides intelligent code folding.
     :ensure t
     :hook (flycheck-mode . flycheck-rust-setup))
 #+END_SRC
+
+** Indentation
+#+BEGIN_SRC emacs-lisp
+  (dolist (command '(yank yank-pop))
+     (eval `(defadvice ,command (after indent-region activate)
+              (and (not current-prefix-arg)
+                   (member major-mode '(emacs-lisp-mode prog-mode))
+                   (let ((mark-even-if-inactive transient-mark-mode))
+                     (indent-region (region-beginning) (region-end) nil))))))
+#+END_SRC
 * Project Management
 ** Magit
 #+BEGIN_SRC emacs-lisp
@@ -622,10 +640,13 @@ Provides intelligent code folding.
     :config
     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-global-mode)
+    (projectile-mode +1)
     (counsel-projectile-mode)
-    (setq projectile-enable-caching nil
-          projectile-completion-system 'ivy))
+    (setq projectile-completion-system 'ivy
+          projectile-switch-project-action #'projectile-find-dir
+          projectile-find-dir-includes-top-level t)
+    (defadvice projectile-project-root (around ignore-remote first activate)
+      (unless (file-remote-p default-directory) ad-do-it)))
 #+END_SRC
 
 * Usability Improvements
@@ -782,7 +803,6 @@ Provides intelligent code folding.
     :ensure t
     :init (eyebrowse-mode t))
 #+END_SRC
-
 * Blogging
 ** Hugo
 #+BEGIN_SRC emacs-lisp
