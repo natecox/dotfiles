@@ -218,6 +218,8 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
 *** Indentation
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode +1)
+  (setq-default tab-width 2)
+  (setq tab-width 2)
 
   (use-package highlight-indent-guides
     :ensure t
@@ -264,13 +266,25 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
   (use-package vterm
     :ensure t)
 #+END_SRC
+
+*** Drag stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package drag-stuff
+    :ensure t
+    :bind (("<M-down>" . drag-stuff-down)
+           ("<M-up>" . drag-stuff-up)
+           ("<M-right>" . drag-stuff-right)
+           ("<M-left>" . drag-stuff-left))
+    :init
+    (drag-stuff-global-mode 1))
+#+END_SRC
 * Org Mode
 ** Setup for macOS
 1. Install macTEX with `brew install cask mactex`
 2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
 3. Ensure Lato font is installed
 
-** Config
+** TODO Config
 #+BEGIN_SRC emacs-lisp
   (use-package org-mode
     :bind (("C-c a" . org-agenda)
@@ -282,7 +296,6 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     :init
     (setq org-default-notes-file (concat org-directory "/notes.org"))
     (setq org-startup-indented t)
-    (setq org-log-done t)
     (setq org-agenda-window-setup 'current-window)
     (setq org-confirm-babel-evaluate nil)
     (add-to-list 'exec-path "/Library/TeX/texbin")
@@ -294,6 +307,7 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
     (setq-default TeX-engine 'xetex)
     (setq-default TeX-PDF-mode t)
+    (setq org-blank-before-new-entry '((heading . 1) (plain-list-item . 1)))
 
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -399,18 +413,41 @@ Provides intelligent code folding.
     :hook (ruby-mode . lsp)
     :hook (elpy-mode . lsp)
     :hook (elm-mode . lsp)
-    :bind (("C-c k D" . lsp-describe-thing-at-point)
-           ("C-c k f" . lsp-format-buffer)
-           ("C-c k R" . lsp-rename))
-    :commands lsp)
+    :hook (yaml-mode . lsp)
+    :bind (("C-c k" . ncox/lsp-hydra/body))
+    :custom (lsp-keymap-prefix "C-c M-k")
+    :commands lsp
+    :init
+    (defvar ncox--general-lsp-hydra-heads
+      '(;; UI
+        ("d" lsp-ui-peek-find-definitions "Definitions" :column "Peek")
+        ("r" lsp-ui-peek-find-references "References")
+        ("i" lsp-ui-peek-find-implementation "Implementation")
+
+        ;; LSP
+        ("R" lsp-rename "Rename")
+        ("p" lsp-describe-thing-at-point "Describe at point" :column "LSP")
+        ("C-a" lsp-execute-code-action "Execute code action")
+        ("C-c" lsp-describe-session "Describe session")
+
+        ;; Formatting
+        ("f" lsp-format-buffer "Format buffer")
+
+        ;; Flycheck
+        ("l" lsp-ui-flycheck-list "List errs/warns/notes" :column "Flycheck")))
+    (eval `(defhydra ncox/lsp-hydra (:color blue :hint nil)
+             ,@(append
+                ncox--general-lsp-hydra-heads))))
 
   (use-package lsp-ui
     :ensure t
     :after lsp-mode
     :hook (lsp-mode . lsp-ui-mode)
-    :bind(("C-c k d" . lsp-ui-peek-find-definitions)
-          ("C-c k r" . lsp-ui-peek-find-references))
     :commands lsp-ui-mode)
+
+  (use-package lsp-ivy
+    :ensure t
+    :after lsp-mode)
 
   (use-package company-lsp
     :ensure t
@@ -422,6 +459,11 @@ Provides intelligent code folding.
 
   (use-package dap-ruby
     :after dap-mode)
+
+  (use-package lsp-origami
+    :ensure t
+    :after lsp-mode origami
+    :hook (origami-mode . lsp-origami-mode))
 #+END_SRC
 
 ** Rest client
@@ -683,14 +725,12 @@ Provides intelligent code folding.
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :ensure t
-    :bind (("C-s" . swiper)
-           ("M-x" . counsel-M-x)
-           ("C-x C-f" . counsel-find-file)
-           ("C-x b" . counsel-switch-buffer))
+    :bind (("C-s" . swiper))
     :init
     (setq ivy-use-virtual-buffers t)
     (setq enable-recursive-minibuffers t)
-    (ivy-mode 1))
+    (ivy-mode 1)
+    (counsel-mode 1))
 
   (use-package ivy-hydra
     :ensure t
@@ -723,6 +763,13 @@ Provides intelligent code folding.
 #+END_SRC
 
 * Buffer Navigation
+** Bufler
+#+BEGIN_SRC emacs-lisp
+  (use-package bufler
+    :ensure t
+    :bind (("C-x C-b" . bufler)
+           ("C-x b" . bufler-switch-buffer)))
+#+END_SRC
 ** iBuffer
 #+BEGIN_SRC emacs-lisp
   (use-package ibuffer
@@ -756,7 +803,7 @@ Provides intelligent code folding.
                                       " " (icon 1 -1 :left :elide) "\t" (name 18 18 :left :elide)
                                       " " (size 9 -1 :right)
                                       " " (mode 16 16 :left :elide) " " filename-and-process)
-                                (mark " " (name 16 -1) " " filename)))))
+                                (mark " " (name 30 -1) " " filename)))))
 
     (with-eval-after-load 'counsel
       (defun my-ibuffer-find-file ()
