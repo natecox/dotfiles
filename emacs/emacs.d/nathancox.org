@@ -415,9 +415,11 @@ Provides intelligent code folding.
     :hook (elpy-mode . lsp)
     :hook (elm-mode . lsp)
     :hook (yaml-mode . lsp)
+    :hook (lsp-mode . lsp-enable-which-key-integration)
     :bind (("C-c k" . ncox/lsp-hydra/body))
-    :custom (lsp-keymap-prefix "C-c M-k")
     :commands lsp
+    :custom
+    (lsp-keymap-prefix "C-c M-k")
     :init
     (defvar ncox--general-lsp-hydra-heads
       '(;; UI
