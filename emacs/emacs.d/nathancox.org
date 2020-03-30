@@ -284,6 +284,14 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
 2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
 3. Ensure Lato font is installed
 
+** Org Bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-superstar
+    :ensure t
+    :hook (org-mode . org-superstar-mode)
+    :custom (org-superstar-special-todo-items t))
+#+END_SRC
+
 ** TODO Config
 #+BEGIN_SRC emacs-lisp
   (use-package org-mode
@@ -312,13 +320,6 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((ruby . t))))
-
-
-  (use-package org-bullets
-    :ensure t
-    :init
-    (setq org-bullets-bullet-list	'("◉" "◎" "⚫" "○" "►" "◇"))
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
   (use-package project-shells
     :ensure t
@@ -425,16 +426,16 @@ Provides intelligent code folding.
         ("i" lsp-ui-peek-find-implementation "Implementation")
 
         ;; LSP
-        ("R" lsp-rename "Rename")
         ("p" lsp-describe-thing-at-point "Describe at point" :column "LSP")
         ("C-a" lsp-execute-code-action "Execute code action")
         ("C-c" lsp-describe-session "Describe session")
 
         ;; Formatting
+        ("R" lsp-rename "Rename")
         ("f" lsp-format-buffer "Format buffer")
 
         ;; Flycheck
-        ("l" lsp-ui-flycheck-list "List errs/warns/notes" :column "Flycheck")))
+        ("l" lsp-ui-flycheck-list "List Errors" :column "Flycheck")))
     (eval `(defhydra ncox/lsp-hydra (:color blue :hint nil)
              ,@(append
                 ncox--general-lsp-hydra-heads))))
@@ -763,13 +764,6 @@ Provides intelligent code folding.
 #+END_SRC
 
 * Buffer Navigation
-** Bufler
-#+BEGIN_SRC emacs-lisp
-  (use-package bufler
-    :ensure t
-    :bind (("C-x C-b" . bufler)
-           ("C-x b" . bufler-switch-buffer)))
-#+END_SRC
 ** iBuffer
 #+BEGIN_SRC emacs-lisp
   (use-package ibuffer
