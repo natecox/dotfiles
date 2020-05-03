@@ -45,10 +45,22 @@ Require packages, add melpa to the available repos, and set a custom file
 #+END_SRC
 
 ** General configuration
+*** Diminish
+This is used to remove modes from the modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish :ensure t)
+#+END_SRC
+
+*** Winner mode
+#+begin_src emacs-lisp
+(winner-mode +1)
+#+end_src
+
 *** Allow risky local vars
 #+BEGIN_SRC emacs-lisp
 (advice-add 'risky-local-variable-p :override #'ignore)
 #+END_SRC
+
 *** Improve speed of next-line
 #+BEGIN_SRC emacs-lisp
 (setq auto-window-vscroll nil)
@@ -71,7 +83,7 @@ I use macs exclusively, where alt is moderately difficult to hit.
   (if (fboundp 'mac-auto-operator-composition-mode)
       (mac-auto-operator-composition-mode))
 
-  (global-set-key (kbd "s-SPC") 'just-one-space)
+  (define-key (current-global-map) (kbd "s-SPC") 'just-one-space)
 #+END_SRC
 
 *** Tramp Defaults
@@ -123,9 +135,10 @@ rejected for any given reason, but kept for posterity.
 | Nord      | Not enough contrast in highlighting            |
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package gruvbox-theme
-  ;;   :ensure t
-  ;;   :init (load-theme 'gruvbox-dark-hard t))
+  (setq frame-resize-pixelwise t)
+  (use-package gruvbox-theme
+    :ensure t
+    :init (load-theme 'gruvbox t))
 
   ;; (use-package doom-themes
   ;;   :ensure t
@@ -135,10 +148,21 @@ rejected for any given reason, but kept for posterity.
   ;;   (load-theme 'doom-one t)
   ;;   (doom-themes-org-config))
 
-  (use-package snazzy-theme
-    :ensure t
-    :init
-    (load-theme 'snazzy))
+  ;; (use-package snazzy-theme
+  ;;   :ensure t
+  ;;   :init
+  ;;   (load-theme 'snazzy))
+
+  ;; (use-package darktooth-theme
+  ;;   :ensure t
+  ;;   :init
+  ;;   (load-theme 'darktooth)
+  ;;   (darktooth-modeline)
+  ;;   (set-face-attribute 'fringe nil :background nil))
+
+  ;; (use-package spacemacs-common
+  ;;   :ensure spacemacs-theme
+  ;;   :init (load-theme 'spacemacs-dark t))
 #+END_SRC
 
 **** Toolbar Config
@@ -169,7 +193,7 @@ Remove the icon toolbar from the top of the GUI
 
 **** Modeline
 #+BEGIN_SRC emacs-lisp
-  (display-time-mode 1)
+  (display-time-mode -1)
   (setq display-time-24hr-format t)
 
   (setq column-number-mode t)
@@ -215,7 +239,7 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
   (setq sentence-end-double-space nil)
 #+END_SRC
 
-*** Indentation
+***d Indentation
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode +1)
   (setq-default tab-width 2)
@@ -261,12 +285,6 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     (setq multi-term-program "/usr/local/bin/zsh"))
 #+END_SRC
 
-*** vterm
-#+BEGIN_SRC emacs-lisp
-  (use-package vterm
-    :ensure t)
-#+END_SRC
-
 *** Drag stuff
 #+BEGIN_SRC emacs-lisp
   (use-package drag-stuff
@@ -278,6 +296,32 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     :init
     (drag-stuff-global-mode 1))
 #+END_SRC
+
+*** Join region
+#+begin_src emacs-lisp
+  (defun join-region (beg end)
+    "Apply join-line over region."
+    (interactive "r")
+    (if mark-active
+        (let ((beg (region-beginning))
+              (end (copy-marker (region-end))))
+          (goto-char beg)
+          (while (< (point) end)
+            (join-line 1)))))
+#+end_src
+
+*** Multiple Cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-c m n" . mc/mark-next-like-this)
+           ("C-c m p" . mc/mark-previous-like-this)
+           ("C-c m a" . mc/mark-all-like-this)
+           ("C-c m w n" . mc/mark-next-like-this-word)
+           ("C-c m w p" . mc/mark-previous-like-this-word)
+           ("C-c m w a" . mc/mark-all-words-like-this)
+           ("C-c m e" . mc/edit-lines)))
+#+end_src
 * Org Mode
 ** Setup for macOS
 1. Install macTEX with `brew install cask mactex`
@@ -315,7 +359,6 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
     (setq-default TeX-engine 'xetex)
     (setq-default TeX-PDF-mode t)
-    (setq org-blank-before-new-entry '((heading . 1) (plain-list-item . 1)))
 
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -412,6 +455,7 @@ Provides intelligent code folding.
   (use-package lsp-mode
     :ensure t
     :hook (ruby-mode . lsp)
+    :hook (enh-ruby-mode . lsp)
     :hook (elpy-mode . lsp)
     :hook (elm-mode . lsp)
     :hook (yaml-mode . lsp)
@@ -527,6 +571,19 @@ Provides intelligent code folding.
 #+END_SRC
 
 ** Language Support
+*** Groovy
+#+begin_src emacs-lisp
+  (use-package groovy-mode
+    :ensure t
+    :config
+    (setq indent-tabs-mode nil
+          c-basic-offset 2))
+#+end_src
+*** Lisp
+#+begin_src emacs-lisp
+  (use-package prism
+    :ensure t)
+#+end_src
 *** Elixir
 #+BEGIN_SRC emacs-lisp
   (use-package alchemist
@@ -541,6 +598,15 @@ Provides intelligent code folding.
 #+END_SRC
 
 *** Ruby
+**** Enhanced Ruby
+#+begin_src emacs-lisp
+  (use-package enh-ruby-mode
+    :ensure t
+    :hook (enh-ruby-mode . inf-ruby-minor-mode)
+    :config
+    (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+    (setq enh-ruby-deep-indent-construct nil))
+#+end_src
 **** Bundler
 #+BEGIN_SRC emacs-lisp
       (use-package bundler :ensure t)
@@ -556,16 +622,16 @@ Provides intelligent code folding.
 
 **** Rails
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile-rails
-    :ensure t
-    :after projectile
-    :init
-    (projectile-rails-global-mode)
-    (setq projectile-rails-vanilla-command "bin/rails"))
-    ;; (setq projectile-rails-custom-server-command "heroku local")
-    ;; (setq projectile-rails-javascript-dirs '("app/frontend/"))
-    ;; (setq projectile-rails-javascript-re "\\.(js|ts)")
-    ;; (setq projectile-rails-stylesheet-dirs '("app/frontend/")))
+  ;; (use-package projectile-rails
+  ;;   :ensure t
+  ;;   :after projectile
+  ;;   :init
+  ;;   (projectile-rails-global-mode)
+  ;;   (setq projectile-rails-vanilla-command "bin/rails"))
+  ;;   ;; (setq projectile-rails-custom-server-command "heroku local")
+  ;;   ;; (setq projectile-rails-javascript-dirs '("app/frontend/"))
+  ;;   ;; (setq projectile-rails-javascript-re "\\.(js|ts)")
+  ;;   ;; (setq projectile-rails-stylesheet-dirs '("app/frontend/")))
 #+END_SRC
 
 **** Rspec-mode
@@ -721,13 +787,15 @@ Provides intelligent code folding.
                             (recents . 5)
                             (agenda . 5)
                             (bookmarks . 5)
-                            (registers . 5))))
+                            (registers . 5)))
+    (setq dashboard-set-footer nil))
 #+END_SRC
 
-** Ivy
+* Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :ensure t
+    :diminish
     :bind (("C-s" . swiper))
     :init
     (setq ivy-use-virtual-buffers t)

@@ -18,6 +18,9 @@ export PATH="$(brew --prefix yarn)/bin:$PATH"
 # Import personal aliases
 [[ -f ~/.aliases ]] && source ~/.aliases
 
+# Setup Autojump
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
 export PLATFORM_DEV=$HOME/src/platform/dev
 shovel() ( $PLATFORM_DEV/script/run shovel "$@"; )
 
