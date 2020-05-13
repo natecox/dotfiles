@@ -13,8 +13,9 @@ Require packages, add melpa to the available repos, and set a custom file
 
 #+BEGIN_SRC emacs-lisp
   (require 'package)
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/") t)
+
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 
   (package-initialize)
 
@@ -138,7 +139,7 @@ rejected for any given reason, but kept for posterity.
   (setq frame-resize-pixelwise t)
   (use-package gruvbox-theme
     :ensure t
-    :init (load-theme 'gruvbox t))
+    :init (load-theme 'gruvbox-dark-hard t))
 
   ;; (use-package doom-themes
   ;;   :ensure t
@@ -339,6 +340,7 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
 ** TODO Config
 #+BEGIN_SRC emacs-lisp
   (use-package org-mode
+    :ensure org-plus-contrib
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
            ("C-c c" . org-capture))
@@ -359,6 +361,8 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
     (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
     (setq-default TeX-engine 'xetex)
     (setq-default TeX-PDF-mode t)
+
+    (require 'ox-confluence)
 
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -455,7 +459,7 @@ Provides intelligent code folding.
   (use-package lsp-mode
     :ensure t
     :hook (ruby-mode . lsp)
-    :hook (enh-ruby-mode . lsp)
+    ;; :hook (enh-ruby-mode . lsp)
     :hook (elpy-mode . lsp)
     :hook (elm-mode . lsp)
     :hook (yaml-mode . lsp)
@@ -576,8 +580,9 @@ Provides intelligent code folding.
   (use-package groovy-mode
     :ensure t
     :config
-    (setq indent-tabs-mode nil
-          c-basic-offset 2))
+    (setq groovy-indent-offset 2)
+    (setq indent-tabs-mode nil)
+    (setq c-basic-offset 2))
 #+end_src
 *** Lisp
 #+begin_src emacs-lisp
@@ -600,12 +605,12 @@ Provides intelligent code folding.
 *** Ruby
 **** Enhanced Ruby
 #+begin_src emacs-lisp
-  (use-package enh-ruby-mode
-    :ensure t
-    :hook (enh-ruby-mode . inf-ruby-minor-mode)
-    :config
-    (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
-    (setq enh-ruby-deep-indent-construct nil))
+  ;; (use-package enh-ruby-mode
+  ;;   :ensure t
+  ;;   :hook (enh-ruby-mode . inf-ruby-minor-mode)
+  ;;   :config
+  ;;   (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
+  ;;   (setq enh-ruby-deep-indent-construct nil))
 #+end_src
 **** Bundler
 #+BEGIN_SRC emacs-lisp
