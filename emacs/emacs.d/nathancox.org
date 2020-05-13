@@ -240,7 +240,7 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
   (setq sentence-end-double-space nil)
 #+END_SRC
 
-***d Indentation
+*** Indentation
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode +1)
   (setq-default tab-width 2)
