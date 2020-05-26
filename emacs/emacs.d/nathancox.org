@@ -117,7 +117,6 @@ From http://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html:
 *** Interface configuration
 **** Typography
 #+BEGIN_SRC emacs-lisp
-  ;; (set-face-attribute 'default nil :font "Dank Mono-15")
   (set-face-attribute 'default nil :font "JetBrains Mono 14")
 #+END_SRC
 
@@ -232,14 +231,6 @@ Remove the icon toolbar from the top of the GUI
   ;;   (moody-replace-vc-mode))
 #+END_SRC
 
-*** Switch to standard single space sentences
-Emacs assumes, for some reason, that sentences should end with puncutation followed by two spaces or a new line.
-This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump paragraphs.
-
-#+BEGIN_SRC emacs-lisp
-  (setq sentence-end-double-space nil)
-#+END_SRC
-
 *** Indentation
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode +1)
@@ -323,6 +314,7 @@ This doesn't make sense to me, and basically makes =M-a= and =M-e= only jump par
            ("C-c m w a" . mc/mark-all-words-like-this)
            ("C-c m e" . mc/edit-lines)))
 #+end_src
+
 * Org Mode
 ** Setup for macOS
 1. Install macTEX with `brew install cask mactex`
