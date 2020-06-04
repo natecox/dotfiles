@@ -180,15 +180,6 @@ Remove the icon toolbar from the top of the GUI
     :init
     (unless (member "all-the-icons" (font-family-list))
       (all-the-icons-install-fonts t)))
-
-  (use-package all-the-icons-ivy
-    :ensure t
-    :after (projectile all-the-icons ivy)
-    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window))
-    :config
-    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
-    (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
-    (all-the-icons-ivy-setup))
 #+END_SRC
 
 **** Modeline
@@ -248,9 +239,6 @@ Remove the icon toolbar from the top of the GUI
 
 *** Search
 #+BEGIN_SRC emacs-lisp
-  (use-package ag
-    :ensure t)
-
   (use-package avy
     :ensure t
     :bind ("C-:" . 'avy-goto-char)
@@ -267,14 +255,6 @@ Remove the icon toolbar from the top of the GUI
 *** Disable system bell
 #+BEGIN_SRC emacs-lisp
   (setq ring-bell-function 'ignore)
-#+END_SRC
-
-*** Multi-term
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term
-    :ensure t
-    :config
-    (setq multi-term-program "/usr/local/bin/zsh"))
 #+END_SRC
 
 *** Drag stuff
@@ -316,20 +296,6 @@ Remove the icon toolbar from the top of the GUI
 #+end_src
 
 * Org Mode
-** Setup for macOS
-1. Install macTEX with `brew install cask mactex`
-2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
-3. Ensure Lato font is installed
-
-** Org Bullets
-#+BEGIN_SRC emacs-lisp
-  (use-package org-superstar
-    :ensure t
-    :hook (org-mode . org-superstar-mode)
-    :custom (org-superstar-special-todo-items t))
-#+END_SRC
-
-** TODO Config
 #+BEGIN_SRC emacs-lisp
   (use-package org-mode
     :ensure org-plus-contrib
@@ -366,36 +332,29 @@ Remove the icon toolbar from the top of the GUI
     (global-project-shells-mode))
 #+END_SRC
 
-** JIRA
+** Setup for macOS
+1. Install macTEX with `brew install cask mactex`
+2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
+3. Ensure Lato font is installed
+
+** Org Superstar
 #+BEGIN_SRC emacs-lisp
-    (use-package org-jira
-      :ensure t
-      :config
-      (setq jiralib-url "https://jira.covermymeds.com")
-      (setq org-jira-working-dir "~/org/jira"))
+  (use-package org-superstar
+    :ensure t
+    :hook (org-mode . org-superstar-mode)
+    :custom (org-superstar-special-todo-items t))
 #+END_SRC
 
-* RSS Reader
+** JIRA
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package elfeed
-  ;;   :ensure t
-  ;;   :init
-  ;;   (global-set-key (kbd "C-x w") 'elfeed))
-
-  ;; (use-package elfeed-org
-  ;;   :ensure t
-  ;;   :after elfeed
-  ;;   :config
-  ;;   (elfeed-org)
-  ;;   (setq rmh-elfeed-org-files (list "~/org/elfeed.org")))
+  (use-package org-jira
+    :ensure t
+    :config
+    (setq jiralib-url "https://jira.covermymeds.com")
+    (setq org-jira-working-dir "~/org/jira"))
 #+END_SRC
 
 * Development Configuration
-** Electric Pair
-#+BEGIN_SRC emacs-lisp
-(electric-pair-mode +1)
-#+END_SRC
-
 ** Toggle quotes
 #+BEGIN_SRC emacs-lisp
   (use-package toggle-quotes
@@ -723,22 +682,17 @@ Provides intelligent code folding.
 * Project Management
 ** Magit
 #+BEGIN_SRC emacs-lisp
-    (use-package magit
-      :ensure t
-      :pin melpa
-      :bind (("C-c g s" . magit-status))
-      :init
-      (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line)
-            git-commit-summary-max-length 50))
+  (use-package magit
+    :ensure t
+    :pin melpa
+    :bind (("C-c g s" . magit-status))
+    :init
+    (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line)
+          git-commit-summary-max-length 50))
 
-    (use-package forge
-      :ensure t
-      :after magit
-      :config
-      (add-to-list 'forge-alist '("git.innova-partners.com" "git.innova-partners.com/api"
-                                  "git.innova-partners.com" forge-github-repository)))
-
-    ;; (use-package magit-town)
+  (use-package forge
+    :ensure t
+    :after magit)
 #+END_SRC
 
 ** Projectile
@@ -788,7 +742,7 @@ Provides intelligent code folding.
     (setq dashboard-set-footer nil))
 #+END_SRC
 
-* Ivy
+** Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :ensure t
@@ -804,14 +758,23 @@ Provides intelligent code folding.
     :ensure t
     :after ivy)
 
-    (use-package flx
-      :ensure t
-      :after ivy
-      :init
-      (setq ivy-re-builders-alist '((t . ivy--regex-plus))))
+  (use-package flx
+    :ensure t
+    :after ivy
+    :init
+    (setq ivy-re-builders-alist '((t . ivy--regex-plus))))
 
   (use-package counsel-projectile
     :ensure t)
+
+  (use-package all-the-icons-ivy
+    :ensure t
+    :after (projectile all-the-icons ivy)
+    :hook (after-init . all-the-icons-ivy-setup)
+    :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window))
+    :config
+    (setq all-the-icons-ivy-file-commands
+          '(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile-find-file counsel-projectile-find-dir counsel-switch-buffer)))
 #+END_SRC
 
 ** Zoom
@@ -821,13 +784,6 @@ Provides intelligent code folding.
     :init
     (zoom-mode t)
     (global-set-key (kbd "C-x +") 'zoom))
-#+END_SRC
-
-** Frog Jump Buffer
-#+BEGIN_SRC emacs-lisp
-  (use-package frog-jump-buffer
-    :ensure t
-    :bind ("s-b" . frog-jump-buffer))
 #+END_SRC
 
 * Buffer Navigation
