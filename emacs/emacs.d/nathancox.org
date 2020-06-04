@@ -345,15 +345,6 @@ Remove the icon toolbar from the top of the GUI
     :custom (org-superstar-special-todo-items t))
 #+END_SRC
 
-** JIRA
-#+BEGIN_SRC emacs-lisp
-  (use-package org-jira
-    :ensure t
-    :config
-    (setq jiralib-url "https://jira.covermymeds.com")
-    (setq org-jira-working-dir "~/org/jira"))
-#+END_SRC
-
 * Development Configuration
 ** Toggle quotes
 #+BEGIN_SRC emacs-lisp
