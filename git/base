@@ -1,7 +1,9 @@
 [push]
-        default = simple
+	default = simple
+[pull]
+	ff = only
 [core]
-        editor = emacsclient -c
+	editor = emacsclient -c
 	excludesfile = $HOME/.gitignore_global
 [diff]
 	tool = opendiff

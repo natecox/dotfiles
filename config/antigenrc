@@ -1,7 +1,6 @@
 antigen use oh-my-zsh
 
 antigen bundles <<EOBUNDLES
-  kiurchv/asdf.plugin.zsh
   git
   heroku
   brew
