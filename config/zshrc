@@ -23,8 +23,7 @@ export PATH="$(brew --prefix yarn)/bin:$PATH"
 export PLATFORM_DEV=$HOME/src/platform/dev
 shovel() ( $PLATFORM_DEV/script/run shovel "$@"; )
 
-mit() ( ssh mit"$@"n1.cmmint.net; )
-mitd() ( ssh deployer@mit"$@"n1.cmmint.net; )
+mit() ( ssh mit"$@".cmmint.net; )
 
 eval "$(starship init zsh)"
 

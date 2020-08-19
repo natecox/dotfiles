@@ -592,7 +592,8 @@ Provides intelligent code folding.
   (use-package rspec-mode
     :ensure t
     :hook (after-init . inf-ruby-switch-setup)
-    :hook (compilation-filter-hook . inf-ruby-auto-enter))
+    :hook (compilation-filter-hook . inf-ruby-auto-enter)
+    :config (setq rspec-primary-source-dirs '("app")))
 #+END_SRC
 
 **** Rubocop
