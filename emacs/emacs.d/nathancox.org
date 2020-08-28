@@ -297,7 +297,7 @@ Remove the icon toolbar from the top of the GUI
 
 * Org Mode
 #+BEGIN_SRC emacs-lisp
-  (use-package org-mode
+  (use-package org
     :ensure org-plus-contrib
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
@@ -320,11 +320,10 @@ Remove the icon toolbar from the top of the GUI
     (setq-default TeX-engine 'xetex)
     (setq-default TeX-PDF-mode t)
 
-    (require 'ox-confluence)
-
     (org-babel-do-load-languages
      'org-babel-load-languages
-     '((ruby . t))))
+     '((ruby . t)
+       (shell . t))))
 
   (use-package project-shells
     :ensure t
@@ -344,6 +343,16 @@ Remove the icon toolbar from the top of the GUI
     :hook (org-mode . org-superstar-mode)
     :custom (org-superstar-special-todo-items t))
 #+END_SRC
+
+** Jira Export
+#+begin_src emacs-lisp
+  (use-package ox-jira
+    :ensure t
+    :after org
+    :config
+    (eval-after-load "org"
+      '(progn (require 'ox-jira))))
+#+end_src
 
 * Development Configuration
 ** Toggle quotes
