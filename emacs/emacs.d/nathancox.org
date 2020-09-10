@@ -9,6 +9,7 @@ This file is my attempt at a from-scratch emacs configuration, moving away from 
 All configuration should be done via =use-package= for performance and consistency.
 
 ** Initialization
+*** General Setup
 Require packages, add melpa to the available repos, and set a custom file
 
 #+BEGIN_SRC emacs-lisp
@@ -89,7 +90,7 @@ I use macs exclusively, where alt is moderately difficult to hit.
 
 *** Tramp Defaults
 #+BEGIN_SRC emacs-lisp
-  (setq tramp-default-method "ssh")
+(setq tramp-default-method "ssh")
 #+END_SRC
 
 *** Backups
@@ -296,6 +297,7 @@ Remove the icon toolbar from the top of the GUI
 #+end_src
 
 * Org Mode
+** General config
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :ensure org-plus-contrib
@@ -310,6 +312,7 @@ Remove the icon toolbar from the top of the GUI
     (setq org-startup-indented t)
     (setq org-agenda-window-setup 'current-window)
     (setq org-confirm-babel-evaluate nil)
+    (setq org-export-copy-to-kill-ring 'if-interactive)
     (add-to-list 'exec-path "/Library/TeX/texbin")
     (setq org-latex-logfiles-extensions
           (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
@@ -352,6 +355,13 @@ Remove the icon toolbar from the top of the GUI
     :config
     (eval-after-load "org"
       '(progn (require 'ox-jira))))
+#+end_src
+
+** Report Export
+#+begin_src emacs-lisp
+  (use-package ox-report
+    :load-path "~/src/natecox/ox-report/"
+    :config (eval-after-load "org" '(progn (require 'ox-report))))
 #+end_src
 
 * Development Configuration
@@ -415,7 +425,7 @@ Provides intelligent code folding.
     :hook (elm-mode . lsp)
     :hook (yaml-mode . lsp)
     :hook (lsp-mode . lsp-enable-which-key-integration)
-    :bind (("C-c k" . ncox/lsp-hydra/body))
+    :bind (("C-c k k" . ncox/lsp-hydra/body))
     :commands lsp
     :custom
     (lsp-keymap-prefix "C-c M-k")
@@ -455,17 +465,6 @@ Provides intelligent code folding.
     :ensure t
     :after lsp-mode
     :commands company-lsp)
-
-  (use-package dap-mode
-    :ensure t)
-
-  (use-package dap-ruby
-    :after dap-mode)
-
-  (use-package lsp-origami
-    :ensure t
-    :after lsp-mode origami
-    :hook (origami-mode . lsp-origami-mode))
 #+END_SRC
 
 ** Rest client
@@ -535,16 +534,19 @@ Provides intelligent code folding.
     (setq indent-tabs-mode nil)
     (setq c-basic-offset 2))
 #+end_src
+
 *** Lisp
 #+begin_src emacs-lisp
   (use-package prism
     :ensure t)
 #+end_src
+
 *** Elixir
 #+BEGIN_SRC emacs-lisp
   (use-package alchemist
     :ensure t)
 #+END_SRC
+
 *** Elm
 #+BEGIN_SRC emacs-lisp
   (use-package elm-mode
@@ -610,6 +612,7 @@ Provides intelligent code folding.
   (use-package rubocop
     :ensure t)
 #+END_SRC
+
 *** Javascript
 #+BEGIN_SRC emacs-lisp
   (setq js-indent-level 2)
@@ -875,3 +878,13 @@ Provides intelligent code folding.
     :ensure t
     :after ox)
 #+END_SRC
+
+* CoverMyEmacs
+#+begin_src emacs-lisp
+  (use-package covermyemacs
+    :bind ("C-c i" . covermyemacs)
+    :custom
+    (covermyemacs-username "ncox")
+    (covermyemacs-pdev-directory "~/src/platform/dev/")
+    :load-path "~/src/natecox/covermyemacs/lisp/")
+#+end_src

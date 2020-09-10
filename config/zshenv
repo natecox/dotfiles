@@ -11,7 +11,7 @@ SPACESHIP_PYENV_SHOW=false
 SPACESHIP_KUBECONTEXT_SHOW=false
 SPACESHIP_DIR_TRUNC=2
 
-export PATH=/Users/ncox/.asdf/shims/:/usr/local/sbin:/usr/local/bin:/Library/TeX/texbin:$PATH
+export PATH=/Users/ncox/.asdf/shims/:/Users/ncox/.cask/bin:/usr/local/sbin:/usr/local/bin:/Library/TeX/texbin:$PATH
 
 # virtualenvwrapper (https://virtualenvwrapper.readthedocs.io/en/latest/)
 export WORKON_HOME=$HOME/.virtualenvs
