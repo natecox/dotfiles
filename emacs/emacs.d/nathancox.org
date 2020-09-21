@@ -2,7 +2,8 @@
 #+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
 
-* Configuration
+
+* PRE-REDO
 ** About this file
 This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
 
@@ -13,16 +14,6 @@ All configuration should be done via =use-package= for performance and consisten
 Require packages, add melpa to the available repos, and set a custom file
 
 #+BEGIN_SRC emacs-lisp
-  (require 'package)
-
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-
-  (package-initialize)
-
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
 
   (use-package exec-path-from-shell
     :ensure t
