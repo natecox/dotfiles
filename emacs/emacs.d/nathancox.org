@@ -2,63 +2,280 @@
 #+STARTUP: content
 #+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
 
-
-* PRE-REDO
-** About this file
+* Preamble
 This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
 
-All configuration should be done via =use-package= for performance and consistency.
+Information here has been shamelessly stolen from all over the place. It's a good practice to assume anything here was
+ripped off from someone smarter than me.
 
-** Initialization
-*** General Setup
-Require packages, add melpa to the available repos, and set a custom file
+* General configuration
+** Boring setup stuff
+Starting off by turning on lexical binding, becauase emacs says we have to.
+#+begin_src emacs-lisp
+  (setq lexical-binding t)
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+Update the garbage collector with reasonable defaults.
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold 100000000)
+#+end_src
 
+Improve performance of vertical scrolling.
+#+begin_src emacs-lisp
+  (setq auto-window-vscroll nil)
+#+end_src
+
+Add the option to remove modes from the modeline with =:diminish=.
+#+begin_src emacs-lisp
+  (use-package diminish :ensure t)
+#+end_src
+
+Tell emacs that I want to use zsh, and that it should also use my path. This solves a lot of nonsense.
+#+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :ensure t
     :config
     (setenv "SHELL" "/usr/local/bin/zsh")
     (setq exec-path-from-shell-variables '("PATH"))
     (exec-path-from-shell-initialize))
-
-  (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file t)
-
-  (setq default-directory "~/")
-  (setq suggest-key-bindings nil)
-
-  (server-start)
-#+END_SRC
-
-** Personal information
-#+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Nathan Cox"
-	user-mail-address "tsuujin@icloud.com")
-#+END_SRC
-
-** General configuration
-*** Diminish
-This is used to remove modes from the modeline
-#+BEGIN_SRC emacs-lisp
-  (use-package diminish :ensure t)
-#+END_SRC
-
-*** Winner mode
-#+begin_src emacs-lisp
-(winner-mode +1)
 #+end_src
 
-*** Allow risky local vars
+Don't bother showing key bindings. We'll get something better set up via counsel, later on.
+#+begin_src emacs-lisp
+  (setq suggest-key-bindings nil)
+#+end_src
+
+Start a server. This is useful because I'm using emacs-mac, which doesn't have a handy script for running an emacs
+server, but I still want to use emacs as the default terminal editor without annoying startup times.
+#+begin_src emacs-lisp
+  (server-start)
+#+end_src
+
+Let Emacs know who the boss is.
+#+begin_src emacs-lisp
+  (setq user-full-name "Nathan Cox"
+        user-mail-address "tsuujin@icloud.com")
+#+end_src
+
+** Forcing emacs to get with the times; or, configuring sane defaults
+Update the UI behavior to be more modern.
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t
+        initial-scratch-message nil
+        sentence-end-double-space nil
+        ring-bell-function 'ignore
+        use-dialog-box nil
+        mark-even-if-inactive nil
+        kill-whole-line t)
+
+  (setq-default indent-tabs-mode nil)     ; Always use spaces.
+  (setq-default tab-width 2)              ; 4 is too much
+
+  (defalias 'yes-or-no-p 'y-or-n-p)       ; Always allow 'y' instead of 'yes'.
+#+end_src
+
+Set UTF-8 to be the de facto standard.
+#+begin_src emacs-lisp
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+#+end_src
+
+When editing, deleted selected text rather than inserting after it.
+#+begin_src emacs-lisp
+  (delete-selection-mode t)
+#+end_src
+
+Use the cool Emacs 27 highlighting stuff.
+#+begin_src emacs-lisp
+  (require 'hl-line)
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'text-mode-hook #'hl-line-mode)
+  (set-face-attribute 'hl-line nil :background "gray21")
+#+end_src
+
+Stop Emacs from littering the filesystem with backups and autosaves.
+#+begin_src emacs-lisp
+  (setq make-backup-files nil
+        auto-save-default nil
+        create-lockfiles nil)
+#+end_src
+
+Trick emacs into not saving custom configurations. By default, any time you use =M-x customize= emacs will write to
+=init.el= with the values you specify. This seems fine, but in practice creates situations where you don't know where
+variables are actually being set. Get rid of that by just piping everything to a fake file.
+#+begin_src emacs-lisp
+  (setq custom-file (make-temp-file ""))
+#+end_src
+
+The last block breaks saving information about which theme files we've marked as safe. Just go ahead and assume they're
+all safe, and don't download anything not on MELPA.
+#+begin_src emacs-lisp
+  (setq custom-safe-themes t)
+#+end_src
+
+Additionally, screwing with the custom file also breaks saving =defvar= and provides a warning every time. Fix this, too.
+#+begin_src emacs-lisp
+  (setq enable-local-variables :all)
+#+end_src
+
+Keep package info off of the recent files list.
+#+begin_src emacs-lisp
+  (use-package recentf
+    :config (add-to-list 'recentf-exclude "\\elpa"))
+#+end_src
+
+Unbind default keys which shouldn't be defaults.
+#+begin_src emacs-lisp
+  (unbind-key "C-x C-f")                  ; find-file-read-only
+  (unbind-key "C-x C-d")                  ; list-directory
+  (unbind-key "C-z")                      ; suspend-frame
+  (unbind-key "M-o")                      ; facemenu-mode
+  (unbind-key "<mouse-2>")                ; pasting with mouse wheel click
+  (unbind-key "<C-wheel-down>")           ; text scaling
+#+end_src
+
+Bring emacs into the 21st century with whitespace handling that doesn't suck.
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook #'delete-trailing-whitespace)
+  (setq require-final-newline t)
+#+end_src
+
+Provide a more powerful undo tree
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :diminish
+    :bind (("C-c _" . undo-tree-visualize))
+    :config
+    (global-undo-tree-mode +1)
+    (unbind-key "M-_" undo-tree-map))
+#+end_src
+
+** User interface and visual improvements
+I perfer JetBrains Mono as my font, it has a lot of excellent ligatures and is easy on the eyes.
 #+BEGIN_SRC emacs-lisp
-(advice-add 'risky-local-variable-p :override #'ignore)
+  (ignore-errors (set-frame-font "JetBrains Mono 14"))
 #+END_SRC
 
-*** Improve speed of next-line
+VS Code and other modern editors have spoiled me with nice looking file-type icons. Let's get those working here.
+#+begin_src emacs-lisp
+  (use-package all-the-icons :ensure t)
+#+end_src
+
+Emacs comes by default with a bunch of window chrome. I think the idea is to make it more easily accessible to new users
+with a familiar UI, but I don't need or want it.
+#+begin_src emacs-lisp
+  (when (window-system)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (tooltip-mode -1))
+#+end_src
+
+I've been using the gruvbox theme for a while, and every time I try to walk away from it I get pulled back in. It seems
+to just have the best overall support and is nice enough in most syntaxes.
 #+BEGIN_SRC emacs-lisp
-(setq auto-window-vscroll nil)
+  (setq frame-resize-pixelwise t)
+  (use-package gruvbox-theme
+    :ensure t
+    :init (load-theme 'gruvbox-dark-hard t))
 #+END_SRC
 
+At some point I realized that I was switching themes frequently enough that I needed a reminder as to why I stopped
+using them. I'll try to keep a running list of things I've tried and why they didn't work for me:
+#+CAPTION: Theme Rejections
+| Theme     | Reason                                         |
+|-----------+------------------------------------------------|
+| Nimbus    | Poor support for other modes, e.g., ace window |
+| Seti      | Poor support for rainbow delimiters            |
+| Chocolate | Not enough contrast with background            |
+| Nord      | Not enough contrast in highlighting            |
+
+Update the modeline with a better alternative, and remove some things I don't think are valuable. I started my emacs
+journey with Spacemacs, so I guess spaceline just felt comfortable.
+#+begin_src emacs-lisp
+  (display-time-mode -1)                  ; Don't display the time, it's already on my screen
+  (setq column-number-mode t)             ; Do display the column number
+
+  (use-package spaceline
+    :ensure t
+    :pin melpa
+    :init
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme))
+#+end_src
+
+Improve clarity of which buffer is currently selected by slightly dimming the others. Note that this operates on the
+buffer level, not the window, so the same buffer open in two windows will both show as /active/.
+#+begin_src emacs-lisp
+  (use-package dimmer
+    :ensure t
+    :custom (dimmer-fraction 0.2)
+    :config (dimmer-mode))
+#+end_src
+
+Given I use emacs primarily for editing, making matching pairs of parenthesis clearer is pretty valuable.
+#+begin_src emacs-lisp
+  (show-paren-mode)
+
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+Giving tree-sitter a shot, I'm told it can improve the syntax highlighting of some languages.
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :ensure t
+    :hook ruby-mode
+    :init (global-tree-sitter-mode))
+
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter)
+#+end_src
+
+I fairly frequently will do something dumb, like closing a window that I didn't mean to. Winner mode helps with that by
+letting me undo it.
+#+begin_src emacs-lisp
+  (winner-mode +1)
+#+end_src
+
+** Text Manipulation
+I don't know how we lived without multiple cursor support. Thanks, sublime text! Lets make that work here, too.
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-c m m" . #'mc/edit-lines)
+           ("C-c m a" . #'mc/mark-all-dwim)))
+#+end_src
+
+When I am writing documentation, or just anything with a prose-like form, I don't tend to want to worry about the length
+of the lines; but I also really don't want anything rolling over the edge of the screen. Lets set a sane default for
+=fill-paragraph (M-q)=.
+#+begin_src emacs-lisp
+  (set-fill-column 120)
+#+end_src
+
+One of the few things I do miss about Vim is the handy "select in" commands =(ci)=. Lets see if we can get some of that
+back. Expand region allows you to execute the command multiple times in sequence to progressively select more of the
+current range.
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :bind (("C-c n" . #'er/expand-region)))
+#+end_src
+
+* TODO PENDING-REDO
+** About this file
+This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
+
+All configuration should be done via =use-package= for performance and consistency.
+
+** General configuration
 *** Mac Specific
 I use macs exclusively, where alt is moderately difficult to hit.
 
@@ -81,144 +298,12 @@ I use macs exclusively, where alt is moderately difficult to hit.
 
 *** Tramp Defaults
 #+BEGIN_SRC emacs-lisp
-(setq tramp-default-method "ssh")
-#+END_SRC
-
-*** Backups
-Create a backup directory to store auto-saves, instead of the current file directory
-
-#+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-#+END_SRC
-
-*** History
-From http://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html:
-
-#+BEGIN_SRC emacs-lisp
-  (setq savehist-file "~/.emacs.d/savehist")
-  (savehist-mode 1)
-  (setq history-length t)
-  (setq history-delete-duplicates t)
-  (setq savehist-save-minibuffer-history 1)
-  (setq savehist-additional-variables
-	'(kill-ring
-	  search-ring
-	  regexp-search-ring))
-#+END_SRC
-
-*** Interface configuration
-**** Typography
-#+BEGIN_SRC emacs-lisp
-  (set-face-attribute 'default nil :font "JetBrains Mono 14")
-#+END_SRC
-
-**** Theme
-My currently selected theme, and a list of possibilities.
-
-In an effort to not pollute the config too much, unused themes are commented out once they've been
-rejected for any given reason, but kept for posterity.
-
-#+CAPTION: Theme Rejections
-| Theme     | Reason                                         |
-|-----------+------------------------------------------------|
-| Nimbus    | Poor support for other modes, e.g., ace window |
-| Seti      | Poor support for rainbow delimiters            |
-| Chocolate | Not enough contrast with background            |
-| Nord      | Not enough contrast in highlighting            |
-
-#+BEGIN_SRC emacs-lisp
-  (setq frame-resize-pixelwise t)
-  (use-package gruvbox-theme
-    :ensure t
-    :init (load-theme 'gruvbox-dark-hard t))
-
-  ;; (use-package doom-themes
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq doom-themes-enable-bold t
-  ;;         doom-themes-enable-italic t)
-  ;;   (load-theme 'doom-one t)
-  ;;   (doom-themes-org-config))
-
-  ;; (use-package snazzy-theme
-  ;;   :ensure t
-  ;;   :init
-  ;;   (load-theme 'snazzy))
-
-  ;; (use-package darktooth-theme
-  ;;   :ensure t
-  ;;   :init
-  ;;   (load-theme 'darktooth)
-  ;;   (darktooth-modeline)
-  ;;   (set-face-attribute 'fringe nil :background nil))
-
-  ;; (use-package spacemacs-common
-  ;;   :ensure spacemacs-theme
-  ;;   :init (load-theme 'spacemacs-dark t))
-#+END_SRC
-
-**** Toolbar Config
-Remove the icon toolbar from the top of the GUI
-
-#+BEGIN_SRC emacs-lisp
-  (tool-bar-mode -1)
-  (use-package centered-window :ensure t)
-#+END_SRC
-
-**** File Icons
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons
-    :ensure t
-    :init
-    (unless (member "all-the-icons" (font-family-list))
-      (all-the-icons-install-fonts t)))
-#+END_SRC
-
-**** Modeline
-#+BEGIN_SRC emacs-lisp
-  (display-time-mode -1)
-  (setq display-time-24hr-format t)
-
-  (setq column-number-mode t)
-
-  (use-package spaceline
-    :ensure t
-    :pin melpa
-    :init
-    (scroll-bar-mode -1)
-    (require 'spaceline-config)
-    (spaceline-spacemacs-theme))
-
-  ;; Pending the fix [[https://github.com/domtronn/all-the-icons.el/pull/157][here]]
-  ;; (use-package spaceline-all-the-icons
-  ;;   :ensure t
-  ;;   :pin melpa
-  ;;   :after spaceline
-  ;;   :config (spaceline-all-the-icons-theme))
-
-  ;; (use-package smart-mode-line-powerline-theme
-  ;;   :ensure t)
-
-  ;; (use-package smart-mode-line
-  ;;   :ensure t
-  ;;   :after smart-mode-line-powerline-theme
-  ;;   :hook (after-init-hook sml/setup)
-  ;;   :init (add-hook 'after-init-hook 'sml/setup)
-  ;;   :config (sml/apply-theme 'powerline))
-
-  ;; (use-package moody
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq x-underline-at-descent-line t)
-  ;;   (moody-replace-mode-line-buffer-identification)
-  ;;   (moody-replace-vc-mode))
+  (setq tramp-default-method "ssh")
 #+END_SRC
 
 *** Indentation
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode +1)
-  (setq-default tab-width 2)
-  (setq tab-width 2)
 
   (use-package highlight-indent-guides
     :ensure t
@@ -237,16 +322,6 @@ Remove the icon toolbar from the top of the GUI
     :init
     (avy-setup-default)
     (global-set-key (kbd "C-c C-j") 'avy-resume))
-#+END_SRC
-
-*** Remove trailing whitespace on save
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
-
-*** Disable system bell
-#+BEGIN_SRC emacs-lisp
-  (setq ring-bell-function 'ignore)
 #+END_SRC
 
 *** Drag stuff
@@ -274,21 +349,8 @@ Remove the icon toolbar from the top of the GUI
             (join-line 1)))))
 #+end_src
 
-*** Multiple Cursors
-#+begin_src emacs-lisp
-  (use-package multiple-cursors
-    :ensure t
-    :bind (("C-c m n" . mc/mark-next-like-this)
-           ("C-c m p" . mc/mark-previous-like-this)
-           ("C-c m a" . mc/mark-all-like-this)
-           ("C-c m w n" . mc/mark-next-like-this-word)
-           ("C-c m w p" . mc/mark-previous-like-this-word)
-           ("C-c m w a" . mc/mark-all-words-like-this)
-           ("C-c m e" . mc/edit-lines)))
-#+end_src
-
-* Org Mode
-** General config
+** Org Mode
+*** General config
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :ensure org-plus-contrib
@@ -325,12 +387,12 @@ Remove the icon toolbar from the top of the GUI
     (global-project-shells-mode))
 #+END_SRC
 
-** Setup for macOS
+*** Setup for macOS
 1. Install macTEX with `brew install cask mactex`
 2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
 3. Ensure Lato font is installed
 
-** Org Superstar
+*** Org Superstar
 #+BEGIN_SRC emacs-lisp
   (use-package org-superstar
     :ensure t
@@ -338,7 +400,7 @@ Remove the icon toolbar from the top of the GUI
     :custom (org-superstar-special-todo-items t))
 #+END_SRC
 
-** Jira Export
+*** Jira Export
 #+begin_src emacs-lisp
   (use-package ox-jira
     :ensure t
@@ -348,22 +410,22 @@ Remove the icon toolbar from the top of the GUI
       '(progn (require 'ox-jira))))
 #+end_src
 
-** Report Export
+*** Report Export
 #+begin_src emacs-lisp
   (use-package ox-report
     :load-path "~/src/natecox/ox-report/"
     :config (eval-after-load "org" '(progn (require 'ox-report))))
 #+end_src
 
-* Development Configuration
-** Toggle quotes
+** Development Configuration
+*** Toggle quotes
 #+BEGIN_SRC emacs-lisp
   (use-package toggle-quotes
     :ensure t
     :bind ("C-'" . toggle-quotes))
 #+END_SRC
 
-** Origami
+*** Origami
 Provides intelligent code folding.
 #+BEGIN_SRC emacs-lisp
   (use-package origami
@@ -373,7 +435,7 @@ Provides intelligent code folding.
     (global-origami-mode +1))
 #+END_SRC
 
-** Ansi term in compilation mode
+*** Ansi term in compilation mode
 #+BEGIN_SRC emacs-lisp
   (require 'ansi-color)
   (defun natecox/colorize-compilation ()
@@ -386,7 +448,7 @@ Provides intelligent code folding.
             #'natecox/colorize-compilation)
 #+END_SRC
 
-** Completion
+*** Completion
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
@@ -395,18 +457,18 @@ Provides intelligent code folding.
     (global-company-mode))
 #+END_SRC
 
-** Flycheck
+*** Flycheck
 #+BEGIN_SRC emacs-lisp
-     (use-package flycheck
-       :ensure t
-       :init
-       (global-flycheck-mode))
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode))
 
-     (use-package flycheck-package
-       :ensure t)
+  (use-package flycheck-package
+    :ensure t)
 #+END_SRC
 
-** LSP Integration
+*** LSP Integration
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :ensure t
@@ -458,7 +520,7 @@ Provides intelligent code folding.
     :commands company-lsp)
 #+END_SRC
 
-** Rest client
+*** Rest client
 #+BEGIN_SRC emacs-lisp
   (use-package restclient
     :ensure t
@@ -474,18 +536,8 @@ Provides intelligent code folding.
     )
 #+END_SRC
 
-** Highlighting
-*** Parentheis
-#+BEGIN_SRC emacs-lisp
-  (show-paren-mode +1)
-
-  (use-package rainbow-delimiters
-    :ensure t
-    :init
-    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-#+END_SRC
-
-*** Gutter
+*** Highlighting
+**** Gutter
 #+BEGIN_SRC emacs-lisp
   (use-package diff-hl
     :ensure t
@@ -495,7 +547,7 @@ Provides intelligent code folding.
     (global-diff-hl-mode))
 #+END_SRC
 
-** Web mode
+*** Web mode
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode :ensure t)
 
@@ -515,30 +567,29 @@ Provides intelligent code folding.
                       ("var" . "<%= :| %>"))))))
 #+END_SRC
 
-** Language Support
-*** Groovy
+*** Language Support
+**** Groovy
 #+begin_src emacs-lisp
   (use-package groovy-mode
     :ensure t
     :config
     (setq groovy-indent-offset 2)
-    (setq indent-tabs-mode nil)
     (setq c-basic-offset 2))
 #+end_src
 
-*** Lisp
+**** Lisp
 #+begin_src emacs-lisp
   (use-package prism
     :ensure t)
 #+end_src
 
-*** Elixir
+**** Elixir
 #+BEGIN_SRC emacs-lisp
   (use-package alchemist
     :ensure t)
 #+END_SRC
 
-*** Elm
+**** Elm
 #+BEGIN_SRC emacs-lisp
   (use-package elm-mode
     :ensure t
@@ -546,8 +597,8 @@ Provides intelligent code folding.
     (add-to-list 'company-backends 'company-elm))
 #+END_SRC
 
-*** Ruby
-**** Enhanced Ruby
+**** Ruby
+***** Enhanced Ruby
 #+begin_src emacs-lisp
   ;; (use-package enh-ruby-mode
   ;;   :ensure t
@@ -556,12 +607,12 @@ Provides intelligent code folding.
   ;;   (add-to-list 'auto-mode-alist '("\\.rb$" . enh-ruby-mode))
   ;;   (setq enh-ruby-deep-indent-construct nil))
 #+end_src
-**** Bundler
+***** Bundler
 #+BEGIN_SRC emacs-lisp
-      (use-package bundler :ensure t)
+  (use-package bundler :ensure t)
 #+END_SRC
 
-**** Yard
+***** Yard
 #+BEGIN_SRC emacs-lisp
   (use-package yard-mode
     :ensure t
@@ -569,7 +620,7 @@ Provides intelligent code folding.
     :hook ruby-mode)
 #+END_SRC
 
-**** Rails
+***** Rails
 #+BEGIN_SRC emacs-lisp
   ;; (use-package projectile-rails
   ;;   :ensure t
@@ -583,7 +634,7 @@ Provides intelligent code folding.
   ;;   ;; (setq projectile-rails-stylesheet-dirs '("app/frontend/")))
 #+END_SRC
 
-**** Rspec-mode
+***** Rspec-mode
 #+BEGIN_SRC emacs-lisp
   (setq compilation-scroll-output t)
   (setenv "PAGER" (executable-find "cat"))
@@ -598,18 +649,18 @@ Provides intelligent code folding.
     :config (setq rspec-primary-source-dirs '("app")))
 #+END_SRC
 
-**** Rubocop
+***** Rubocop
 #+BEGIN_SRC emacs-lisp
   (use-package rubocop
     :ensure t)
 #+END_SRC
 
-*** Javascript
+**** Javascript
 #+BEGIN_SRC emacs-lisp
   (setq js-indent-level 2)
 #+END_SRC
 
-*** Typescript
+**** Typescript
 #+BEGIN_SRC emacs-lisp
   (defun setup-tide-mode()
     (interactive)
@@ -632,7 +683,7 @@ Provides intelligent code folding.
            (before-save . tide-format-before-save)))
 #+END_SRC
 
-*** Python
+**** Python
 #+BEGIN_SRC emacs-lisp
   (use-package elpy
     :ensure t
@@ -640,7 +691,7 @@ Provides intelligent code folding.
     (elpy-enable))
 #+END_SRC
 
-*** Yaml
+**** Yaml
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :ensure t
@@ -648,7 +699,7 @@ Provides intelligent code folding.
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
 
-*** Rust
+**** Rust
 #+BEGIN_SRC emacs-lisp
   (use-package toml-mode
     :ensure t)
@@ -665,17 +716,17 @@ Provides intelligent code folding.
     :hook (flycheck-mode . flycheck-rust-setup))
 #+END_SRC
 
-** Indentation
+*** Indentation
 #+BEGIN_SRC emacs-lisp
   (dolist (command '(yank yank-pop))
-     (eval `(defadvice ,command (after indent-region activate)
-              (and (not current-prefix-arg)
-                   (member major-mode '(emacs-lisp-mode prog-mode))
-                   (let ((mark-even-if-inactive transient-mark-mode))
-                     (indent-region (region-beginning) (region-end) nil))))))
+    (eval `(defadvice ,command (after indent-region activate)
+             (and (not current-prefix-arg)
+                  (member major-mode '(emacs-lisp-mode prog-mode))
+                  (let ((mark-even-if-inactive transient-mark-mode))
+                    (indent-region (region-beginning) (region-end) nil))))))
 #+END_SRC
-* Project Management
-** Magit
+** Project Management
+*** Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
@@ -690,7 +741,7 @@ Provides intelligent code folding.
     :after magit)
 #+END_SRC
 
-** Projectile
+*** Projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :ensure t
@@ -706,15 +757,15 @@ Provides intelligent code folding.
       (unless (file-remote-p default-directory) ad-do-it)))
 #+END_SRC
 
-* Usability Improvements
-** Discover.el
+** Usability Improvements
+*** Discover.el
 #+BEGIN_SRC emacs-lisp
   (use-package discover
     :ensure t
     :init (global-discover-mode 1))
 #+END_SRC
 
-** Which Key
+*** Which Key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
@@ -722,7 +773,7 @@ Provides intelligent code folding.
     (which-key-mode))
 #+END_SRC
 
-** Dashboard
+*** Dashboard
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :ensure t
@@ -737,7 +788,7 @@ Provides intelligent code folding.
     (setq dashboard-set-footer nil))
 #+END_SRC
 
-** Ivy
+*** Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :ensure t
@@ -748,6 +799,12 @@ Provides intelligent code folding.
     (setq enable-recursive-minibuffers t)
     (ivy-mode 1)
     (counsel-mode 1))
+
+  (use-package counsel
+    :after ivy
+    :bind (("C-x C-f" . #'counsel-find-file)
+           :map ivy-minibuffer-map)
+    :init (counsel-mode 1))
 
   (use-package ivy-hydra
     :ensure t
@@ -772,7 +829,7 @@ Provides intelligent code folding.
           '(counsel-find-file counsel-file-jump counsel-recentf counsel-projectile-find-file counsel-projectile-find-dir counsel-switch-buffer)))
 #+END_SRC
 
-** Zoom
+*** Zoom
 #+BEGIN_SRC emacs-lisp
   (use-package zoom
     :ensure t
@@ -781,8 +838,8 @@ Provides intelligent code folding.
     (global-set-key (kbd "C-x +") 'zoom))
 #+END_SRC
 
-* Buffer Navigation
-** iBuffer
+** Buffer Navigation
+*** iBuffer
 #+BEGIN_SRC emacs-lisp
   (use-package ibuffer
     :ensure nil
@@ -848,7 +905,7 @@ Provides intelligent code folding.
               "Project: "))))
 #+END_SRC
 
-** Ace Window
+*** Ace Window
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
@@ -856,21 +913,21 @@ Provides intelligent code folding.
     (global-set-key (kbd "M-o") 'ace-window))
 #+END_SRC
 
-** Eyebrowse
+*** Eyebrowse
 #+BEGIN_SRC emacs-lisp
   (use-package eyebrowse
     :ensure t
     :init (eyebrowse-mode t))
 #+END_SRC
-* Blogging
-** Hugo
+** Blogging
+*** Hugo
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
     :ensure t
     :after ox)
 #+END_SRC
 
-* CoverMyEmacs
+** CoverMyEmacs
 #+begin_src emacs-lisp
   (use-package covermyemacs
     :bind ("C-c i" . covermyemacs)
