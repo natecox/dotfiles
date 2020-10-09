@@ -23,3 +23,4 @@
 (setq max-lisp-eval-depth 2000)
 
 (reload-config)
+(put 'dired-find-alternate-file 'disabled nil)

@@ -54,7 +54,7 @@ server, but I still want to use emacs as the default terminal editor without ann
 Let Emacs know who the boss is.
 #+begin_src emacs-lisp
   (setq user-full-name "Nathan Cox"
-        user-mail-address "tsuujin@icloud.com")
+        user-mail-address "ncox@covermymeds.com")
 #+end_src
 
 ** Forcing emacs to get with the times; or, configuring sane defaults
@@ -95,7 +95,8 @@ Use the cool Emacs 27 highlighting stuff.
   (require 'hl-line)
   (add-hook 'prog-mode-hook #'hl-line-mode)
   (add-hook 'text-mode-hook #'hl-line-mode)
-  (set-face-attribute 'hl-line nil :background "gray21")
+
+  (set-face-attribute 'hl-line nil :background "gray15")
 #+end_src
 
 Stop Emacs from littering the filesystem with backups and autosaves.
@@ -126,7 +127,9 @@ Additionally, screwing with the custom file also breaks saving =defvar= and prov
 Keep package info off of the recent files list.
 #+begin_src emacs-lisp
   (use-package recentf
-    :config (add-to-list 'recentf-exclude "\\elpa"))
+    :config
+    (add-to-list 'recentf-exclude "\\elpa")
+    (add-to-list 'recentf-exclude "^/private"))
 #+end_src
 
 Unbind default keys which shouldn't be defaults.
@@ -150,10 +153,9 @@ Provide a more powerful undo tree
   (use-package undo-tree
     :ensure t
     :diminish
-    :bind (("C-c _" . undo-tree-visualize))
-    :config
-    (global-undo-tree-mode +1)
-    (unbind-key "M-_" undo-tree-map))
+    :init
+    (global-undo-tree-mode)
+    (define-key undo-tree-map (kbd "C-x r") nil))
 #+end_src
 
 ** User interface and visual improvements
@@ -214,7 +216,7 @@ buffer level, not the window, so the same buffer open in two windows will both s
 #+begin_src emacs-lisp
   (use-package dimmer
     :ensure t
-    :custom (dimmer-fraction 0.2)
+    :custom (dimmer-fraction 0.1)
     :config (dimmer-mode))
 #+end_src
 
@@ -230,7 +232,8 @@ Giving tree-sitter a shot, I'm told it can improve the syntax highlighting of so
 #+begin_src emacs-lisp
   (use-package tree-sitter
     :ensure t
-    :hook ruby-mode
+    :hook ((ruby-mode . tree-sitter-hl-mode)
+           (rustic-mode . tree-sitter-hl-mode))
     :init (global-tree-sitter-mode))
 
   (use-package tree-sitter-langs
@@ -269,6 +272,98 @@ current range.
     :bind (("C-c n" . #'er/expand-region)))
 #+end_src
 
+* Email
+I use Office365 for my work email, and want to be able to get my emails without having to use Outlook. It's not that
+Outlook is /bad/, it's just that it doesn't feel like a native macOS app--and doesn't support the emacs keybindings I'm
+used to elsewhere.
+
+Getting mail working in emacs turns out to be a pain in the ass. The documentation out there for it isn't great, and
+working with O365 is even more of a mystery.
+
+** Syncing your account to a local maildir
+
+The first thing you need to do is find /some way/ of getting your Exchange emails into a local maildir. I tried out a
+couple of solutions for this: [[http://www.offlineimap.org][offlineimap]] and [[https://isync.sourceforge.io][isync]].
+
+My first attempt was using offlineimap, and I hit a pretty immediate roadblock. Namely that python3--which I basically
+demand be my global python--doesn't work. I tried downgrading to 2.7 so that I could get offlineimap working, and I
+/did/ get it working eventually, but I wasn't satisfied enough with it to mess with my global python install.
+
+My second attempt was =mbsync=, which is the executable distributed with isync. I don't know why they did that. I was
+able to install it with homebrew.
+#+begin_src shell
+brew install isync
+#+end_src
+
+Configuring isync is fairly simple. This is essentially my current =~/.mbsyncrc= config:
+#+begin_src example
+IMAPAccount exchange
+Host outlook.office365.com
+User <your username>
+PassCmd "security find-generic-password -g -a <your username>@outlook.office365.com -w"
+AuthMechs LOGIN
+SSLType IMAPS
+SSLVersions TLSv1
+CertificateFile /usr/local/etc/openssl@1.1/cert.pem
+
+IMAPStore exchange-remote
+Account exchange
+
+MaildirStore exchange-local
+Path ~/.mail/exchange
+Inbox ~/.mail/exchange/inbox
+Trash trash
+
+Channel exchange-folders
+Master :exchange-remote:
+Slave :exchange-local:
+Patterns "INBOX"
+Create Both
+Expunge Both
+SyncState *
+
+Group exchange
+Channel exchange-folders
+#+end_src
+
+A couple of key features from above:
+- =PassCmd= allows you to not store your password in plain text. I'm using the Apple keychain, which works great because
+  Outlook already has that set up for me.
+- You will need to generate a cert.pem file using openssl
+
+Once you have isync configured you can manually sync to ensure that it works as expected.
+#+begin_src shell
+mbsync -V <account name>
+#+end_src
+
+If it works as expected, you can turn on the homebrew service to run automatically.
+#+begin_src shell
+brew services start isync
+#+end_src
+
+** Initializing mu
+We're going to be using mu4e as our mail client, which means we will need to configure mu. This is pretty simple.
+#+begin_src shell
+  mu init --maildir <your maildir path>
+  mu index
+#+end_src
+
+** Configuring mu4e
+mu4e (mu for emacs) is the last part of the puzzle here, and fortunately the simplest. All we /need/ to do is tell it
+where our maildir is located, but we're going to set a few preferences as well.
+
+#+begin_src emacs-lisp
+  (use-package mu4e
+    :config
+    (setq mu4e-maildir (expand-file-name "~/.mail")) ; Set up in our mbsyncrc
+    (setq mu4e-get-mail-command "true")              ; Use the mu get mail command by default
+    (setq mu4e-change-filenames-when-moving t)       ; This is nessecary only because we're using mbsync
+    (setq mu4e-view-prefer-html t))                  ; Prefer the html version of email, rather than plain text
+#+end_src
+
+What I /haven't/ done yet is configure mail sending. I will probably do this at some point, but honestly I can't
+remember the last time I sent mail, so it doesn't seem worth the time.
+
 * TODO PENDING-REDO
 ** About this file
 This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
@@ -280,10 +375,11 @@ All configuration should be done via =use-package= for performance and consisten
 I use macs exclusively, where alt is moderately difficult to hit.
 
 #+BEGIN_SRC emacs-lisp
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'super)
-  (setq mac-control-modifier 'control)
-  (setq ns-function-modifier 'hyper)
+  (when (eq system-type 'darwin)
+    (setq ns-command-modifier 'meta)
+    (setq ns-option-modifier 'super)
+    (setq ns-control-modifier 'control)
+    (setq ns-function-modifier 'hyper))
 
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-al --group-directories-first")
@@ -356,16 +452,19 @@ I use macs exclusively, where alt is moderately difficult to hit.
     :ensure org-plus-contrib
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
-           ("C-c c" . org-capture))
+           ("C-c c" . org-capture)
+           ("C-c r" . org-refile))
     :custom
     (org-directory "~/org")
     (org-agenda-files (list org-directory))
     :init
     (setq org-default-notes-file (concat org-directory "/notes.org"))
+    (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
     (setq org-startup-indented t)
     (setq org-agenda-window-setup 'current-window)
     (setq org-confirm-babel-evaluate nil)
     (setq org-export-copy-to-kill-ring 'if-interactive)
+    (setq org-export-with-sub-superscripts '{})
     (add-to-list 'exec-path "/Library/TeX/texbin")
     (setq org-latex-logfiles-extensions
           (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
@@ -435,19 +534,6 @@ Provides intelligent code folding.
     (global-origami-mode +1))
 #+END_SRC
 
-*** Ansi term in compilation mode
-#+BEGIN_SRC emacs-lisp
-  (require 'ansi-color)
-  (defun natecox/colorize-compilation ()
-    "Colorize from `compilation-filter-start' to `point'."
-    (let ((inhibit-read-only t))
-      (ansi-color-apply-on-region
-       compilation-filter-start (point))))
-
-  (add-hook 'compilation-filter-hook
-            #'natecox/colorize-compilation)
-#+END_SRC
-
 *** Completion
 #+BEGIN_SRC emacs-lisp
   (use-package company
@@ -481,28 +567,7 @@ Provides intelligent code folding.
     :bind (("C-c k k" . ncox/lsp-hydra/body))
     :commands lsp
     :custom
-    (lsp-keymap-prefix "C-c M-k")
-    :init
-    (defvar ncox--general-lsp-hydra-heads
-      '(;; UI
-        ("d" lsp-ui-peek-find-definitions "Definitions" :column "Peek")
-        ("r" lsp-ui-peek-find-references "References")
-        ("i" lsp-ui-peek-find-implementation "Implementation")
-
-        ;; LSP
-        ("p" lsp-describe-thing-at-point "Describe at point" :column "LSP")
-        ("C-a" lsp-execute-code-action "Execute code action")
-        ("C-c" lsp-describe-session "Describe session")
-
-        ;; Formatting
-        ("R" lsp-rename "Rename")
-        ("f" lsp-format-buffer "Format buffer")
-
-        ;; Flycheck
-        ("l" lsp-ui-flycheck-list "List Errors" :column "Flycheck")))
-    (eval `(defhydra ncox/lsp-hydra (:color blue :hint nil)
-             ,@(append
-                ncox--general-lsp-hydra-heads))))
+    (lsp-keymap-prefix "C-c M-k"))
 
   (use-package lsp-ui
     :ensure t
@@ -701,19 +766,7 @@ Provides intelligent code folding.
 
 **** Rust
 #+BEGIN_SRC emacs-lisp
-  (use-package toml-mode
-    :ensure t)
-
-  (use-package rust-mode
-    :after (lsp-mode)
-    :hook (rust-mode . lsp))
-
-  (use-package cargo
-    :hook (rust-mode . cargo-minor-mode))
-
-  (use-package flycheck-rust
-    :ensure t
-    :hook (flycheck-mode . flycheck-rust-setup))
+  (use-package rustic :ensure t)
 #+END_SRC
 
 *** Indentation
@@ -746,15 +799,27 @@ Provides intelligent code folding.
   (use-package projectile
     :ensure t
     :config
+    (setq projectile-project-search-path (cddr (directory-files "~/src" t)))
     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (projectile-mode +1)
     (counsel-projectile-mode)
-    (setq projectile-completion-system 'ivy
-          projectile-switch-project-action #'projectile-find-dir
-          projectile-find-dir-includes-top-level t)
+    (setq projectile-completion-system 'ivy)
+
+    (counsel-projectile-modify-action
+     'counsel-projectile-switch-project-action
+     '((default counsel-projectile-switch-project-action-vc)))
+
     (defadvice projectile-project-root (around ignore-remote first activate)
       (unless (file-remote-p default-directory) ad-do-it)))
+
+  (use-package perspective
+    :ensure t
+    :config (persp-mode))
+
+  (use-package persp-projectile
+    :ensure t
+    :after (projectile perspective))
 #+END_SRC
 
 ** Usability Improvements
@@ -841,69 +906,76 @@ Provides intelligent code folding.
 ** Buffer Navigation
 *** iBuffer
 #+BEGIN_SRC emacs-lisp
-  (use-package ibuffer
-    :ensure nil
-    :functions (all-the-icons-icon-for-file
-                all-the-icons-icon-for-mode
-                all-the-icons-auto-mode-match?
-                all-the-icons-faicon)
-    :commands ibuffer-find-file
-    :bind ("C-x C-b" . ibuffer)
-    :config
-    (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
+  ;; (use-package ibuffer
+  ;;   :ensure nil
+  ;;   :functions (all-the-icons-icon-for-file
+  ;;               all-the-icons-icon-for-mode
+  ;;               all-the-icons-auto-mode-match?
+  ;;               all-the-icons-faicon)
+  ;;   :commands ibuffer-find-file
+  ;;   :bind ("C-x C-b" . ibuffer)
+  ;;   :config
+  ;;   (setq ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold)))
 
-    ;; Display buffer icons on GUI
-    (when (display-graphic-p)
-      ;; To be correctly aligned, the size of the name field must be equal to that
-      ;; of the icon column below, plus 1 (for the tab I inserted)
-      (define-ibuffer-column icon (:name "   ")
-        (let ((icon (if (and (buffer-file-name)
-                             (all-the-icons-auto-mode-match?))
-                        (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)) :v-adjust -0.05)
-                      (all-the-icons-icon-for-mode major-mode :v-adjust -0.05))))
-          (if (symbolp icon)
-              (setq icon (all-the-icons-faicon "file-o" :face 'all-the-icons-dsilver :height 0.8 :v-adjust 0.0))
-            icon)))
+  ;;   ;; Display buffer icons on GUI
+  ;;   (when (display-graphic-p)
+  ;;     ;; To be correctly aligned, the size of the name field must be equal to that
+  ;;     ;; of the icon column below, plus 1 (for the tab I inserted)
+  ;;     (define-ibuffer-column icon (:name "   ")
+  ;;       (let ((icon (if (and (buffer-file-name)
+  ;;                            (all-the-icons-auto-mode-match?))
+  ;;                       (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)) :v-adjust -0.05)
+  ;;                     (all-the-icons-icon-for-mode major-mode :v-adjust -0.05))))
+  ;;         (if (symbolp icon)
+  ;;             (setq icon (all-the-icons-faicon "file-o" :face 'all-the-icons-dsilver :height 0.8 :v-adjust 0.0))
+  ;;           icon)))
 
-      (let ((tab-width 1))
-        (setq ibuffer-formats '((mark modified read-only locked
-                                      ;; Here you may adjust by replacing :right with :center or :left
-                                      ;; According to taste, if you want the icon further from the name
-                                      " " (icon 1 -1 :left :elide) "\t" (name 18 18 :left :elide)
-                                      " " (size 9 -1 :right)
-                                      " " (mode 16 16 :left :elide) " " filename-and-process)
-                                (mark " " (name 30 -1) " " filename)))))
+  ;;     (let ((tab-width 1))
+  ;;       (setq ibuffer-formats '((mark modified read-only locked
+  ;;                                     ;; Here you may adjust by replacing :right with :center or :left
+  ;;                                     ;; According to taste, if you want the icon further from the name
+  ;;                                     " " (icon 1 -1 :left :elide) "\t" (name 18 18 :left :elide)
+  ;;                                     " " (size 9 -1 :right)
+  ;;                                     " " (mode 16 16 :left :elide) " " filename-and-process)
+  ;;                               (mark " " (name 30 -1) " " filename)))))
 
-    (with-eval-after-load 'counsel
-      (defun my-ibuffer-find-file ()
-        (interactive)
-        (let ((default-directory (let ((buf (ibuffer-current-buffer)))
-                                   (if (buffer-live-p buf)
-                                       (with-current-buffer buf
-                                         default-directory)
-                                     default-directory))))
-          (counsel-find-file default-directory)))
-      (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))
+  ;;   (with-eval-after-load 'counsel
+  ;;     (defun my-ibuffer-find-file ()
+  ;;       (interactive)
+  ;;       (let ((default-directory (let ((buf (ibuffer-current-buffer)))
+  ;;                                  (if (buffer-live-p buf)
+  ;;                                      (with-current-buffer buf
+  ;;                                        default-directory)
+  ;;                                    default-directory))))
+  ;;         (counsel-find-file default-directory)))
+  ;;     (advice-add #'ibuffer-find-file :override #'my-ibuffer-find-file))
 
-    ;; Group ibuffer's list by project root
-    (use-package ibuffer-projectile
-      :ensure t
-      :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
-      :hook ((ibuffer . (lambda ()
-                          (ibuffer-projectile-set-filter-groups)
-                          (unless (eq ibuffer-sorting-mode 'alphabetic)
-                            (ibuffer-do-sort-by-alphabetic)))))
-      :config
-      (setq ibuffer-projectile-prefix
-            (if (display-graphic-p)
-                (concat
-                 (all-the-icons-octicon "file-directory"
-                                        :face ibuffer-filter-group-name-face
-                                        :v-adjust -0.05
-                                        :height 1.25)
-                 " ")
-              "Project: "))))
+  ;;   ;; Group ibuffer's list by project root
+  ;;   (use-package ibuffer-projectile
+  ;;     :ensure t
+  ;;     :functions all-the-icons-octicon ibuffer-do-sort-by-alphabetic
+  ;;     :hook ((ibuffer . (lambda ()
+  ;;                         (ibuffer-projectile-set-filter-groups)
+  ;;                         (unless (eq ibuffer-sorting-mode 'alphabetic)
+  ;;                           (ibuffer-do-sort-by-alphabetic)))))
+  ;;     :config
+  ;;     (setq ibuffer-projectile-prefix
+  ;;           (if (display-graphic-p)
+  ;;               (concat
+  ;;                (all-the-icons-octicon "file-directory"
+  ;;                                       :face ibuffer-filter-group-name-face
+  ;;                                       :v-adjust -0.05
+  ;;                                       :height 1.25)
+  ;;                " ")
+  ;;             "Project: "))))
 #+END_SRC
+
+*** Bufler
+#+begin_src emacs-lisp
+  (use-package bufler
+    :ensure t
+    :bind ("C-x C-b" . bufler))
+#+end_src
 
 *** Ace Window
 #+BEGIN_SRC emacs-lisp
