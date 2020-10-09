@@ -344,7 +344,7 @@ brew services start isync
 ** Initializing mu
 We're going to be using mu4e as our mail client, which means we will need to configure mu. This is pretty simple.
 #+begin_src shell
-  mu init --maildir <your maildir path>
+  mu init --maildir=~/.mail --my-address=<your email address>
   mu index
 #+end_src
 
