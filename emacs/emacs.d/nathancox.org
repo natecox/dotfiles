@@ -354,15 +354,36 @@ where our maildir is located, but we're going to set a few preferences as well.
 
 #+begin_src emacs-lisp
   (use-package mu4e
+    :bind (("C-c e" . mu4e))
     :config
-    (setq mu4e-maildir (expand-file-name "~/.mail")) ; Set up in our mbsyncrc
-    (setq mu4e-get-mail-command "true")              ; Use the mu get mail command by default
-    (setq mu4e-change-filenames-when-moving t)       ; This is nessecary only because we're using mbsync
-    (setq mu4e-view-prefer-html t))                  ; Prefer the html version of email, rather than plain text
+    (setq mail-user-agent 'mu4e-user-agent)
+    (setq mu4e-maildir "~/.mail")
+    (setq mu4e-get-mail-command "true")
+    (setq mu4e-change-filenames-when-moving t)
+    (setq mu4e-sent-messages-behavior 'sent)
+
+    ;; Set the SMTP server to office 365's defaults
+    (setq message-send-mail-function 'smtpmail-send-it)
+    (setq smtpmail-smtp-server "smtp.office365.com")
+    (setq smtpmail-smtp-service 587))
 #+end_src
 
-What I /haven't/ done yet is configure mail sending. I will probably do this at some point, but honestly I can't
-remember the last time I sent mail, so it doesn't seem worth the time.
+One of the shortfalls of sending email over emacs is that it wants to do so via plain text. Plain text is ugly. You know
+what isn't ugly? Org mode. Lets use that instead.
+
+Org-msg modifies the mail compose window by turning into an org-mode buffer. You can compose your text as a normal
+org-mode document, and when it sends it will convert it into HTML for you.
+
+*Note:* At this moment the version of org-msg on melpa contains a bug which will prevent you from actually sending
+emails. I have an open issue on this and a PR to fix the problem. Once that gets merged in I will go back to =:ensure t=
+here.
+
+#+begin_src emacs-lisp
+  (use-package org-msg
+    :load-path "~/src/natecox/org-msg/"   ; pending my PR getting merged upstream
+    :after mu4e
+    :init (org-msg-mode))
+#+end_src
 
 * TODO PENDING-REDO
 ** About this file
