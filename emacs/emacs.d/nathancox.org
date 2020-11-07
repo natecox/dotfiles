@@ -260,7 +260,7 @@ When I am writing documentation, or just anything with a prose-like form, I don'
 of the lines; but I also really don't want anything rolling over the edge of the screen. Lets set a sane default for
 =fill-paragraph (M-q)=.
 #+begin_src emacs-lisp
-  (set-fill-column 120)
+  (setq-default fill-column 120)
 #+end_src
 
 One of the few things I do miss about Vim is the handy "select in" commands =(ci)=. Lets see if we can get some of that
@@ -358,7 +358,7 @@ where our maildir is located, but we're going to set a few preferences as well.
     :config
     (setq mail-user-agent 'mu4e-user-agent)
     (setq mu4e-maildir "~/.mail")
-    (setq mu4e-get-mail-command "true")
+    (setq mu4e-get-mail-command "mbsync -a")
     (setq mu4e-change-filenames-when-moving t)
     (setq mu4e-sent-messages-behavior 'sent)
 
@@ -385,6 +385,61 @@ here.
     :init (org-msg-mode))
 #+end_src
 
+* Task management
+One of the common tasks for my day is doing code reviews, which have checklists. I started off by keeping an org file
+around with these checklists that I would update every time I did a review. Turns out capture templates are quite a bit
+simpler to use on the fly.
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(("t" "Task" entry (file+headline "" "Tasks") "* TODO %?\n%u\n%a")
+          ("n" "Note" entry (file+headline "" "Notes") "* %?\n%U")
+          ("l" "TIL" entry (file+headline "" "Today I Learned...") "* TIL %?\n%U")
+          ("r" "Code Reviews")
+          ("rr" "RMT Review" entry (file "")
+           "* RMT Summary
+  | Category          | Outcome |
+  |-------------------+---------|
+  | *Overall Risk*    | %?        |
+  | *PHI*             |         |
+  | *Performance*     |         |
+  | *Testing*         |         |
+  | *Deployment Plan* |         |
+
+  ,** Notes
+
+  LGTRMT :+1:")
+          ("re" "EM Review" entry (file "")
+           "* EMD Review
+  - [%? ] Risk labeled?
+  - [ ] Jira card linked?
+  - [ ] Jira card links back?
+  - [ ] Code review complete?
+  - [ ] RMT review complete?
+  - [ ] Unique reviewers?
+  - [ ] Notifiations sent? (optional)
+  - [ ] Dependencies linked? (optional)
+
+  ,** Notes
+
+  LGTEMD :+1:")))
+#+end_src
+
+* Navigating the file system
+I use dired an awful lot, from moving project files around to working remotely in tramp. On the whole I really like it,
+but there are a couple of nice-to-haves which make the process friendlier.
+
+Adding [[http://pragmaticemacs.com/emacs/tree-style-directory-views-in-dired-with-dired-subtree/][tree style views]] can really make getting around a bit less irritating. Dired kind of supports this
+out-of-the-box, but it places expanded directories in a new section below the current. Lets inline it.
+
+#+begin_src emacs-lisp
+  (use-package dired-subtree
+    :ensure t
+    :config
+    (bind-keys :map dired-mode-map
+               ("i" . dired-subtree-insert)
+               (";" . dired-subtree-remove)))
+#+end_src
+
 * TODO PENDING-REDO
 ** About this file
 This file is my attempt at a from-scratch emacs configuration, moving away from prebuilt frameworks such as doom and spacemacs.
@@ -399,8 +454,7 @@ I use macs exclusively, where alt is moderately difficult to hit.
   (when (eq system-type 'darwin)
     (setq ns-command-modifier 'meta)
     (setq ns-option-modifier 'super)
-    (setq ns-control-modifier 'control)
-    (setq ns-function-modifier 'hyper))
+    (setq ns-control-modifier 'control))
 
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-al --group-directories-first")
@@ -435,7 +489,8 @@ I use macs exclusively, where alt is moderately difficult to hit.
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :ensure t
-    :bind ("C-:" . 'avy-goto-char)
+    :bind (("C-c t" . 'avy-goto-char)
+           ("C-c T" . 'avy-goto-line))
     :init
     (avy-setup-default)
     (global-set-key (kbd "C-c C-j") 'avy-resume))
@@ -486,6 +541,7 @@ I use macs exclusively, where alt is moderately difficult to hit.
     (setq org-confirm-babel-evaluate nil)
     (setq org-export-copy-to-kill-ring 'if-interactive)
     (setq org-export-with-sub-superscripts '{})
+    (setq org-export-with-toc nil)
     (add-to-list 'exec-path "/Library/TeX/texbin")
     (setq org-latex-logfiles-extensions
           (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
@@ -506,7 +562,6 @@ I use macs exclusively, where alt is moderately difficult to hit.
     :init
     (global-project-shells-mode))
 #+END_SRC
-
 *** Setup for macOS
 1. Install macTEX with `brew install cask mactex`
 2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
@@ -535,6 +590,13 @@ I use macs exclusively, where alt is moderately difficult to hit.
   (use-package ox-report
     :load-path "~/src/natecox/ox-report/"
     :config (eval-after-load "org" '(progn (require 'ox-report))))
+#+end_src
+
+*** Github Flavored Markdown Export
+#+begin_src emacs-lisp
+  (use-package ox-gfm
+    :ensure t
+    :config (eval-after-load "org" '(require 'ox-gfm nil t)))
 #+end_src
 
 ** Development Configuration
@@ -584,9 +646,11 @@ Provides intelligent code folding.
     :hook (elpy-mode . lsp)
     :hook (elm-mode . lsp)
     :hook (yaml-mode . lsp)
+    :hook (elixir-mode . lsp)
     :hook (lsp-mode . lsp-enable-which-key-integration)
-    :bind (("C-c k k" . ncox/lsp-hydra/body))
     :commands lsp
+    :init
+    (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release")
     :custom
     (lsp-keymap-prefix "C-c M-k"))
 
@@ -668,12 +732,6 @@ Provides intelligent code folding.
   (use-package prism
     :ensure t)
 #+end_src
-
-**** Elixir
-#+BEGIN_SRC emacs-lisp
-  (use-package alchemist
-    :ensure t)
-#+END_SRC
 
 **** Elm
 #+BEGIN_SRC emacs-lisp
@@ -806,6 +864,7 @@ Provides intelligent code folding.
     :ensure t
     :pin melpa
     :bind (("C-c g s" . magit-status))
+    :hook ((git-commit-mode . (lambda () (set-fill-column 72))))
     :init
     (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line)
           git-commit-summary-max-length 50))
