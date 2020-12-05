@@ -134,8 +134,6 @@ Keep package info off of the recent files list.
 
 Unbind default keys which shouldn't be defaults.
 #+begin_src emacs-lisp
-  (unbind-key "C-x C-f")                  ; find-file-read-only
-  (unbind-key "C-x C-d")                  ; list-directory
   (unbind-key "C-z")                      ; suspend-frame
   (unbind-key "M-o")                      ; facemenu-mode
   (unbind-key "<mouse-2>")                ; pasting with mouse wheel click
@@ -182,9 +180,17 @@ I've been using the gruvbox theme for a while, and every time I try to walk away
 to just have the best overall support and is nice enough in most syntaxes.
 #+BEGIN_SRC emacs-lisp
   (setq frame-resize-pixelwise t)
-  (use-package gruvbox-theme
+  ;; (use-package gruvbox-theme
+  ;;   :ensure t
+  ;;   :init (load-theme 'gruvbox-dark-hard t))
+
+  (use-package doom-themes
     :ensure t
-    :init (load-theme 'gruvbox-dark-hard t))
+    :config
+    (setq doom-themes-enable-bold t
+          doom-themes-enable-italic t)
+    (load-theme 'doom-snazzy t)
+    (doom-themes-org-config))
 #+END_SRC
 
 At some point I realized that I was switching themes frequently enough that I needed a reminder as to why I stopped
@@ -203,12 +209,16 @@ journey with Spacemacs, so I guess spaceline just felt comfortable.
   (display-time-mode -1)                  ; Don't display the time, it's already on my screen
   (setq column-number-mode t)             ; Do display the column number
 
-  (use-package spaceline
+  (use-package doom-modeline
     :ensure t
-    :pin melpa
-    :init
-    (require 'spaceline-config)
-    (spaceline-spacemacs-theme))
+    :init (doom-modeline-mode 1))
+
+  ;; (use-package spaceline
+  ;;   :ensure t
+  ;;   :pin melpa
+  ;;   :init
+  ;;   (require 'spaceline-config)
+  ;;   (spaceline-spacemacs-theme))
 #+end_src
 
 Improve clarity of which buffer is currently selected by slightly dimming the others. Note that this operates on the
@@ -272,14 +282,27 @@ current range.
     :bind (("C-c n" . #'er/expand-region)))
 #+end_src
 
+Recently, I made a switch from space indentation to tabs. If you're interested in my reasoning feel free to check out
+[[https://www.reddit.com/r/javascript/comments/c8drjo/nobody_talks_about_the_real_reason_to_use_tabs/][this reddit thread]]. tl;dr: tabs are far superiour to spaces for some people with visual impairments, and that is reason
+enough for me.
+
+However, as in most things, the best option is somewhere in the middle of a polarized debate. Tabs are the more
+accessible option for indentation, but suck for /alignment/. The solution is to just use both: tabs for indentation,
+spaces for alignment. Fortunately, someone has [[https://github.com/jcsalomon/smarttabs][already taken care of this for us]].
+
+#+begin_src emacs-lisp
+  (use-package smart-tabs-mode
+    :ensure t
+    :init
+    (smart-tabs-insinuate 'ruby))
+#+end_src
 * Email
 I use Office365 for my work email, and want to be able to get my emails without having to use Outlook. It's not that
 Outlook is /bad/, it's just that it doesn't feel like a native macOS app--and doesn't support the emacs keybindings I'm
 used to elsewhere.
 
 Getting mail working in emacs turns out to be a pain in the ass. The documentation out there for it isn't great, and
-working with O365 is even more of a mystery.
-
+working with O365 is even more of a myster
 ** Syncing your account to a local maildir
 
 The first thing you need to do is find /some way/ of getting your Exchange emails into a local maildir. I tried out a
@@ -452,9 +475,9 @@ I use macs exclusively, where alt is moderately difficult to hit.
 
 #+BEGIN_SRC emacs-lisp
   (when (eq system-type 'darwin)
-    (setq ns-command-modifier 'meta)
-    (setq ns-option-modifier 'super)
-    (setq ns-control-modifier 'control))
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super)
+    (setq mac-control-modifier 'control))
 
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-al --group-directories-first")
@@ -464,7 +487,7 @@ I use macs exclusively, where alt is moderately difficult to hit.
   (if (fboundp 'mac-auto-operator-composition-mode)
       (mac-auto-operator-composition-mode))
 
-  (define-key (current-global-map) (kbd "s-SPC") 'just-one-space)
+  (define-key (current-global-map) (kbd "s-SPC") 'cycle-spacing)
 #+END_SRC
 
 *** Tramp Defaults
@@ -489,8 +512,8 @@ I use macs exclusively, where alt is moderately difficult to hit.
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :ensure t
-    :bind (("C-c t" . 'avy-goto-char)
-           ("C-c T" . 'avy-goto-line))
+    :bind (("s-t" . 'avy-goto-char)
+           ("s-T" . 'avy-goto-line))
     :init
     (avy-setup-default)
     (global-set-key (kbd "C-c C-j") 'avy-resume))
@@ -557,6 +580,10 @@ I use macs exclusively, where alt is moderately difficult to hit.
      '((ruby . t)
        (shell . t))))
 
+  (use-package ob-mermaid
+    :ensure t
+    :custom (ob-mermaid-cli-path "~/.asdf/shims/mmdc"))
+
   (use-package project-shells
     :ensure t
     :init
@@ -579,10 +606,10 @@ I use macs exclusively, where alt is moderately difficult to hit.
 #+begin_src emacs-lisp
   (use-package ox-jira
     :ensure t
+    :load-path "~/src/natecox/ox-jira.el/"
     :after org
     :config
-    (eval-after-load "org"
-      '(progn (require 'ox-jira))))
+    (eval-after-load "org" '(progn (require 'ox-jira))))
 #+end_src
 
 *** Report Export
@@ -871,7 +898,8 @@ Provides intelligent code folding.
 
   (use-package forge
     :ensure t
-    :after magit)
+    :after magit
+    :config (push '("git.innova-partners.com" "git.innova-partners.com/api/v3" "git.innova-partners.com" forge-github-repository) forge-alist))
 #+END_SRC
 
 *** Projectile
