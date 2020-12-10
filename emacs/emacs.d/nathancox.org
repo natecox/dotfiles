@@ -96,7 +96,7 @@ Use the cool Emacs 27 highlighting stuff.
   (add-hook 'prog-mode-hook #'hl-line-mode)
   (add-hook 'text-mode-hook #'hl-line-mode)
 
-  (set-face-attribute 'hl-line nil :background "gray15")
+  ;; (set-face-attribute 'hl-line nil :background "gray15")
 #+end_src
 
 Stop Emacs from littering the filesystem with backups and autosaves.
@@ -184,13 +184,22 @@ to just have the best overall support and is nice enough in most syntaxes.
   ;;   :ensure t
   ;;   :init (load-theme 'gruvbox-dark-hard t))
 
-  (use-package doom-themes
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq doom-themes-enable-bold t
+  ;;         doom-themes-enable-italic t)
+  ;;   (load-theme 'doom-snazzy t)
+  ;;   (doom-themes-org-config))
+
+  (use-package modus-themes
     :ensure t
-    :config
-    (setq doom-themes-enable-bold t
-          doom-themes-enable-italic t)
-    (load-theme 'doom-snazzy t)
-    (doom-themes-org-config))
+    :init
+    (setq modus-themes-links 'neutral-underline
+          modus-themes-syntax nil
+          modus-themes-intense-hl-line t
+          modus-themes-mode-line 'moody)
+    (modus-themes-load-vivendi))
 #+END_SRC
 
 At some point I realized that I was switching themes frequently enough that I needed a reminder as to why I stopped
@@ -209,9 +218,16 @@ journey with Spacemacs, so I guess spaceline just felt comfortable.
   (display-time-mode -1)                  ; Don't display the time, it's already on my screen
   (setq column-number-mode t)             ; Do display the column number
 
-  (use-package doom-modeline
+  ;; (use-package doom-modeline
+  ;;   :ensure t
+  ;;   :init (doom-modeline-mode 1))
+
+  (use-package moody
     :ensure t
-    :init (doom-modeline-mode 1))
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
 
   ;; (use-package spaceline
   ;;   :ensure t
@@ -657,8 +673,8 @@ Provides intelligent code folding.
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
-    :init
-    (global-flycheck-mode))
+    :diminish
+    :init (global-flycheck-mode))
 
   (use-package flycheck-package
     :ensure t)
@@ -905,6 +921,7 @@ Provides intelligent code folding.
 *** Projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
+    :diminish
     :ensure t
     :config
     (setq projectile-project-search-path (cddr (directory-files "~/src" t)))
@@ -974,6 +991,7 @@ Provides intelligent code folding.
     (counsel-mode 1))
 
   (use-package counsel
+    :diminish
     :after ivy
     :bind (("C-x C-f" . #'counsel-find-file)
            :map ivy-minibuffer-map)
