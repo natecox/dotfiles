@@ -222,17 +222,19 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :custom
     (ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold))))
 
-  ;; Group ibuffer's list by project root
-  (use-package ibuffer-projectile
+  (use-package ibuffer-vc
     :ensure t
-    :functions ibuffer-do-sort-by-alphabetic
-    :hook ((ibuffer . (lambda ()
-                        (ibuffer-projectile-set-filter-groups)
-                        (unless (eq ibuffer-sorting-mode 'alphabetic)
-                          (ibuffer-do-sort-by-alphabetic)))))
+    :hook (ibuffer . (lambda ()
+                       (ibuffer-vc-set-filter-groups-by-vc-root)
+                       (unless (eq ibuffer-sorting-mode 'alphabetic)
+                         (ibuffer-do-sort-by-alphabetic))))
     :custom
-    (ibuffer-projectile-prefix
-     (if (display-graphic-p) "Project: ")))
+    (ibuffer-formats '((mark modified read-only " "
+                             (name 18 18 :left :elide) " "
+                             (size 9 -1 :right) " "
+                             (mode 16 16 :left :elide) " "
+                             (vc-status 16 16 :left) " "
+                             (vc-relative-file)))))
 
   (use-package ace-window
     :ensure t
