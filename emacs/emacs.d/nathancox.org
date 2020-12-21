@@ -543,7 +543,7 @@ simpler to use on the fly.
   (use-package diff-hl
     :ensure t
     :after magit
-    :hook (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+    :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :init (global-diff-hl-mode))
 #+END_SRC
 
