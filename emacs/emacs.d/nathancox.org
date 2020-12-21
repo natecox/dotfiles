@@ -29,9 +29,6 @@
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (require 'org-install)
-  (require 'ob-tangle)
-
   (setq gc-cons-threshold 100000000)
   (setq auto-window-vscroll nil)
 
@@ -168,16 +165,16 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   ;; indent with tabs, align with spaces where enabled
   (use-package smart-tabs-mode
     :ensure t
-    :init (smart-tabs-insinuate 'ruby))
+    :config (smart-tabs-insinuate 'ruby))
 
   ;; add a visual intent guide
   (use-package highlight-indent-guides
     :ensure t
     :hook (prog-mode . highlight-indent-guides-mode)
-    :config
-    (setq highlight-indent-guides-method 'character
-          highlight-indent-guides-character ?|
-          highlight-indent-guides-responsive 'stack))
+    :custom
+    (highlight-indent-guides-method 'character)
+    (highlight-indent-guides-character ?|)
+    (highlight-indent-guides-responsive 'stack))
 #+end_src
 
 ** Text manipulation
@@ -186,7 +183,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :ensure t
     :diminish
     :bind (:map undo-tree-map ("C-x r" . nil)) ; resolves map conflict w/ discover.el
-    :init (global-undo-tree-mode))
+    :config (global-undo-tree-mode))
 
   (use-package expand-region
     :ensure t
@@ -207,7 +204,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            ("<M-up>" . drag-stuff-up)
            ("<M-right>" . drag-stuff-right)
            ("<M-left>" . drag-stuff-left))
-    :init (drag-stuff-global-mode 1))
+    :config (drag-stuff-global-mode 1))
 #+end_src
 
 ** Buffer management
@@ -216,7 +213,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :ensure t
     :diminish
     :bind ("C-x +" . zoom)
-    :init (zoom-mode t))
+    :config (zoom-mode t))
 
   (use-package ibuffer
     :ensure nil
@@ -250,7 +247,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (modus-themes-links 'neutral-underline)
     (modus-themes-syntax nil)
     (modus-themes-intense-hl-line t)
-    :init (modus-themes-load-vivendi))
+    :config (modus-themes-load-vivendi))
 #+end_src
 
 * Improving navigation
@@ -260,23 +257,23 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :bind (("s-t" . 'avy-goto-char)
            ("s-T" . 'avy-goto-line)
            ("C-c C-j" . 'avy-resume))
-    :init (avy-setup-default))
+    :config (avy-setup-default))
 
   (use-package prescient
     :ensure t
-    :init (prescient-persist-mode t))
+    :config (prescient-persist-mode t))
 
   (use-package selectrum
     :ensure t
-    :init (selectrum-mode t))
+    :config (selectrum-mode t))
 
   (use-package selectrum-prescient
     :ensure t
-    :init (selectrum-prescient-mode t))
+    :config (selectrum-prescient-mode t))
 
   (use-package ctrlf
     :ensure t
-    :init (ctrlf-mode t))
+    :config (ctrlf-mode t))
 #+END_SRC
 
 * Improving discoverability
@@ -294,12 +291,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package discover
     :ensure t
     :diminish
-    :init (global-discover-mode 1))
+    :config (global-discover-mode 1))
 
   (use-package which-key
     :ensure t
     :diminish
-    :init (which-key-mode))
+    :config (which-key-mode))
 #+END_SRC
 
 * Org Mode
@@ -353,7 +350,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Babel additions
 #+begin_src emacs-lisp
   (use-package org
-    :init
+    :config
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((ruby . t)
@@ -464,17 +461,17 @@ simpler to use on the fly.
   (use-package company
     :ensure t
     :diminish
-    :init (global-company-mode))
+    :config (global-company-mode))
 
   (use-package company-prescient
     :ensure t
     :after prescient
-    :init (company-prescient-mode))
+    :config (company-prescient-mode))
 
   (use-package flycheck
     :ensure t
     :diminish
-    :init (global-flycheck-mode))
+    :config (global-flycheck-mode))
 
   (use-package flycheck-package
     :ensure t
@@ -486,7 +483,7 @@ simpler to use on the fly.
 ** Visual improvements
 #+begin_src emacs-lisp
   (use-package emacs
-    :init (show-paren-mode))
+    :config (show-paren-mode))
 
   ;; match paired brackets with colors
   (use-package rainbow-delimiters
@@ -499,7 +496,7 @@ simpler to use on the fly.
     :diminish
     :hook ((ruby-mode . tree-sitter-hl-mode)
            (rustic-mode . tree-sitter-hl-mode))
-    :init (global-tree-sitter-mode))
+    :config (global-tree-sitter-mode))
 
   (use-package tree-sitter-langs
     :ensure t
@@ -513,7 +510,7 @@ simpler to use on the fly.
     :hook (lsp-enable-which-key-integration)
     :commands lsp
     :custom (lsp-keymap-prefix "C-c M-k")
-    :init (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release"))
+    :config (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release"))
 
   (use-package lsp-ui
     :ensure t
@@ -531,7 +528,7 @@ simpler to use on the fly.
     :pin melpa
     :bind (("C-c g s" . magit-status))
     :hook ((git-commit-mode . (lambda () (set-fill-column 72))))
-    :init
+    :config
     (setq git-commit-style-convention-checks '(non-empty-second-line overlong-summary-line)
           git-commit-summary-max-length 50))
 
@@ -544,7 +541,7 @@ simpler to use on the fly.
     :ensure t
     :after magit
     :hook (magit-post-refresh . diff-hl-magit-post-refresh)
-    :init (global-diff-hl-mode))
+    :config (global-diff-hl-mode))
 #+END_SRC
 
 ** Project management
@@ -559,8 +556,10 @@ simpler to use on the fly.
     :config
     (defadvice projectile-project-root (around ignore-remote first activate)
       (unless (file-remote-p default-directory) ad-do-it))
-    :init (projectile-mode t))
+    (projectile-mode t))
 #+END_SRC
+
+*** TODO add pretty hydra for projectile
 
 ** Languages & frameworks
 *** Frontend
@@ -588,7 +587,7 @@ simpler to use on the fly.
     :ensure t)
 #+end_src
 
-**** Ruby
+*** Ruby
 #+BEGIN_SRC emacs-lisp
   (use-package ruby-mode
     :hook (ruby-mode . lsp))
@@ -615,12 +614,12 @@ simpler to use on the fly.
   (use-package rubocop :ensure t)
 #+END_SRC
 
-**** Yaml
+*** Yaml
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :ensure t
     :hook (yaml-mode . lsp)
-    :init (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+    :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
 
 * CoverMyEmacs
