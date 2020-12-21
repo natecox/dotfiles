@@ -258,10 +258,9 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package avy
     :ensure t
     :bind (("s-t" . 'avy-goto-char)
-           ("s-T" . 'avy-goto-line))
-    :init
-    (avy-setup-default)
-    (global-set-key (kbd "C-c C-j") 'avy-resume))
+           ("s-T" . 'avy-goto-line)
+           ("C-c C-j" . 'avy-resume))
+    :init (avy-setup-default))
 
   (use-package prescient
     :ensure t
