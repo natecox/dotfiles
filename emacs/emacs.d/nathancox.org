@@ -214,6 +214,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+BEGIN_SRC emacs-lisp
   (use-package zoom
     :ensure t
+    :diminish
     :bind ("C-x +" . zoom)
     :init (zoom-mode t))
 
@@ -261,6 +262,22 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :init
     (avy-setup-default)
     (global-set-key (kbd "C-c C-j") 'avy-resume))
+
+  (use-package prescient
+    :ensure t
+    :init (prescient-persist-mode t))
+
+  (use-package selectrum
+    :ensure t
+    :init (selectrum-mode t))
+
+  (use-package selectrum-prescient
+    :ensure t
+    :init (selectrum-prescient-mode t))
+
+  (use-package ctrlf
+    :ensure t
+    :init (ctrlf-mode t))
 #+END_SRC
 
 * Improving discoverability
@@ -449,6 +466,11 @@ simpler to use on the fly.
     :ensure t
     :diminish
     :init (global-company-mode))
+
+  (use-package company-prescient
+    :ensure t
+    :after prescient
+    :init (company-prescient-mode))
 
   (use-package flycheck
     :ensure t
