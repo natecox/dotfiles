@@ -99,9 +99,6 @@
     ;; enable winner mode globally for undo/redo window layout changes
     (winner-mode t)
 
-    ;; enable fake ido mode
-    (fido-mode)
-
     ;; clean up the mode line
     (display-time-mode -1)
     (setq column-number-mode t))
