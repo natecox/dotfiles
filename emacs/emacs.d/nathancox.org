@@ -251,6 +251,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 * Improving navigation
 #+BEGIN_SRC emacs-lisp
+  ;; jump to character on screen
   (use-package avy
     :ensure t
     :bind (("s-t" . 'avy-goto-char)
@@ -258,10 +259,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            ("C-c C-j" . 'avy-resume))
     :config (avy-setup-default))
 
+  ;; better predictions based on common usage
   (use-package prescient
     :ensure t
     :config (prescient-persist-mode t))
 
+  ;; better interface for selecting items from a list
   (use-package selectrum
     :ensure t
     :config (selectrum-mode t))
@@ -270,9 +273,20 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :ensure t
     :config (selectrum-prescient-mode t))
 
+  ;; improved UX for searching in a buffer
   (use-package ctrlf
     :ensure t
     :config (ctrlf-mode t))
+
+  ;; add annotations to minibuffers
+  (use-package marginalia
+    :ensure t
+    :bind (:map minibuffer-local-map ("C-M-a" . marginalia-cycle))
+    :custom (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode)
+    (advice-add #'marginalia-cycle :after
+                (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit)))))
 #+END_SRC
 
 * Improving discoverability
@@ -312,6 +326,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            ("C-c l" . org-store-link)
            ("C-c c" . org-capture)
            ("C-c r" . org-refile))
+    :hook ((after-init . org-agenda-list))
     :custom
     (org-directory "~/org")
     (org-agenda-files (list org-directory))
