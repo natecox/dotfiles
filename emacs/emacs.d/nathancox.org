@@ -240,13 +240,25 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 ** Look and feel
 #+begin_src emacs-lisp
+  (defun nc/apply-theme (appearance)
+    "Load theme, taking current system APPEARANCE into consideration."
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (modus-themes-load-operandi))
+      ('dark (modus-themes-load-vivendi))))
+
   (use-package modus-themes
     :ensure t
     :custom
     (modus-themes-links 'neutral-underline)
     (modus-themes-syntax nil)
     (modus-themes-intense-hl-line t)
-    :config (modus-themes-load-vivendi))
+    :init
+    ;; if a patch has been applied enabling mac system appearance detection,
+    ;; use the hook provided. Otherwise, just set a theme manually.
+    (if (boundp 'ns-system-appearance-change-functions)
+        (add-hook 'ns-system-appearance-change-functions #'nc/apply-theme)
+      (modus-themes-load-operandi)))
 #+end_src
 
 * Improving navigation
