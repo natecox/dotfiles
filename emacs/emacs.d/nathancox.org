@@ -341,7 +341,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :hook ((after-init . (lambda () (org-agenda nil "n"))))
     :custom
     (org-directory "~/org")
-    (org-agenda-files (list org-directory))
+    (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
     (org-default-notes-file (concat org-directory "/notes.org"))
     (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
     (org-startup-indented t)
