@@ -484,6 +484,9 @@ simpler to use on the fly.
 * Programming
 ** Completion & linting
 #+begin_src emacs-lisp
+  (use-package flyspell
+    :hook ((prog-mode . 'flyspell-prog-mode)))
+
   (use-package company
     :ensure t
     :diminish
@@ -510,6 +513,15 @@ simpler to use on the fly.
 #+begin_src emacs-lisp
   (use-package emacs
     :config (show-paren-mode))
+
+  ;; add ansi support for compilation buffers
+  (use-package xterm-color
+    :ensure t
+    :custom (compilation-environment '("TERM=xterm-256color"))
+    :config
+    (defun nc/advise-compilation-filter (f proc string)
+           (funcall f proc (xterm-color-filter string)))
+    (advice-add 'compilation-filter :around #'nc/advise-compilation-filter))
 
   ;; match paired brackets with colors
   (use-package rainbow-delimiters
