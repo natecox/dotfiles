@@ -44,78 +44,79 @@
 
 * Setting sane defaults
 #+begin_src emacs-lisp
-  (use-package emacs
-    :hook ((before-save . delete-trailing-whitespace))
-    :bind (("s-SPC" . cycle-spacing))
-    :config
-    (setq inhibit-startup-screen t
-          initial-scratch-message nil
-          sentence-end-double-space nil
-          ring-bell-function 'ignore
-          use-dialog-box nil
-          mark-even-if-inactive nil
-          kill-whole-line t
-          require-final-newline t
-          frame-resize-pixelwise t)
+	(use-package emacs
+		:hook ((before-save . delete-trailing-whitespace))
+		:bind (("s-SPC" . cycle-spacing))
+		:custom ((ispell-program-name "aspell"))
+		:config
+		(setq inhibit-startup-screen t
+					initial-scratch-message nil
+					sentence-end-double-space nil
+					ring-bell-function 'ignore
+					use-dialog-box nil
+					mark-even-if-inactive nil
+					kill-whole-line t
+					require-final-newline t
+					frame-resize-pixelwise t)
 
-    (setq user-full-name "Nathan Cox"
-          user-mail-address "ncox@covermymeds.com")
+		(setq user-full-name "Nathan Cox"
+					user-mail-address "ncox@covermymeds.com")
 
-    ;; always allow 'y' instead of 'yes'.
-    (defalias 'yes-or-no-p 'y-or-n-p)
+		;; always allow 'y' instead of 'yes'.
+		(defalias 'yes-or-no-p 'y-or-n-p)
 
-    ;; default to utf-8 for all the things
-    (set-charset-priority 'unicode)
-    (setq locale-coding-system 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
-    (set-selection-coding-system 'utf-8)
-    (prefer-coding-system 'utf-8)
-    (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+		;; default to utf-8 for all the things
+		(set-charset-priority 'unicode)
+		(setq locale-coding-system 'utf-8)
+		(set-terminal-coding-system 'utf-8)
+		(set-keyboard-coding-system 'utf-8)
+		(set-selection-coding-system 'utf-8)
+		(prefer-coding-system 'utf-8)
+		(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-    ;; write over selected text on input... like all modern editors do
-    (delete-selection-mode t)
+		;; write over selected text on input... like all modern editors do
+		(delete-selection-mode t)
 
-    ;; Don't persist a custom file, this bites me more than it helps
-    (setq custom-file (make-temp-file "")) ; use a temp file as a placeholder
-    (setq custom-safe-themes t)            ; mark all themes as safe, since we can't persist now
-    (setq enable-local-variables :all)     ; fix =defvar= warnings
+		;; Don't persist a custom file, this bites me more than it helps
+		;; (setq custom-file (make-temp-file "")) ; use a temp file as a placeholder
+		(setq custom-safe-themes t)            ; mark all themes as safe, since we can't persist now
+		(setq enable-local-variables :all)     ; fix =defvar= warnings
 
-    ;; stop emacs from littering the file system with backup files
-    (setq make-backup-files nil
-          auto-save-default nil
-          create-lockfiles nil)
+		;; stop emacs from littering the file system with backup files
+		(setq make-backup-files nil
+					auto-save-default nil
+					create-lockfiles nil)
 
-    ;; don't show any extra window chrome
-    (when (window-system)
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (tooltip-mode -1)
-      (toggle-scroll-bar -1))
+		;; don't show any extra window chrome
+		(when (window-system)
+			(tool-bar-mode -1)
+			(scroll-bar-mode -1)
+			(tooltip-mode -1)
+			(toggle-scroll-bar -1))
 
-    ;; use a font I like, but fail gracefully if it isn't available
-    (ignore-errors (set-frame-font "JetBrains Mono 14"))
+		;; use a font I like, but fail gracefully if it isn't available
+		(ignore-errors (set-frame-font "JetBrains Mono 14"))
 
-    ;; enable winner mode globally for undo/redo window layout changes
-    (winner-mode t)
+		;; enable winner mode globally for undo/redo window layout changes
+		(winner-mode t)
 
-    ;; clean up the mode line
-    (display-time-mode -1)
-    (setq column-number-mode t))
+		;; clean up the mode line
+		(display-time-mode -1)
+		(setq column-number-mode t))
 
-  ;; customize tramp default behaviour
-  (use-package tramp
-    :custom (tramp-default-method "ssh"))
+	;; customize tramp default behaviour
+	(use-package tramp
+		:custom (tramp-default-method "ssh"))
 
-  ;; use the builtin current-line highlighter
-  (use-package hl-line-mode
-    :hook ((prog-mode) (text-mode)))
+	;; use the builtin current-line highlighter
+	(use-package hl-line-mode
+		:hook ((prog-mode) (text-mode)))
 
-  ;; keep package files out of recentf
-  (use-package recentf
-    :config
-    (add-to-list 'recentf-exclude "\\elpa")
-    (add-to-list 'recentf-exclude "^/private"))
+	;; keep package files out of recentf
+	(use-package recentf
+		:config
+		(add-to-list 'recentf-exclude "\\elpa")
+		(add-to-list 'recentf-exclude "^/private"))
 #+end_src
 
 ** Mac config
@@ -299,6 +300,9 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (marginalia-mode)
     (advice-add #'marginalia-cycle :after
                 (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit)))))
+
+  (use-package consult
+    :ensure t)
 #+END_SRC
 
 * Improving discoverability
@@ -332,34 +336,33 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 ** Sane defaults
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure org-plus-contrib              ; install contrib packages
-    :bind (("C-c a" . org-agenda)
-           ("C-c l" . org-store-link)
-           ("C-c c" . org-capture)
-           ("C-c r" . org-refile))
-    :hook ((after-init . (lambda () (org-agenda nil "n"))))
-    :custom
-    (org-directory "~/org")
-    (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
-    (org-default-notes-file (concat org-directory "/notes.org"))
-    (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-    (org-startup-indented t)
-    (org-agenda-window-setup 'current-window)
-    (org-confirm-babel-evaluate nil)
-    (org-export-copy-to-kill-ring 'if-interactive)
-    (org-export-with-sub-superscripts '{})
-    (org-export-with-toc nil)
-    (org-latex-logfiles-extensions
-     (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
-             "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
-             "ps" "spl" "bbl" "xdv")))
-    (org-latex-compiler "xelatex")
-    (org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
-    :config
-    (add-to-list 'exec-path "/Library/TeX/texbin")
-    (setq-default TeX-engine 'xetex)
-    (setq-default TeX-PDF-mode t))
+	(use-package org
+		:bind (("C-c a" . org-agenda)
+					 ("C-c l" . org-store-link)
+					 ("C-c c" . org-capture)
+					 ("C-c r" . org-refile))
+		:hook ((after-init . (lambda () (org-agenda nil "n"))))
+		:custom
+		(org-directory "~/org")
+		(org-agenda-files org-directory)
+		(org-default-notes-file (concat org-directory "/notes.org"))
+		(org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+		(org-startup-indented t)
+		(org-agenda-window-setup 'current-window)
+		(org-confirm-babel-evaluate nil)
+		(org-export-copy-to-kill-ring 'if-interactive)
+		(org-export-with-sub-superscripts '{})
+		(org-export-with-toc nil)
+		(org-latex-logfiles-extensions
+		 (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
+						 "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
+						 "ps" "spl" "bbl" "xdv")))
+		(org-latex-compiler "xelatex")
+		(org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
+		:config
+		(add-to-list 'exec-path "/Library/TeX/texbin")
+		(setq-default TeX-engine 'xetex)
+		(setq-default TeX-PDF-mode t))
 #+END_SRC
 
 *** TODO add major mode hydra for org mode
@@ -408,19 +411,18 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :ensure t
     :diminish
     :after (pretty-hydra)
-    :hook (after-init . org-roam-mode)
     :custom (org-roam-directory "~/org/slips/")
     :bind ("s-r" . 'org-roam-hydra/body)
     :pretty-hydra
     ((:title "Org Roam" :quit-key "q" :exit t)
-      ("Slips"
-       (("f" org-roam-find-file "Find or create topic")
-        ("i" org-roam-insert "Insert slip")
-        ("I" org-roam-insert-immediate "Insert slip (immediately)")
-        ("g" org-roam-graph "Open SVG graph"))
-       "Toggle"
-       (("l" org-roam "Backlinks")
-        ("s" org-roam-server-mode "Server" :toggle t :exit nil)))))
+     ("Slips"
+      (("f" org-roam-find-file "Find or create topic")
+       ("i" org-roam-insert "Insert slip")
+       ("I" org-roam-insert-immediate "Insert slip (immediately)")
+       ("g" org-roam-graph "Open SVG graph"))
+      "Toggle"
+      (("l" org-roam "Backlinks")
+       ("s" org-roam-server-mode "Server" :toggle t :exit nil)))))
 
   (use-package org-roam-server
     :ensure t
@@ -484,7 +486,7 @@ simpler to use on the fly.
 * Programming
 ** Completion & linting
 #+begin_src emacs-lisp
-  (use-package flyspell
+  (use-package flyspell-mode
     :hook ((prog-mode . 'flyspell-prog-mode)))
 
   (use-package company
