@@ -336,33 +336,33 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 ** Sane defaults
 #+BEGIN_SRC emacs-lisp
-	(use-package org
-		:bind (("C-c a" . org-agenda)
-					 ("C-c l" . org-store-link)
-					 ("C-c c" . org-capture)
-					 ("C-c r" . org-refile))
-		:hook ((after-init . (lambda () (org-agenda nil "n"))))
-		:custom
-		(org-directory "~/org")
-		(org-agenda-files org-directory)
-		(org-default-notes-file (concat org-directory "/notes.org"))
-		(org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-		(org-startup-indented t)
-		(org-agenda-window-setup 'current-window)
-		(org-confirm-babel-evaluate nil)
-		(org-export-copy-to-kill-ring 'if-interactive)
-		(org-export-with-sub-superscripts '{})
-		(org-export-with-toc nil)
-		(org-latex-logfiles-extensions
-		 (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
-						 "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
-						 "ps" "spl" "bbl" "xdv")))
-		(org-latex-compiler "xelatex")
-		(org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
-		:config
-		(add-to-list 'exec-path "/Library/TeX/texbin")
-		(setq-default TeX-engine 'xetex)
-		(setq-default TeX-PDF-mode t))
+  (use-package org
+    :bind (("C-c a" . org-agenda)
+           ("C-c l" . org-store-link)
+           ("C-c c" . org-capture)
+           ("C-c r" . org-refile))
+    :hook ((after-init . (lambda () (org-agenda nil "n"))))
+    :custom
+    (org-directory "~/org")
+    (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+    (org-default-notes-file (concat org-directory "/notes.org"))
+    (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+    (org-startup-indented t)
+    (org-agenda-window-setup 'current-window)
+    (org-confirm-babel-evaluate nil)
+    (org-export-copy-to-kill-ring 'if-interactive)
+    (org-export-with-sub-superscripts '{})
+    (org-export-with-toc nil)
+    (org-latex-logfiles-extensions
+     (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
+             "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
+             "ps" "spl" "bbl" "xdv")))
+    (org-latex-compiler "xelatex")
+    (org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
+    :config
+    (add-to-list 'exec-path "/Library/TeX/texbin")
+    (setq-default TeX-engine 'xetex)
+    (setq-default TeX-PDF-mode t))
 #+END_SRC
 
 *** TODO add major mode hydra for org mode
@@ -487,7 +487,8 @@ simpler to use on the fly.
 ** Completion & linting
 #+begin_src emacs-lisp
   (use-package flyspell-mode
-    :hook ((prog-mode . 'flyspell-prog-mode)))
+    :hook ((text-mode . 'flyspell-mode)
+           (prog-mode . 'flyspell-prog-mode)))
 
   (use-package company
     :ensure t
@@ -597,6 +598,10 @@ simpler to use on the fly.
     (defadvice projectile-project-root (around ignore-remote first activate)
       (unless (file-remote-p default-directory) ad-do-it))
     (projectile-mode t))
+
+  (use-package persp-projectile
+    :ensure t
+    :init (persp-mode))
 #+END_SRC
 
 *** TODO add pretty hydra for projectile
