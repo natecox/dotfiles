@@ -95,7 +95,7 @@
 			(toggle-scroll-bar -1))
 
 		;; use a font I like, but fail gracefully if it isn't available
-		(ignore-errors (set-frame-font "JetBrains Mono 14"))
+		(set-face-attribute 'default nil :font "JetBrains Mono 14")
 
 		;; enable winner mode globally for undo/redo window layout changes
 		(winner-mode t)
@@ -241,25 +241,41 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 ** Look and feel
 #+begin_src emacs-lisp
-  (defun nc/apply-theme (appearance)
+  (defun nc/apply-modus-theme (appearance)
     "Load theme, taking current system APPEARANCE into consideration."
     (mapc #'disable-theme custom-enabled-themes)
     (pcase appearance
       ('light (modus-themes-load-operandi))
       ('dark (modus-themes-load-vivendi))))
 
-  (use-package modus-themes
+  (defun nc/apply-humanoid-theme (appearance)
+    "Load theme, taking current system APPEARANCE into consideration."
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (load-theme 'humanoid-light t))
+      ('dark (load-theme 'humanoid-dark t))))
+
+  (use-package humanoid-themes
     :ensure t
     :custom
-    (modus-themes-links 'neutral-underline)
-    (modus-themes-syntax nil)
-    (modus-themes-intense-hl-line t)
+    (humanoid-comment-italic t)
     :init
-    ;; if a patch has been applied enabling mac system appearance detection,
-    ;; use the hook provided. Otherwise, just set a theme manually.
     (if (boundp 'ns-system-appearance-change-functions)
-        (add-hook 'ns-system-appearance-change-functions #'nc/apply-theme)
-      (modus-themes-load-operandi)))
+        (add-hook 'ns-system-appearance-change-functions #'nc/apply-humanoid-theme)
+      (load-theme 'humanoid-light t)))
+
+  ;; (use-package modus-themes
+  ;;   :ensure t
+  ;;   :custom
+  ;;   (modus-themes-links 'neutral-underline)
+  ;;   (modus-themes-syntax nil)
+  ;;   (modus-themes-intense-hl-line t)
+  ;;   :init
+  ;;   ;; if a patch has been applied enabling mac system appearance detection,
+  ;;   ;; use the hook provided. Otherwise, just set a theme manually.
+  ;;   (if (boundp 'ns-system-appearance-change-functions)
+  ;;       (add-hook 'ns-system-appearance-change-functions #'nc/apply-modus-theme)
+  ;;     (modus-themes-load-operandi)))
 #+end_src
 
 * Improving navigation
@@ -328,6 +344,11 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :config (which-key-mode))
 #+END_SRC
 
+* Webkit playground
+#+begin_src emacs-lisp
+  ;; (setq browse-url-browser-function 'xwidget-webkit-browse-url)
+#+end_src
+
 * Org Mode
 ** Installation instructions for macOS
 1. Install macTEX with `brew install cask mactex`
@@ -353,6 +374,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-export-copy-to-kill-ring 'if-interactive)
     (org-export-with-sub-superscripts '{})
     (org-export-with-toc nil)
+    (org-export-with-section-numbers nil)
+    (org-export-with-author nil)
     (org-latex-logfiles-extensions
      (quote ("lof" "lot" "tex" "aux" "idx" "log" "out" "toc" "nav"
              "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc"
@@ -367,13 +390,20 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 *** TODO add major mode hydra for org mode
 
+** Better capture templates
+#+begin_src emacs-lisp
+  (use-package doct :ensure t)
+#+end_src
+
 ** Visual improvements
 #+begin_src emacs-lisp
-  ;; add fancy bullets
-  (use-package org-superstar
-    :ensure t
-    :hook (org-mode . org-superstar-mode)
-    :custom (org-superstar-special-todo-items t))
+  ;; ;; add fancy bullets
+  ;; (use-package org-superstar
+  ;;   :ensure t
+  ;;   :hook (org-mode . org-superstar-mode)
+  ;;   :custom
+  ;;   (org-superstar-special-todo-items t)
+  ;;   (org-superstar-remove-leading-stars t))
 #+end_src
 
 ** Babel additions
@@ -383,6 +413,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((ruby . t)
+       (python . t)
        (shell . t))))
 
   ;; enable mermaid diagram blocks
@@ -407,22 +438,49 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 ** Roam
 #+begin_src emacs-lisp
+  (use-package doct-org-roam
+    :load-path "~/src/progfolio/doct-org-roam/")
+
   (use-package org-roam
     :ensure t
     :diminish
-    :after (pretty-hydra)
-    :custom (org-roam-directory "~/org/slips/")
+    :after (pretty-hydra doct)
     :bind ("s-r" . 'org-roam-hydra/body)
+    :custom
+    (org-roam-directory "~/org/slips/")
+    (org-roam-graph-exclude-matcher '("dailies"))
+    (org-roam-dailies-capture-templates
+     (doct-org-roam
+      '(("default"
+         :keys "d"
+         :type entry
+         :function org-roam-capture--get-point
+         :template "* %?"
+         :org-roam (:file-name "daily/%<%Y-%m-%d>" :head "#+title: %<%Y-%m-%d>\n\n" :olp ("General")))
+        ("Observations"
+         :keys "o"
+         :type item
+         :function org-roam-capture--get-point
+         :template ("- %{wizard}: %?")
+         :org-roam (:file-name "daily/%<%Y-%m-%d>" :head "#+title: %<%Y-%m-%d>\n\n" :olp ("Observations"))
+         :children (("Kyle Modlich" :keys "k" :wizard "Kyle")
+                    ("Chris Doggett" :keys "c" :wizard "Doggett")
+                    ("Gary Miller" :keys "g" :wizard "Gary"))))))
     :pretty-hydra
     ((:title "Org Roam" :quit-key "q" :exit t)
      ("Slips"
       (("f" org-roam-find-file "Find or create topic")
        ("i" org-roam-insert "Insert slip")
-       ("I" org-roam-insert-immediate "Insert slip (immediately)")
-       ("g" org-roam-graph "Open SVG graph"))
+       ("I" org-roam-insert-immediate "Insert slip (immediately)"))
+      "Dailies"
+      (("d" org-roam-dailies-capture-today "Capture daily note")
+       ("D" org-roam-today "Visit today's slip")
+       ("Y" org-roam-yesterday "Visit yesterday's slip"))
+      "Graph"
+      (("g" org-roam-graph "Open SVG graph"))
       "Toggle"
-      (("l" org-roam "Backlinks")
-       ("s" org-roam-server-mode "Server" :toggle t :exit nil)))))
+      (("L" org-roam "Backlinks")
+       ("S" org-roam-server-mode "Server" :toggle t :exit nil)))))
 
   (use-package org-roam-server
     :ensure t
@@ -483,6 +541,18 @@ simpler to use on the fly.
   LGTEMD :+1:"))))
 #+end_src
 
+** REST
+#+begin_src emacs-lisp
+  (use-package restclient :ensure t)
+
+  (use-package ob-restclient
+    :ensure t
+    :config
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((restclient . t))))
+#+end_src
+
 * Programming
 ** Completion & linting
 #+begin_src emacs-lisp
@@ -508,6 +578,15 @@ simpler to use on the fly.
   (use-package flycheck-package
     :ensure t
     :after flycheck)
+
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-global-mode 1))
+
+  (use-package yasnippet-snippets
+    :ensure t
+    :after yasnippet)
 #+end_src
 
 *** TODO add pretty hydra for flycheck
@@ -599,9 +678,9 @@ simpler to use on the fly.
       (unless (file-remote-p default-directory) ad-do-it))
     (projectile-mode t))
 
-  (use-package persp-projectile
-    :ensure t
-    :init (persp-mode))
+  (use-package perspective :ensure t :config (persp-mode))
+
+  (use-package persp-projectile :ensure t :after perspective)
 #+END_SRC
 
 *** TODO add pretty hydra for projectile
@@ -659,6 +738,14 @@ simpler to use on the fly.
   (use-package rubocop :ensure t)
 #+END_SRC
 
+*** Python
+#+begin_src emacs-lisp
+  (use-package elpy
+    :ensure t
+    :defer t
+    :init (advice-add 'python-mode :before 'elpy-enable))
+#+end_src
+
 *** Yaml
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
@@ -666,6 +753,12 @@ simpler to use on the fly.
     :hook (yaml-mode . lsp)
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
+
+* Presentations
+#+begin_src emacs-lisp
+  (use-package org-tree-slide
+    :ensure t)
+#+end_src
 
 * CoverMyEmacs
 #+begin_src emacs-lisp
