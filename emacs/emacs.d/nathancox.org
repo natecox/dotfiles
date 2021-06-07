@@ -441,6 +441,11 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package doct-org-roam
     :load-path "~/src/progfolio/doct-org-roam/")
 
+  (defun nc/file-path-from-title (title)
+    "Returns a valid file name from a given TITLE."
+    (let ((path (org-roam-link--get-file-from-title title)))
+      (substring path 0 -4)))
+
   (use-package org-roam
     :ensure t
     :diminish
@@ -461,11 +466,13 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
          :keys "o"
          :type item
          :function org-roam-capture--get-point
-         :template ("- %{wizard}: %?")
-         :org-roam (:file-name "daily/%<%Y-%m-%d>" :head "#+title: %<%Y-%m-%d>\n\n" :olp ("Observations"))
-         :children (("Kyle Modlich" :keys "k" :wizard "Kyle")
-                    ("Chris Doggett" :keys "c" :wizard "Doggett")
-                    ("Gary Miller" :keys "g" :wizard "Gary"))))))
+         :template ("- %U: %?")
+         :children (("Kyle Modlich" :keys "k"
+                     :org-roam (:file-name "%(nc/file-path-from-title \"Kyle Modlich\")" :olp ("Observations")))
+                    ("Chris Doggett" :keys "c"
+                     :org-roam (:file-name "%(nc/file-path-from-title \"Chris Doggett\")" :olp ("Observations")))
+                    ("Gary Miller" :keys "g"
+                     :org-roam (:file-name "%(nc/file-path-from-title \"Gary Miller\")" :olp ("Observations"))))))))
     :pretty-hydra
     ((:title "Org Roam" :quit-key "q" :exit t)
      ("Slips"
