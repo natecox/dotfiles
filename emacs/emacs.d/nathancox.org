@@ -203,6 +203,14 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            ("<M-right>" . drag-stuff-right)
            ("<M-left>" . drag-stuff-left))
     :config (drag-stuff-global-mode 1))
+
+  (defun nc/run-region-as-shell-command (start end)
+    "Execute region from START to END as a shell command."
+    (interactive "r")
+    (shell-command  (buffer-substring-no-properties start end)))
+
+  (use-package shell-region
+    :bind (("s-|" . nc/run-region-as-shell-command)))
 #+end_src
 
 ** Buffer management
