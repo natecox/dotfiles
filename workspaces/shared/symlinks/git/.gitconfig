@@ -9,3 +9,5 @@
 	tool = opendiff
 [merge]
 	tool = opendiff
+[include]
+	path = ~/.gitconfig.local
