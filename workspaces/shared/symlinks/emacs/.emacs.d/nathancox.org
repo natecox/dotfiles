@@ -450,7 +450,11 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package ox-confluence
     :after org-contrib
     :config (eval-after-load "org" '(require 'ox-contrib nil t)))
+#+end_src
 
+** Meetings management
+
+#+begin_src emacs-lisp
   (use-package org-secretary
     :after org-contrib
     :config (add-to-list 'org-modules 'org-secretary t))
@@ -465,13 +469,18 @@ simpler to use on the fly.
   (use-package org
     :after (doct)
     :custom
+    (org-todo-keywords
+     '((sequence "TODO(t)" "|" "DONE(d)" "CANCELLED(c)")
+       (sequence "TASK(f)" "|" "DONE(d)")
+       (sequence "MAYBE(m)" "|" "CANCELLED(c)")))
     (org-capture-templates
-     (doct '(("Task" :keys "t" :headline "Tasks" :template "* TODO %?\n%u\n%a")
-             ("Note" :keys "n" :headline "Notes" :template "* %?\n%U")
-             ("TIL" :keys "l" :headline "Today I Learned..." :template "* TIL %?\n%U")
-             ("Code Reviews" :keys "r" :children
+     (doct '(("Task" :keys "t" :file "" :headline "Tasks" :template "* TODO %?\n%u\n%a")
+             ("Note" :keys "n" :file "" :headline "Notes" :template "* %?\n%U")
+             ("TIL" :keys "l" :file "" :headline "Today I Learned..." :template "* TIL %?\n%U")
+             ("Code Reviews" :keys "r" :file "" :children
               (("RMT Review" :keys "r" :template-file "capture-templates/rmt.orgcaptmpl")
-               ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl")))))))
+               ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl"))))))
+  )
 #+end_src
 
 ** REST
@@ -484,6 +493,17 @@ simpler to use on the fly.
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((restclient . t))))
+#+end_src
+
+** Searching
+#+begin_src emacs-lisp
+  (use-package deft
+    :ensure t
+    :commands (deft)
+    :custom
+    (deft-directory org-directory)
+    (deft-recursive t)
+    (deft-auto-save-interval -1))
 #+end_src
 
 * Programming
@@ -636,11 +656,25 @@ simpler to use on the fly.
                  ("content_for_if" . "<% if content_for?(:|) %>\n<% yield : %>\n<% end %>")
                  ("var" . "<%= :| %>")))))
     :init
+    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode)))
 
   (use-package emmet-mode
     :hook (web-mode . emmet-mode)
+    :ensure t)
+#+end_src
+
+*** Clojure
+
+#+begin_src emacs-lisp
+  (use-package clojure-mode
+    :ensure t
+    :hook ((clojure-mode . lsp)
+           (clojurescript-mode . lsp)
+           (clojurec-mode . lsp)))
+
+  (use-package cider
     :ensure t)
 #+end_src
 

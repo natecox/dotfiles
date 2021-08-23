@@ -7,7 +7,7 @@ configuration.
 ## Installation
 
 ```sh
-$ git clone --recursive https://github.com/ncox/dotfiles ~/.dotfiles
+$ git clone --recursive https://github.com/natecox/dotfiles ~/.dotfiles
 $ caffeinate ~/.dotfiles/zero/setup
 ```
 
