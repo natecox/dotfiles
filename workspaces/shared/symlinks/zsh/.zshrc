@@ -1,8 +1,5 @@
 setopt HIST_FIND_NO_DUPS
 
-# Fresh shell
-source ~/.fresh/build/shell.sh
-
 # Antigen (https://github.com/zsh-users/antigen)
 # Install with `brew install antigen`
 source $(brew --prefix)/share/antigen/antigen.zsh
