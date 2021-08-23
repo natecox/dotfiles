@@ -23,10 +23,10 @@
         "revision": "4dffe58b473ec0df023c79cd3cacfaac4804ccb3"
       },
       "homebrew/cask": {
-        "revision": "d020e46875407ad355045ceeb75d2bec1cd148fc"
+        "revision": "78767bada25a528d55a4bd0f701f35e9a2597ff8"
       },
       "homebrew/core": {
-        "revision": "2c8b629843eee8125e34b97ee6352c70f6b1c454"
+        "revision": "b0e8f541cbb9fea59d79a18bd78b30584e81a4d5"
       },
       "homebrew/services": {
         "revision": "651b2251997bdc86e3d5312fb3f3085651d46cf3"
@@ -2553,7 +2553,7 @@
         "bottle": false
       },
       "universal-ctags/universal-ctags/universal-ctags": {
-        "version": "HEAD-f43463a",
+        "version": "HEAD-56b6e89",
         "bottle": false,
         "options": {
           "args": [
@@ -2572,12 +2572,6 @@
         "version": "2021.1,105",
         "options": {
           "full_name": "gpg-suite"
-        }
-      },
-      "java": {
-        "version": "14.0.2,12:205943a0976c4ed48cb16f1043c5c647",
-        "options": {
-          "full_name": "java"
         }
       },
       "mactex": {
@@ -2645,6 +2639,14 @@
         "CLT": "12.5.0.22.9",
         "Xcode": "12.5",
         "macOS": "11.5.2"
+      },
+      "monterey": {
+        "HOMEBREW_VERSION": "3.2.9",
+        "HOMEBREW_PREFIX": "/usr/local",
+        "Homebrew/homebrew-core": "b0e8f541cbb9fea59d79a18bd78b30584e81a4d5",
+        "CLT": "13.0.0.0.1.1628499445",
+        "Xcode": "13.0",
+        "macOS": "12.0"
       }
     }
   }

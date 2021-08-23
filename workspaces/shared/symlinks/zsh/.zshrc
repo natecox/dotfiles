@@ -6,7 +6,7 @@ source $(brew --prefix)/share/antigen/antigen.zsh
 antigen init $HOME/.antigenrc
 
 # ASDF
-. $HOME/.asdf/asdf.sh
+. /usr/local/opt/asdf/libexec/asdf.sh
 
 # Yarn (https://yarnpkg.com/)
 export PATH="$(brew --prefix yarn)/bin:$PATH"
