@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for i in {ruby,nodejs,rust,python,elm,groovy,elixir,erlang,clojure}
+while IFS=' ' read -r i _
 do
-		asdf plugin add $i
-done
+    asdf plugin add $i
+done < ~/.tool-versions
 
 asdf install
