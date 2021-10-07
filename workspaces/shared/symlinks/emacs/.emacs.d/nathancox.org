@@ -3,139 +3,151 @@
 #+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
 
 * Manifesto
+
 - Prefer navive solutions to packages when possible
 - Menus and prompts are better than muscle memory
 - Consistency is more important than convinence
 - =use-package= is /the way/.
 
 * Setup
+
 #+begin_src emacs-lisp
   (setq lexical-binding t)
 
-  (require 'package)
-
-  (setq package-enable-at-startup nil)
-  (setq max-lisp-eval-depth 2000)
-
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives '("ublt" . "https://elpa.ubolonton.org/packages/") t)
-
-  (when (< emacs-major-version 27)
-    (package-initialize))
-
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
 
   (setq gc-cons-threshold 100000000)
   (setq auto-window-vscroll nil)
 
-  (use-package diminish :ensure t)
+  (straight-use-package 'use-package)
+
+  (use-package diminish :straight t)
 
   (use-package exec-path-from-shell
-    :ensure t
+    :straight t
     :config
     (setenv "SHELL" "/usr/local/bin/zsh")
     (setq exec-path-from-shell-variables '("PATH"))
     (exec-path-from-shell-initialize))
 #+end_src
 
-* Setting sane defaults
+* N Λ N O
+
+I really like what the *N Λ N O* project is doing with Emacs. Lets start with their stuff and then work outwards.
+
 #+begin_src emacs-lisp
-	(use-package emacs
-		:hook ((before-save . delete-trailing-whitespace))
-		:bind (("s-SPC" . cycle-spacing))
-		:custom ((ispell-program-name "aspell"))
-		:config
-		(setq inhibit-startup-screen t
-					initial-scratch-message nil
-					sentence-end-double-space nil
-					ring-bell-function 'ignore
-					use-dialog-box nil
-					mark-even-if-inactive nil
-					kill-whole-line t
-					require-final-newline t
-					frame-resize-pixelwise t)
+  (defun nc/apply-nano-theme (appearance)
+    "Load theme, taking current system APPEARANCE into consideration."
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (nano-light))
+      ('dark (nano-dark))))
 
-		(setq user-full-name "Nathan Cox"
-					user-mail-address "ncox@covermymeds.com")
+  (straight-use-package
+   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
 
-		;; always allow 'y' instead of 'yes'.
-		(defalias 'yes-or-no-p 'y-or-n-p)
+  (use-package nano-base-colors)
+  (use-package nano-faces)
+  (use-package nano-modeline)
+  (use-package nano-bindings)
+  (use-package nano-session)
+  (use-package nano-layout)
+  (use-package nano-writer)
 
-		;; default to utf-8 for all the things
-		(set-charset-priority 'unicode)
-		(setq locale-coding-system 'utf-8)
-		(set-terminal-coding-system 'utf-8)
-		(set-keyboard-coding-system 'utf-8)
-		(set-selection-coding-system 'utf-8)
-		(prefer-coding-system 'utf-8)
-		(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+  (use-package nano-defaults
+    :config
+    (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)))
 
-		;; write over selected text on input... like all modern editors do
-		(delete-selection-mode t)
+  (use-package nano-theme
+    :straight '(nano-theme :type git :host github :repo "rougier/nano-theme")
 
-		;; Don't persist a custom file, this bites me more than it helps
-		(setq custom-file null-device)         ; use a temp file as a placeholder
-		(setq custom-safe-themes t)            ; mark all themes as safe, since we can't persist now
-		(setq enable-local-variables :all)     ; fix =defvar= warnings
+    :config
+    (set-face-attribute 'default nil :font "JetBrains Mono 13")
 
-		;; stop emacs from littering the file system with backup files
-		(setq make-backup-files nil
-					auto-save-default nil
-					create-lockfiles nil)
+    ;; If emacs has been built with system appearance detection
+    ;; add a hook to change the theme to match the system
+    (if (boundp 'ns-system-appearance-change-functions)
+        (add-hook 'ns-system-appearance-change-functions #'nc/apply-nano-theme)
+      (nano-light)))
 
-		;; don't show any extra window chrome
-		(when (window-system)
-			(tool-bar-mode -1)
-			(scroll-bar-mode -1)
-			(tooltip-mode -1)
-			(toggle-scroll-bar -1))
-
-		;; use a font I like, but fail gracefully if it isn't available
-		(set-face-attribute 'default nil :font "JetBrains Mono 14")
-
-		;; enable winner mode globally for undo/redo window layout changes
-		(winner-mode t)
-
-		;; clean up the mode line
-		(display-time-mode -1)
-		(setq column-number-mode t))
-
-	;; customize tramp default behaviour
-	(use-package tramp
-		:custom (tramp-default-method "ssh"))
-
-	;; use the builtin current-line highlighter
-	(use-package hl-line-mode
-		:hook ((prog-mode) (text-mode)))
-
-	;; keep package files out of recentf
-	(use-package recentf
-		:config
-		(add-to-list 'recentf-exclude "\\elpa")
-		(add-to-list 'recentf-exclude "^/private"))
+  (use-package svg-lib
+    :straight (svg-lib :type git :host github :repo "rougier/svg-lib"))
 #+end_src
 
-** Mac config
-I use macOS almost exclusively, which comes with a couple of caveats for sane defaults.
+** Additional sane defaults
 
-#+BEGIN_SRC emacs-lisp
-  (when (eq system-type 'darwin)
-    (setq mac-command-modifier 'meta)     ; command as Meta
-    (setq mac-option-modifier 'super)     ; alt as super
-    (setq mac-control-modifier 'control)) ; control as... control
+This covers config not directly covered by *N Λ N O*.
 
-  (setq insert-directory-program "gls" dired-use-ls-dired t)
-  (setq dired-listing-switches "-al --group-directories-first")
+#+begin_src emacs-lisp
+  (use-package emacs
+    :hook ((before-save . delete-trailing-whitespace))
+    :bind (("s-SPC" . cycle-spacing))
+    :custom ((ispell-program-name "aspell"))
+    :config
 
-  (if (fboundp 'mac-auto-operator-composition-mode)
-      (mac-auto-operator-composition-mode))
-#+END_SRC
+    (setq user-full-name "Nathan Cox"
+          user-mail-address "ncox@covermymeds.com")
+
+    ;; write over selected text on input... like all modern editors do
+    (delete-selection-mode t)
+
+    ;; use a reasonable line length
+    (setq-default fill-column 120)
+
+    ;; Don't persist a custom file, this bites me more than it helps
+    (setq custom-file null-device)         ; use a temp file as a placeholder
+    (setq custom-safe-themes t)            ; mark all themes as safe, since we can't persist now
+    (setq enable-local-variables :all)     ; fix =defvar= warnings
+
+    ;; stop emacs from littering the file system with backup files
+    (setq make-backup-files nil
+          auto-save-default nil
+          create-lockfiles nil)
+
+    ;; enable winner mode globally for undo/redo window layout changes
+    (winner-mode t)
+
+    ;; clean up the mode line
+    (display-time-mode -1)
+    (setq column-number-mode t)
+
+    ;; Mac specific
+    (when (eq system-type 'darwin)
+      (setq mac-option-modifier 'super))
+
+    (setq insert-directory-program "gls" dired-use-ls-dired t)
+    (setq dired-listing-switches "-al --group-directories-first")
+    (setq ring-bell-function 'ignore))
+
+  ;; customize tramp default behaviour
+  (use-package tramp
+    :custom (tramp-default-method "ssh"))
+
+  ;; use the builtin current-line highlighter
+  (use-package hl-line-mode
+    :hook ((prog-mode) (text-mode)))
+
+  ;; keep package files out of recentf
+  (use-package recentf
+    :config
+    (add-to-list 'recentf-exclude "\\elpa")
+    (add-to-list 'recentf-exclude "^/private"))
+#+end_src
 
 ** Indentation
+
 Recently, I made a switch from space indentation to tabs. If you're interested in my reasoning feel free to check out
 [[https://www.reddit.com/r/javascript/comments/c8drjo/nobody_talks_about_the_real_reason_to_use_tabs/][this reddit thread]]. tl;dr: tabs are far superiour to spaces for some people with visual impairments, and that is reason
 enough for me.
@@ -152,22 +164,18 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :config
     ;; use common convention for indentation by default
     (setq-default indent-tabs-mode nil)   ; Always use spaces.
-    (setq-default tab-width 2)            ; 4 is too much
-
-    ;; use a reasonable line length
-    (setq-default fill-column 120)
 
     ;; let emacs handle indentation
     (electric-indent-mode +1))
 
   ;; indent with tabs, align with spaces where enabled
   (use-package smart-tabs-mode
-    :ensure t
+    :straight t
     :config (smart-tabs-insinuate 'ruby))
 
   ;; add a visual intent guide
   (use-package highlight-indent-guides
-    :ensure t
+    :straight t
     :hook (prog-mode . highlight-indent-guides-mode)
     :custom
     (highlight-indent-guides-method 'character)
@@ -176,26 +184,27 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+end_src
 
 ** Text manipulation
+
 #+begin_src emacs-lisp
   (use-package undo-tree
-    :ensure t
+    :straight t
     :bind (:map undo-tree-map ("C-x r" . nil)) ; resolves map conflict w/ discover.el
     :config (global-undo-tree-mode))
 
   (use-package expand-region
-    :ensure t
+    :straight t
     :diminish
     :bind (("s-e" . #'er/expand-region)))
 
   (use-package change-inner
-    :ensure t
+    :straight t
     :diminish
     :after expand-region
     :bind (("s-i" . #'change-inner)
            ("s-o" . #'change-outer)))
 
   (use-package drag-stuff
-    :ensure t
+    :straight t
     :diminish
     :bind (("<M-down>" . drag-stuff-down)
            ("<M-up>" . drag-stuff-up)
@@ -213,22 +222,22 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+end_src
 
 ** Buffer management
+
 #+BEGIN_SRC emacs-lisp
   (use-package zoom
-    :ensure t
+    :straight t
     :diminish
     :bind ("C-x +" . zoom)
     :config (zoom-mode t))
 
   (use-package ibuffer
-    :ensure nil
     :commands ibuffer-find-file
     :bind ("C-x C-b" . ibuffer)
     :custom
     (ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold))))
 
   (use-package ibuffer-vc
-    :ensure t
+    :straight t
     :hook (ibuffer . (lambda ()
                        (ibuffer-vc-set-filter-groups-by-vc-root)
                        (unless (eq ibuffer-sorting-mode 'alphabetic)
@@ -242,54 +251,16 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
                              (vc-relative-file)))))
 
   (use-package ace-window
-    :ensure t
+    :straight t
     :bind ("M-o" . ace-window))
 #+END_SRC
 
-** Look and feel
-#+begin_src emacs-lisp
-  (defun nc/apply-modus-theme (appearance)
-    "Load theme, taking current system APPEARANCE into consideration."
-    (mapc #'disable-theme custom-enabled-themes)
-    (pcase appearance
-      ('light (modus-themes-load-operandi))
-      ('dark (modus-themes-load-vivendi))))
-
-  ;; (defun nc/apply-humanoid-theme (appearance)
-  ;;   "Load theme, taking current system APPEARANCE into consideration."
-  ;;   (mapc #'disable-theme custom-enabled-themes)
-  ;;   (pcase appearance
-  ;;     ('light (load-theme 'humanoid-light t))
-  ;;     ('dark (load-theme 'humanoid-dark t))))
-
-  ;; (use-package humanoid-themes
-  ;;   :ensure t
-  ;;   :custom
-  ;;   (humanoid-comment-italic t)
-  ;;   :init
-  ;;   (if (boundp 'ns-system-appearance-change-functions)
-  ;;       (add-hook 'ns-system-appearance-change-functions #'nc/apply-humanoid-theme)
-  ;;     (load-theme 'humanoid-light t)))
-
-  (use-package modus-themes
-    :ensure t
-    :custom
-    (modus-themes-links 'neutral-underline)
-    (modus-themes-syntax nil)
-    (modus-themes-intense-hl-line t)
-    :init
-    ;; if a patch has been applied enabling mac system appearance detection,
-    ;; use the hook provided. Otherwise, just set a theme manually.
-    (if (boundp 'ns-system-appearance-change-functions)
-        (add-hook 'ns-system-appearance-change-functions #'nc/apply-modus-theme)
-      (modus-themes-load-operandi)))
-#+end_src
-
 * Improving navigation
+
 #+BEGIN_SRC emacs-lisp
   ;; jump to character on screen
   (use-package avy
-    :ensure t
+    :straight t
     :bind (("s-t" . 'avy-goto-char)
            ("s-T" . 'avy-goto-line)
            ("C-c C-j" . 'avy-resume))
@@ -297,26 +268,26 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; better predictions based on common usage
   (use-package prescient
-    :ensure t
+    :straight t
     :config (prescient-persist-mode t))
 
   ;; better interface for selecting items from a list
   (use-package selectrum
-    :ensure t
+    :straight t
     :config (selectrum-mode t))
 
   (use-package selectrum-prescient
-    :ensure t
+    :straight t
     :config (selectrum-prescient-mode t))
 
   ;; improved UX for searching in a buffer
   (use-package ctrlf
-    :ensure t
+    :straight t
     :config (ctrlf-mode t))
 
   ;; add annotations to minibuffers
   (use-package marginalia
-    :ensure t
+    :straight t
     :bind (:map minibuffer-local-map ("C-M-a" . marginalia-cycle))
     :custom (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
     :init
@@ -325,15 +296,17 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
                 (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit)))))
 
   (use-package consult
-    :ensure t)
+    :straight t)
 #+END_SRC
 
 * Improving discoverability
+
 #+begin_src emacs-lisp
-  (use-package hydra :ensure t)
+  (use-package hydra
+    :straight t)
 
   (use-package major-mode-hydra
-    :ensure t
+    :straight t
     :after hydra
     :diminish
     :bind ([s-return] . major-mode-hydra))
@@ -341,30 +314,29 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package pretty-hydra)
 
   (use-package discover
-    :ensure t
+    :straight t
     :diminish
     :config (global-discover-mode 1))
 
   (use-package which-key
-    :ensure t
+    :straight t
     :diminish
     :config (which-key-mode))
 #+END_SRC
 
-* Webkit playground
-#+begin_src emacs-lisp
-  ;; (setq browse-url-browser-function 'xwidget-webkit-browse-url)
-#+end_src
-
 * Org Mode
+
 ** Installation instructions for macOS
+
 1. Install macTEX with `brew install cask mactex`
 2. Download and install [[https://amaxwell.github.io/tlutility/][TEX Live Utility]]
 3. Ensure Lato font is installed
 
 ** Sane defaults
+
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :straight (:type built-in)
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
            ("C-c c" . org-capture)
@@ -400,22 +372,13 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 *** TODO add major mode hydra for org mode
 
 ** Better capture templates
-#+begin_src emacs-lisp
-  (use-package doct :ensure t)
-#+end_src
 
-** Visual improvements
 #+begin_src emacs-lisp
-  ;; ;; add fancy bullets
-  ;; (use-package org-superstar
-  ;;   :ensure t
-  ;;   :hook (org-mode . org-superstar-mode)
-  ;;   :custom
-  ;;   (org-superstar-special-todo-items t)
-  ;;   (org-superstar-remove-leading-stars t))
+  (use-package doct :straight t)
 #+end_src
 
 ** Babel additions
+
 #+begin_src emacs-lisp
   (use-package org
     :config
@@ -427,23 +390,25 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; enable mermaid diagram blocks
   (use-package ob-mermaid
-    :ensure t
+    :straight t
     :custom (ob-mermaid-cli-path "~/.asdf/shims/mmdc"))
 #+end_src
 
 ** Exporters
+
 #+begin_src emacs-lisp
-  (use-package org-contrib :ensure t)
+  (use-package org-contrib
+    :straight t)
 
   ;; add jira format export
   (use-package ox-jira
-    :ensure t
+    :straight t
     :after org
     :config (eval-after-load "org" '(progn (require 'ox-jira))))
 
   ;; add github flavored markdown export
   (use-package ox-gfm
-    :ensure t
+    :straight t
     :config (eval-after-load "org" '(require 'ox-gfm nil t)))
 
   ;; add confluence formatted export
@@ -452,15 +417,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :config (eval-after-load "org" '(require 'ox-contrib nil t)))
 #+end_src
 
-** Meetings management
-
-#+begin_src emacs-lisp
-  (use-package org-secretary
-    :after org-contrib
-    :config (add-to-list 'org-modules 'org-secretary t))
-#+end_src
-
 ** Task management
+
 One of the common tasks for my day is doing code reviews, which have checklists. I started off by keeping an org file
 around with these checklists that I would update every time I did a review. Turns out capture templates are quite a bit
 simpler to use on the fly.
@@ -480,113 +438,94 @@ simpler to use on the fly.
              ("Code Reviews" :keys "r" :file "" :children
               (("RMT Review" :keys "r" :template-file "capture-templates/rmt.orgcaptmpl")
                ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl"))))))
-  )
-#+end_src
-
-** REST
-#+begin_src emacs-lisp
-  (use-package restclient :ensure t)
-
-  (use-package ob-restclient
-    :ensure t
-    :config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((restclient . t))))
-#+end_src
-
-** Searching
-#+begin_src emacs-lisp
-  (use-package deft
-    :ensure t
-    :commands (deft)
-    :custom
-    (deft-directory org-directory)
-    (deft-recursive t)
-    (deft-auto-save-interval -1))
+    )
 #+end_src
 
 * Programming
+
 ** Completion & linting
+
 #+begin_src emacs-lisp
   (use-package flyspell-mode
     :hook ((text-mode . flyspell-mode)
            (prog-mode . flyspell-prog-mode)))
 
   (use-package company
-    :ensure t
+    :straight t
     :diminish
     :config (global-company-mode))
 
   (use-package company-prescient
-    :ensure t
+    :straight t
     :after prescient
     :config (company-prescient-mode))
 
   (use-package flycheck
-    :ensure t
+    :straight t
     :diminish
     :config (global-flycheck-mode))
 
   (use-package flycheck-package
-    :ensure t
+    :straight t
     :after flycheck)
 
   (use-package yasnippet
-    :ensure t
+    :straight t
     :config
     (yas-global-mode 1))
 
   (use-package yasnippet-snippets
-    :ensure t
+    :straight t
     :after yasnippet)
 #+end_src
 
 *** TODO add pretty hydra for flycheck
 
 ** Visual improvements
+
 #+begin_src emacs-lisp
   (use-package emacs
     :config (show-paren-mode))
 
   ;; add ansi support for compilation buffers
   (use-package xterm-color
-    :ensure t
+    :straight t
     :custom (compilation-environment '("TERM=xterm-256color"))
     :config
     (defun nc/advise-compilation-filter (f proc string)
-           (funcall f proc (xterm-color-filter string)))
+      (funcall f proc (xterm-color-filter string)))
     (advice-add 'compilation-filter :around #'nc/advise-compilation-filter))
 
   ;; match paired brackets with colors
   (use-package rainbow-delimiters
-    :ensure t
+    :straight t
     :hook (prog-mode . rainbow-delimiters-mode))
 
   ;; more consistant syntax highlighting
   (use-package tree-sitter
-    :ensure t
+    :straight t
     :diminish
     :hook ((ruby-mode . tree-sitter-hl-mode)
            (rustic-mode . tree-sitter-hl-mode))
     :config (global-tree-sitter-mode))
 
   (use-package tree-sitter-langs
-    :ensure t
+    :straight t
     :after tree-sitter)
 #+end_src
 
 ** LSP integration
+
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :ensure t
+    :straight t
     :hook (lsp-enable-which-key-integration)
     :commands lsp
     :custom (lsp-keymap-prefix "C-c M-k")
     :config (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release"))
 
   (use-package lsp-ui
-    :ensure t
+    :straight t
     :after lsp-mode
     :hook (lsp-mode . lsp-ui-mode)
     :commands lsp-ui-mode)
@@ -595,10 +534,10 @@ simpler to use on the fly.
 *** TODO add pretty hydra for lsp mode
 
 ** Version control
+
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :ensure t
-    :pin melpa
+    :straight t
     :bind (("C-c g s" . magit-status))
     :hook ((git-commit-mode . (lambda () (set-fill-column 72))))
     :config
@@ -606,22 +545,23 @@ simpler to use on the fly.
           git-commit-summary-max-length 50))
 
   (use-package forge
-    :ensure t
+    :straight t
     :after magit
     :config (push '("git.innova-partners.com" "git.innova-partners.com/api/v3" "git.innova-partners.com" forge-github-repository) forge-alist))
 
   (use-package diff-hl
-    :ensure t
+    :straight t
     :after magit
     :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
 #+END_SRC
 
 ** Project management
+
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :diminish
-    :ensure t
+    :straight t
     :bind-keymap ("s-p" . projectile-command-map)
     :custom
     (projectile-project-search-path (cddr (directory-files "~/src" t)))
@@ -631,21 +571,26 @@ simpler to use on the fly.
       (unless (file-remote-p default-directory) ad-do-it))
     (projectile-mode t))
 
-  (use-package perspective :ensure t :config (persp-mode))
+  (use-package perspective
+    :straight t :config (persp-mode))
 
-  (use-package persp-projectile :ensure t :after perspective)
+  (use-package persp-projectile
+    :straight t
+    :after perspective)
 #+END_SRC
 
 *** TODO add pretty hydra for projectile
 
 ** Languages & frameworks
+
 *** Frontend
+
 #+begin_src emacs-lisp
   (use-package emacs
     :custom (js-indent-level 2))
 
   (use-package web-mode
-    :ensure t
+    :straight t
     :custom
     (web-mode-markup-indent-offset 2)
     (web-mode-css-indent-offset 2)
@@ -662,72 +607,88 @@ simpler to use on the fly.
 
   (use-package emmet-mode
     :hook (web-mode . emmet-mode)
-    :ensure t)
+    :straight t)
 #+end_src
 
 *** Clojure
 
 #+begin_src emacs-lisp
   (use-package clojure-mode
-    :ensure t
+    :straight t
     :hook ((clojure-mode . lsp)
            (clojurescript-mode . lsp)
            (clojurec-mode . lsp)))
 
   (use-package cider
-    :ensure t)
+    :straight t)
 #+end_src
 
 *** Ruby
+
 #+BEGIN_SRC emacs-lisp
   (use-package ruby-mode
     :hook (ruby-mode . lsp))
 
-  (use-package bundler :ensure t)
+  (use-package bundler
+    :straight t)
 
   (use-package yard-mode
-    :ensure t
+    :straight t
     :after ruby-mode
     :hook ruby-mode)
 
   (use-package inf-ruby
-    :ensure t
+    :straight t
     :config (setenv "PAGER" (executable-find "cat")))
 
   (use-package rspec-mode
-    :ensure t
+    :straight t
     :hook ((after-init . inf-ruby-switch-setup)
            (compilation-filter-hook . inf-ruby-auto-enter))
     :custom
     (compilation-scroll-output t)
     (rspec-primary-source-dirs '("app")))
 
-  (use-package rubocop :ensure t)
+  (use-package rubocop
+    :straight t)
 #+END_SRC
 
 *** Python
+
 #+begin_src emacs-lisp
   (use-package elpy
-    :ensure t
+    :straight t
     :defer t
     :init (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
 
 *** Yaml
+
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-    :ensure t
+    :straight t
     :hook (yaml-mode . lsp)
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
 
+** ParEdit mode
+
+#+begin_src emacs-lisp
+  (use-package paredit
+    :straight t
+    :hook ((lisp-mode . enable-paredit-mode)
+           (emacs-lisp-mode . enable-paredit-mode)))
+#+end_src
+
 * Presentations
+
 #+begin_src emacs-lisp
   (use-package org-tree-slide
-    :ensure t)
+    :straight t)
 #+end_src
 
 * CoverMyEmacs
+
 #+begin_src emacs-lisp
   (use-package covermyemacs
     :bind ("C-c i" . covermyemacs)

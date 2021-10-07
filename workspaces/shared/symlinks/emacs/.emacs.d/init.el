@@ -4,3 +4,4 @@
 
 (setq vc-follow-symlinks nil)
 (reload-config)
+(put 'set-goal-column 'disabled nil)
