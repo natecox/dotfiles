@@ -335,12 +335,33 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Sane defaults
 
 #+BEGIN_SRC emacs-lisp
+  (defun nc/org-insert-dwim (&optional arg)
+    "Insert an appropriate org item. ARG optional."
+    (interactive "P")
+    (when (eq major-mode 'org-mode)
+      (let ((org-special-cprl-a/e t)
+            (below? (unless (equal arg '(4)) '(4))))
+        (cond ((org-at-item-p)
+               (let ((org-M-RET-may-split-line nil)
+                     (org-enable-sort-checkbox nil))
+                 (when below? (org-end-of-line))
+                 (org-insert-item (org-at-item-checkbox-p))))
+              ((org-before-first-heading-p)
+               (org-insert-heading))
+              (t
+               (org-back-to-heading)
+               (if (org-get-todo-state)
+                   (org-insert-todo-heading t below?)
+                   (org-insert-heading below?)))))))
+
   (use-package org
     :straight (:type built-in)
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
            ("C-c c" . org-capture)
-           ("C-c r" . org-refile))
+           ("C-c r" . org-refile)
+           :map org-mode-map
+           ("M-<return>" . nc/org-insert-dwim))
     :hook ((after-init . (lambda () (org-agenda nil "n"))))
     :custom
     (org-directory "~/org")
@@ -389,6 +410,10 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
        (shell . t))))
 
   ;; enable mermaid diagram blocks
+  (use-package mermaid-mode
+    :straight t
+    :custom (mermaid-mmdc-location "~/.asdf/shims/mmdc"))
+
   (use-package ob-mermaid
     :straight t
     :custom (ob-mermaid-cli-path "~/.asdf/shims/mmdc"))
@@ -437,7 +462,9 @@ simpler to use on the fly.
              ("TIL" :keys "l" :file "" :headline "Today I Learned..." :template "* TIL %?\n%U")
              ("Code Reviews" :keys "r" :file "" :children
               (("RMT Review" :keys "r" :template-file "capture-templates/rmt.orgcaptmpl")
-               ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl"))))))
+               ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl")))
+             ("Interviews" :keys "i" :file "interviews.org" :children
+              (("MINASWAN" :keys "m" :template-file "capture-templates/interviews/minaswan.orgcaptmpl"))))))
     )
 #+end_src
 
