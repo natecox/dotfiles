@@ -1,0 +1,4 @@
+tap "blightmud/blightmud"
+tap "qmk/qmk"
+brew "blightmud/blightmud/blightmud"
+brew "qmk/qmk/qmk"

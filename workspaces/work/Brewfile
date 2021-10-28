@@ -1,0 +1,5 @@
+tap "datawire/blackbird"
+brew "azure-cli"
+brew "groovy"
+brew "redis", restart_service: true
+brew "datawire/blackbird/telepresence"
