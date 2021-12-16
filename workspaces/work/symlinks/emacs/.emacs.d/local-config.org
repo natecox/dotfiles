@@ -1,0 +1,19 @@
+#+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
+
+* Task management
+
+#+begin_src emacs-lisp
+  (use-package org
+      :after (doct)
+      :custom
+      (org-capture-templates
+       (doct '(("Task" :keys "t" :file "" :headline "Tasks" :template "* TODO %?\n%u\n%a")
+               ("Note" :keys "n" :file "" :headline "Notes" :template "* %?\n%U")
+               (:group "Team management" :file "team management.org" :datetree t :empty-lines 1 :children
+                       (("Observation" :keys "o" :template "* %? :observation:%^{subject}g")
+                        ("Meetings" :keys "m" :children
+                         (("1:1" :keys "o" :template-file "capture-templates/meetings/one-on-one.org")
+                          ("Generic" :keys "m" :template-file "capture-templates/meetings/generic.org")))))
+               ("Interviews" :keys "i" :file "interviews.org" :children
+                (("MINASWAN" :keys "m" :template-file "capture-templates/interviews/minaswan.orgcaptmpl")))))))
+#+end_src

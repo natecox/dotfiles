@@ -59,10 +59,9 @@ I really like what the *N Λ N O* project is doing with Emacs. Lets start with t
 
   (use-package nano-base-colors)
   (use-package nano-faces)
-  (use-package nano-modeline)
   (use-package nano-bindings)
   (use-package nano-session)
-  (use-package nano-layout)
+  ;; (use-package nano-layout)
   (use-package nano-writer)
 
   (use-package nano-defaults
@@ -70,11 +69,16 @@ I really like what the *N Λ N O* project is doing with Emacs. Lets start with t
     (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
     (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)))
 
+  ;; (use-package nano-modeline
+  ;;   :straight '(nano-modeline :type git :host github :repo "rougier/nano-modeline")
+  ;;   :config (nano-modeline-mode))
+
   (use-package nano-theme
-    :straight '(nano-theme :type git :host github :repo "rougier/nano-theme")
+    :straight '(nano-theme :type git :host github :repo "natecox/nano-theme")
 
     :config
-    (set-face-attribute 'default nil :font "JetBrains Mono 13")
+
+    (custom-set-faces '(default ((t (:font "JetBrains Mono 13")))))
 
     ;; If emacs has been built with system appearance detection
     ;; add a hook to change the theme to match the system
@@ -82,8 +86,8 @@ I really like what the *N Λ N O* project is doing with Emacs. Lets start with t
         (add-hook 'ns-system-appearance-change-functions #'nc/apply-nano-theme)
       (nano-light)))
 
-  (use-package svg-lib
-    :straight (svg-lib :type git :host github :repo "rougier/svg-lib"))
+  (use-package nano-agenda
+    :straight '(nano-agenda :type git :host github :repo "rougier/nano-agenda"))
 #+end_src
 
 ** Additional sane defaults
@@ -373,6 +377,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-blank-before-new-entry '((heading . t) (plain-list-item . nil)))
     (org-agenda-window-setup 'current-window)
     (org-confirm-babel-evaluate nil)
+    (org-tags-column 80)
     (org-export-copy-to-kill-ring 'if-interactive)
     (org-export-with-sub-superscripts '{})
     (org-export-with-toc nil)
@@ -440,32 +445,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package ox-confluence
     :after org-contrib
     :config (eval-after-load "org" '(require 'ox-contrib nil t)))
-#+end_src
-
-** Task management
-
-One of the common tasks for my day is doing code reviews, which have checklists. I started off by keeping an org file
-around with these checklists that I would update every time I did a review. Turns out capture templates are quite a bit
-simpler to use on the fly.
-
-#+begin_src emacs-lisp
-  (use-package org
-    :after (doct)
-    :custom
-    (org-todo-keywords
-     '((sequence "TODO(t)" "|" "DONE(d)" "CANCELLED(c)")
-       (sequence "TASK(f)" "|" "DONE(d)")
-       (sequence "MAYBE(m)" "|" "CANCELLED(c)")))
-    (org-capture-templates
-     (doct '(("Task" :keys "t" :file "" :headline "Tasks" :template "* TODO %?\n%u\n%a")
-             ("Note" :keys "n" :file "" :headline "Notes" :template "* %?\n%U")
-             ("TIL" :keys "l" :file "" :headline "Today I Learned..." :template "* TIL %?\n%U")
-             ("Code Reviews" :keys "r" :file "" :children
-              (("RMT Review" :keys "r" :template-file "capture-templates/rmt.orgcaptmpl")
-               ("EM Review" :keys "e" :template-file "capture-templates/emd.orgcaptmpl")))
-             ("Interviews" :keys "i" :file "interviews.org" :children
-              (("MINASWAN" :keys "m" :template-file "capture-templates/interviews/minaswan.orgcaptmpl"))))))
-    )
 #+end_src
 
 * Programming
