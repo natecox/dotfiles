@@ -74,7 +74,7 @@ I really like what the *N Λ N O* project is doing with Emacs. Lets start with t
   ;;   :config (nano-modeline-mode))
 
   (use-package nano-theme
-    :straight '(nano-theme :type git :host github :repo "natecox/nano-theme")
+    :straight '(nano-theme :type git :host github :fork "natecox/nano-theme")
 
     :config
 
