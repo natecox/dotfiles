@@ -1,0 +1,1 @@
+alias gcode_sync="rsync -am --info=progress2 --include '*/' --include '*.gcode' --exclude '*' ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/3D\ Prints/ /Volumes/PRUSA_MINI"

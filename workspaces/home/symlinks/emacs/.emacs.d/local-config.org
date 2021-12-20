@@ -1,0 +1,13 @@
+#+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
+
+* Task management
+
+#+begin_src emacs-lisp
+  (use-package org
+      :after (doct)
+      :custom
+      (org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org")
+      (org-capture-templates
+       (doct '(("Task" :keys "t" :file "" :headline "Tasks" :template "* TODO %?\n%u\n%a")
+               ("Note" :keys "n" :file "" :headline "Notes" :template "* %?\n%U")))))
+#+end_src

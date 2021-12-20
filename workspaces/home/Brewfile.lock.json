@@ -1,0 +1,44 @@
+{
+  "entries": {
+    "tap": {
+      "blightmud/blightmud": {
+        "revision": "5865814bc89dce35f9ab28307a67d375f6fb429e"
+      },
+      "qmk/qmk": {
+        "revision": "442f094d61815563a6a38688cc2d15b600f08f4e"
+      }
+    },
+    "brew": {
+      "blightmud/blightmud/blightmud": {
+        "version": "3.5.0",
+        "bottle": false
+      },
+      "qmk/qmk/qmk": {
+        "version": "1.0.0_1",
+        "bottle": {
+          "rebuild": 0,
+          "root_url": "https://github.com/qmk/homebrew-qmk/releases/download/qmk-1.0.0_1",
+          "files": {
+            "catalina": {
+              "cellar": ":any_skip_relocation",
+              "url": "https://github.com/qmk/homebrew-qmk/releases/download/qmk-1.0.0_1/qmk-1.0.0_1.catalina.bottle.tar.gz",
+              "sha256": "a57083d872d52469c4c696d1031522d253cf12b45e8eeab764b888fd8eab8a52"
+            }
+          }
+        }
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "monterey": {
+        "HOMEBREW_VERSION": "3.3.8",
+        "HOMEBREW_PREFIX": "/usr/local",
+        "Homebrew/homebrew-core": "89dc0af839520d3f566a5f7b408269f044a5aa0b",
+        "CLT": "13.2.0.0.1.1638488800",
+        "Xcode": "13.2",
+        "macOS": "12.2"
+      }
+    }
+  }
+}

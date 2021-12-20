@@ -23,10 +23,10 @@
         "revision": "98605110483b68fac97c85f14f86d9120e0c6f88"
       },
       "homebrew/cask": {
-        "revision": "303fccba63e2e8366da449d01cd1ef996bd42eb0"
+        "revision": "f22e3625e84537c67f2c37ec1c6a7e56a015c482"
       },
       "homebrew/core": {
-        "revision": "1b404f3929a310ef325050d86af04a8d2a65f5d4"
+        "revision": "89dc0af839520d3f566a5f7b408269f044a5aa0b"
       },
       "homebrew/services": {
         "revision": "b07fa2ae78da238c6e03cf609b9f83455fd16125"
@@ -59,7 +59,7 @@
         "revision": "a021cbd2b835b7e88f6beb2c3b021e21fe2f8cd5"
       },
       "homebrew/cask-fonts": {
-        "revision": "67e89af711b03a8a9df84b1eb63abd5c60638cb5"
+        "revision": "8921e8946627760be9dea30757376ec49c0f839c"
       }
     },
     "brew": {
@@ -3069,7 +3069,7 @@
         "bottle": false
       },
       "universal-ctags/universal-ctags/universal-ctags": {
-        "version": "HEAD-4dfe928",
+        "version": "HEAD-56b6e89",
         "bottle": false,
         "options": {
           "args": [
@@ -3152,6 +3152,15 @@
       "clojure-lsp/brew/clojure-lsp-native": {
         "version": "2021.12.01-12.28.16",
         "bottle": false
+      },
+      "d12frosted/emacs-plus/emacs-plus@29": {
+        "version": "29.0.50",
+        "bottle": false,
+        "options": {
+          "args": [
+            "with-nobu417-big-sur-icon"
+          ]
+        }
       }
     },
     "cask": {
@@ -3254,10 +3263,10 @@
       "monterey": {
         "HOMEBREW_VERSION": "3.3.8",
         "HOMEBREW_PREFIX": "/usr/local",
-        "Homebrew/homebrew-core": "1b404f3929a310ef325050d86af04a8d2a65f5d4",
+        "Homebrew/homebrew-core": "89dc0af839520d3f566a5f7b408269f044a5aa0b",
         "CLT": "13.2.0.0.1.1638488800",
-        "Xcode": "13.1",
-        "macOS": "12.1"
+        "Xcode": "13.2",
+        "macOS": "12.2"
       }
     }
   }
