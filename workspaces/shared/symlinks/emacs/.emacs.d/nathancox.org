@@ -1,5 +1,5 @@
 #+TITLE: Nate's Emacs Config
-#+STARTUP: content
+#+STARTUP: indent
 #+PROPERTY: header-args:emacs-lisp :tangle yes :results output silent
 
 * Manifesto
@@ -74,7 +74,7 @@ I really like what the *N Λ N O* project is doing with Emacs. Lets start with t
   ;;   :config (nano-modeline-mode))
 
   (use-package nano-theme
-    :straight '(nano-theme :type git :host github :fork "natecox/nano-theme")
+    :straight '(nano-theme :type git :host github :repo "rougier/nano-theme" :fork "natecox/nano-theme")
 
     :config
 
@@ -278,6 +278,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   ;; better interface for selecting items from a list
   (use-package selectrum
     :straight t
+    :custom (selectrum-extend-current-candidate-highlight t)
     :config (selectrum-mode t))
 
   (use-package selectrum-prescient
@@ -447,6 +448,15 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :config (eval-after-load "org" '(require 'ox-contrib nil t)))
 #+end_src
 
+* Terminal
+
+** vterm
+
+#+begin_src emacs-lisp
+  (use-package vterm
+    :straight t)
+#+end_src
+
 * Programming
 
 ** Completion & linting
@@ -595,24 +605,30 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package emacs
     :custom (js-indent-level 2))
 
-  (use-package web-mode
-    :straight t
-    :custom
-    (web-mode-markup-indent-offset 2)
-    (web-mode-css-indent-offset 2)
-    (web-mode-code-indent-offset 2)
-    (web-mode-enable-css-colorization t)
-    (web-mode-extra-snippets
-     '(("erb" . (("content_for" . "<% content_for :| do %>\n\n<% end %>")
-                 ("content_for_if" . "<% if content_for?(:|) %>\n<% yield : %>\n<% end %>")
-                 ("var" . "<%= :| %>")))))
-    :init
-    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode)))
+  ;; (use-package web-mode
+  ;;   :straight `(web-mode :type git :host github :repo "fxbois/web-mode" :commit "3ff506aae50a47b277f2b95ff7b7a7c596664e6a")
+
+  ;;   :custom
+  ;;   (web-mode-markup-indent-offset 2)
+  ;;   (web-mode-css-indent-offset 2)
+  ;;   (web-mode-code-indent-offset 2)
+  ;;   (web-mode-enable-css-colorization t)
+  ;;   (web-mode-enable-html-entities-fontification t)
+  ;;   (web-mode-extra-snippets
+  ;;    '(("erb" . (("content_for" . "<% content_for :| do %>\n\n<% end %>")
+  ;;                ("content_for_if" . "<% if content_for?(:|) %>\n<% yield : %>\n<% end %>")
+  ;;                ("var" . "<%= :| %>")))))
+
+  ;;   :init
+  ;;   (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+  ;;   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  ;;   (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode)))
+
+  (use-package html-mode
+    :hook (html-mode . lsp))
 
   (use-package emmet-mode
-    :hook (web-mode . emmet-mode)
+    :hook (html-mode . emmet-mode)
     :straight t)
 #+end_src
 
@@ -626,7 +642,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            (clojurec-mode . lsp)))
 
   (use-package cider
-    :straight t)
+    :straight '(cider :tag "v1.2.0"))
 #+end_src
 
 *** Ruby
@@ -683,7 +699,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package paredit
     :straight t
     :hook ((lisp-mode . enable-paredit-mode)
-           (emacs-lisp-mode . enable-paredit-mode)))
+           (emacs-lisp-mode . enable-paredit-mode)
+           (clojure-mode . enable-paredit-mode)))
 #+end_src
 
 * Presentations
