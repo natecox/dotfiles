@@ -11,88 +11,76 @@
 
 * Setup
 
+** Initialization
+
 #+begin_src emacs-lisp
+  (require 'package)
+
   (setq lexical-binding t)
-
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
   (setq gc-cons-threshold 100000000)
   (setq auto-window-vscroll nil)
+  (setq max-lisp-eval-depth 2000)
+  (setq package-enable-at-startup nil)
 
-  (straight-use-package 'use-package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+  (add-to-list 'package-archives '("ublt" . "https://elpa.ubolonton.org/packages/") t)
 
-  (use-package diminish :straight t)
+  (when (< emacs-major-version 27)
+    (package-initialize))
+#+end_src
+
+** use-package
+
+use-package is the basis for how packages will be installed and configured going forwards. It provides a sane, stable
+way to encapsulate package configs into an easily digestible format.
+
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+  (package-install 'use-package))
+#+end_src
+
+#+RESULTS:
+: Package ‘use-package’ installed.
+
+** COMMENT Quelpa
+
+In the case where a package needs to be built from source locally, quelpa can grab from many sources and do this for us.
+
+It also has a =use-package= integration so we don't need to maintain multiple config styles.
+
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'quelpa)
+    (with-temp-buffer
+      (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+      (eval-buffer)
+      (quelpa-self-upgrade)))
+
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package)
+#+end_src
+
+** Important /early/ config
+
+Items that feel like they should belong in a dedicated section later, but are critical to load early.
+
+#+begin_src emacs-lisp
+  (use-package diminish :ensure t)
 
   (use-package exec-path-from-shell
-    :straight t
+    :ensure t
     :config
     (setenv "SHELL" "/usr/local/bin/zsh")
     (setq exec-path-from-shell-variables '("PATH"))
     (exec-path-from-shell-initialize))
 #+end_src
 
-* N Λ N O
-
-I really like what the *N Λ N O* project is doing with Emacs. Lets start with their stuff and then work outwards.
-
-#+begin_src emacs-lisp
-  (defun nc/apply-nano-theme (appearance)
-    "Load theme, taking current system APPEARANCE into consideration."
-    (mapc #'disable-theme custom-enabled-themes)
-    (pcase appearance
-      ('light (nano-light))
-      ('dark (nano-dark))))
-
-  (straight-use-package
-   '(nano-emacs :type git :host github :repo "rougier/nano-emacs"))
-
-  (use-package nano-base-colors)
-  (use-package nano-faces)
-  (use-package nano-bindings)
-  (use-package nano-session)
-  ;; (use-package nano-layout)
-  (use-package nano-writer)
-
-  (use-package nano-defaults
-    :config
-    (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (if (fboundp 'tool-bar-mode) (tool-bar-mode -1)))
-
-  ;; (use-package nano-modeline
-  ;;   :straight '(nano-modeline :type git :host github :repo "rougier/nano-modeline")
-  ;;   :config (nano-modeline-mode))
-
-  (use-package nano-theme
-    :straight '(nano-theme :type git :host github :repo "rougier/nano-theme" :fork "natecox/nano-theme")
-
-    :config
-
-    (custom-set-faces '(default ((t (:font "JetBrains Mono 13")))))
-
-    ;; If emacs has been built with system appearance detection
-    ;; add a hook to change the theme to match the system
-    (if (boundp 'ns-system-appearance-change-functions)
-        (add-hook 'ns-system-appearance-change-functions #'nc/apply-nano-theme)
-      (nano-light)))
-
-  (use-package nano-agenda
-    :straight '(nano-agenda :type git :host github :repo "rougier/nano-agenda"))
-#+end_src
-
 ** Additional sane defaults
-
-This covers config not directly covered by *N Λ N O*.
 
 #+begin_src emacs-lisp
   (use-package emacs
@@ -103,6 +91,145 @@ This covers config not directly covered by *N Λ N O*.
 
     (setq user-full-name "Nathan Cox"
           user-mail-address "ncox@covermymeds.com")
+
+    ;; No startup  screen
+    (setq inhibit-startup-screen t)
+
+    ;; No startup message
+    (setq inhibit-startup-message t)
+    (setq inhibit-startup-echo-area-message t)
+
+    ;; No message in scratch buffer
+    (setq initial-scratch-message nil)
+
+    ;; Initial buffer
+    (setq initial-buffer-choice nil)
+
+    ;; No frame title
+    (setq frame-title-format nil)
+
+    ;; No file dialog
+    (setq use-file-dialog nil)
+
+    ;; No dialog box
+    (setq use-dialog-box nil)
+
+    ;; No popup windows
+    (setq pop-up-windows nil)
+
+    ;; No empty line indicators
+    (setq indicate-empty-lines nil)
+
+    ;; No cursor in inactive windows
+    (setq cursor-in-non-selected-windows nil)
+
+    ;; Text mode is initial mode
+    (setq initial-major-mode 'text-mode)
+
+    ;; Text mode is default major mode
+    (setq default-major-mode 'text-mode)
+
+    ;; Moderate font lock
+    (setq font-lock-maximum-decoration nil)
+
+    ;; No limit on font lock
+    (setq font-lock-maximum-size nil)
+
+    ;; No line break space points
+    (setq auto-fill-mode nil)
+
+    ;; Fill column at 80
+    (setq fill-column 80)
+
+    ;; No confirmation for visiting non-existent files
+    (setq confirm-nonexistent-file-or-buffer nil)
+
+    ;; Completion style, see
+    ;; gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html
+    (setq completion-styles '(basic substring))
+
+    ;; Use RET to open org-mode links, including those in quick-help.org
+    (setq org-return-follows-link t)
+
+    ;; Mouse active in terminal
+    (unless (display-graphic-p)
+      (xterm-mouse-mode 1)
+      (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+      (global-set-key (kbd "<mouse-5>") 'scroll-up-line))
+
+    ;; No scroll bars
+    (if (fboundp 'scroll-bar-mode) (set-scroll-bar-mode nil))
+
+    ;; No toolbar
+    (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+
+    ;; No menu bar
+    (if (display-graphic-p)
+        (menu-bar-mode t) ;; When nil, focus problem on OSX
+      (menu-bar-mode -1))
+
+    ;; Navigate windows using shift+direction
+    (windmove-default-keybindings)
+
+    ;; Mac specific
+    (when (eq system-type 'darwin)
+      (setq ns-use-native-fullscreen t
+            mac-option-key-is-meta nil
+            mac-command-key-is-meta t
+            mac-command-modifier 'meta
+            mac-option-modifier 'super
+            mac-use-title-bar nil))
+
+    ;; Make sure clipboard works properly in tty mode on OSX
+    (defun copy-from-osx ()
+      (shell-command-to-string "pbpaste"))
+    (defun paste-to-osx (text &optional push)
+      (let ((process-connection-type nil))
+        (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+          (process-send-string proc text)
+          (process-send-eof proc))))
+    (when (and (not (display-graphic-p))
+               (eq system-type 'darwin))
+      (setq interprogram-cut-function 'paste-to-osx)
+      (setq interprogram-paste-function 'copy-from-osx))
+
+    ;; y/n for  answering yes/no questions
+    (fset 'yes-or-no-p 'y-or-n-p)
+
+    ;; Size of temporary buffers
+    (temp-buffer-resize-mode)
+    (setq temp-buffer-max-height 8)
+
+    ;; Minimum window height
+    (setq window-min-height 1)
+
+    ;; Buffer encoding
+    (prefer-coding-system       'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (set-language-environment   'utf-8)
+
+    ;; Unique buffer names
+    (require 'uniquify)
+    (setq uniquify-buffer-name-style 'reverse
+          uniquify-separator " • "
+          uniquify-after-kill-buffer-p t
+          uniquify-ignore-buffers-re "^\\*")
+
+    ;; Default shell in term
+    (unless (eq system-type 'windows-nt)
+      (setq-default shell-file-name "/bin/zsh")
+      (setq explicit-shell-file-name "/bin/zsh"))
+
+    ;; Kill term buffer when exiting
+    (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+      (if (memq (process-status proc) '(signal exit))
+          (let ((buffer (process-buffer proc)))
+            ad-do-it
+            (kill-buffer buffer))
+        ad-do-it))
+    (ad-activate 'term-sentinel)
 
     ;; write over selected text on input... like all modern editors do
     (delete-selection-mode t)
@@ -127,10 +254,6 @@ This covers config not directly covered by *N Λ N O*.
     (display-time-mode -1)
     (setq column-number-mode t)
 
-    ;; Mac specific
-    (when (eq system-type 'darwin)
-      (setq mac-option-modifier 'super))
-
     (setq insert-directory-program "gls" dired-use-ls-dired t)
     (setq dired-listing-switches "-al --group-directories-first")
     (setq ring-bell-function 'ignore))
@@ -148,6 +271,32 @@ This covers config not directly covered by *N Λ N O*.
     :config
     (add-to-list 'recentf-exclude "\\elpa")
     (add-to-list 'recentf-exclude "^/private"))
+#+end_src
+
+* Look and feel
+
+** Theme
+
+#+begin_src emacs-lisp
+  (defun nc/respect-sytem-theme (appearance)
+    "Load theme, taking current system APPEARANCE into consideration."
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (modus-themes-load-operandi))
+      ('dark (modus-themes-load-vivendi))))
+
+  (use-package modus-themes
+    :ensure t
+
+    :config
+
+    (custom-set-faces '(default ((t (:font "JetBrains Mono 13")))))
+
+    ;; If emacs has been built with system appearance detection
+    ;; add a hook to change the theme to match the system
+    (if (boundp 'ns-system-appearance-change-functions)
+        (add-hook 'ns-system-appearance-change-functions #'nc/respect-sytem-theme)
+      (modus-themes-load-operandi)))
 #+end_src
 
 ** Indentation
@@ -174,12 +323,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; indent with tabs, align with spaces where enabled
   (use-package smart-tabs-mode
-    :straight t
+    :ensure t
     :config (smart-tabs-insinuate 'ruby))
 
   ;; add a visual intent guide
   (use-package highlight-indent-guides
-    :straight t
+    :ensure t
     :hook (prog-mode . highlight-indent-guides-mode)
     :custom
     (highlight-indent-guides-method 'character)
@@ -191,24 +340,24 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+begin_src emacs-lisp
   (use-package undo-tree
-    :straight t
+    :ensure t
     :bind (:map undo-tree-map ("C-x r" . nil)) ; resolves map conflict w/ discover.el
     :config (global-undo-tree-mode))
 
   (use-package expand-region
-    :straight t
+    :ensure t
     :diminish
     :bind (("s-e" . #'er/expand-region)))
 
   (use-package change-inner
-    :straight t
+    :ensure t
     :diminish
     :after expand-region
     :bind (("s-i" . #'change-inner)
            ("s-o" . #'change-outer)))
 
   (use-package drag-stuff
-    :straight t
+    :ensure t
     :diminish
     :bind (("<M-down>" . drag-stuff-down)
            ("<M-up>" . drag-stuff-up)
@@ -229,7 +378,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+BEGIN_SRC emacs-lisp
   (use-package zoom
-    :straight t
+    :ensure t
     :diminish
     :bind ("C-x +" . zoom)
     :config (zoom-mode t))
@@ -241,7 +390,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold))))
 
   (use-package ibuffer-vc
-    :straight t
+    :ensure t
     :hook (ibuffer . (lambda ()
                        (ibuffer-vc-set-filter-groups-by-vc-root)
                        (unless (eq ibuffer-sorting-mode 'alphabetic)
@@ -255,7 +404,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
                              (vc-relative-file)))))
 
   (use-package ace-window
-    :straight t
+    :ensure t
     :bind ("M-o" . ace-window))
 #+END_SRC
 
@@ -264,7 +413,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+BEGIN_SRC emacs-lisp
   ;; jump to character on screen
   (use-package avy
-    :straight t
+    :ensure t
     :bind (("s-t" . 'avy-goto-char)
            ("s-T" . 'avy-goto-line)
            ("C-c C-j" . 'avy-resume))
@@ -272,27 +421,27 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; better predictions based on common usage
   (use-package prescient
-    :straight t
+    :ensure t
     :config (prescient-persist-mode t))
 
   ;; better interface for selecting items from a list
   (use-package selectrum
-    :straight t
+    :ensure t
     :custom (selectrum-extend-current-candidate-highlight t)
     :config (selectrum-mode t))
 
   (use-package selectrum-prescient
-    :straight t
+    :ensure t
     :config (selectrum-prescient-mode t))
 
   ;; improved UX for searching in a buffer
   (use-package ctrlf
-    :straight t
+    :ensure t
     :config (ctrlf-mode t))
 
   ;; add annotations to minibuffers
   (use-package marginalia
-    :straight t
+    :ensure t
     :bind (:map minibuffer-local-map ("C-M-a" . marginalia-cycle))
     :custom (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
     :init
@@ -301,17 +450,17 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
                 (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit)))))
 
   (use-package consult
-    :straight t)
+    :ensure t)
 #+END_SRC
 
 * Improving discoverability
 
 #+begin_src emacs-lisp
   (use-package hydra
-    :straight t)
+    :ensure t)
 
   (use-package major-mode-hydra
-    :straight t
+    :ensure t
     :after hydra
     :diminish
     :bind ([s-return] . major-mode-hydra))
@@ -319,12 +468,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package pretty-hydra)
 
   (use-package discover
-    :straight t
+    :ensure t
     :diminish
     :config (global-discover-mode 1))
 
   (use-package which-key
-    :straight t
+    :ensure t
     :diminish
     :config (which-key-mode))
 #+END_SRC
@@ -360,7 +509,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
                    (org-insert-heading below?)))))))
 
   (use-package org
-    :straight (:type built-in)
     :bind (("C-c a" . org-agenda)
            ("C-c l" . org-store-link)
            ("C-c c" . org-capture)
@@ -401,7 +549,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Better capture templates
 
 #+begin_src emacs-lisp
-  (use-package doct :straight t)
+  (use-package doct :ensure t)
 #+end_src
 
 ** Babel additions
@@ -417,11 +565,11 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; enable mermaid diagram blocks
   (use-package mermaid-mode
-    :straight t
+    :ensure t
     :custom (mermaid-mmdc-location "~/.asdf/shims/mmdc"))
 
   (use-package ob-mermaid
-    :straight t
+    :ensure t
     :custom (ob-mermaid-cli-path "~/.asdf/shims/mmdc"))
 #+end_src
 
@@ -429,17 +577,17 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+begin_src emacs-lisp
   (use-package org-contrib
-    :straight t)
+    :ensure t)
 
   ;; add jira format export
   (use-package ox-jira
-    :straight t
+    :ensure t
     :after org
     :config (eval-after-load "org" '(progn (require 'ox-jira))))
 
   ;; add github flavored markdown export
   (use-package ox-gfm
-    :straight t
+    :ensure t
     :config (eval-after-load "org" '(require 'ox-gfm nil t)))
 
   ;; add confluence formatted export
@@ -454,7 +602,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+begin_src emacs-lisp
   (use-package vterm
-    :straight t)
+    :ensure t)
 #+end_src
 
 * Programming
@@ -467,31 +615,31 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            (prog-mode . flyspell-prog-mode)))
 
   (use-package company
-    :straight t
+    :ensure t
     :diminish
     :config (global-company-mode))
 
   (use-package company-prescient
-    :straight t
+    :ensure t
     :after prescient
     :config (company-prescient-mode))
 
   (use-package flycheck
-    :straight t
+    :ensure t
     :diminish
     :config (global-flycheck-mode))
 
   (use-package flycheck-package
-    :straight t
+    :ensure t
     :after flycheck)
 
   (use-package yasnippet
-    :straight t
+    :ensure t
     :config
     (yas-global-mode 1))
 
   (use-package yasnippet-snippets
-    :straight t
+    :ensure t
     :after yasnippet)
 #+end_src
 
@@ -505,7 +653,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; add ansi support for compilation buffers
   (use-package xterm-color
-    :straight t
+    :ensure t
     :custom (compilation-environment '("TERM=xterm-256color"))
     :config
     (defun nc/advise-compilation-filter (f proc string)
@@ -514,19 +662,19 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   ;; match paired brackets with colors
   (use-package rainbow-delimiters
-    :straight t
+    :ensure t
     :hook (prog-mode . rainbow-delimiters-mode))
 
   ;; more consistant syntax highlighting
   (use-package tree-sitter
-    :straight t
+    :ensure t
     :diminish
     :hook ((ruby-mode . tree-sitter-hl-mode)
            (rustic-mode . tree-sitter-hl-mode))
     :config (global-tree-sitter-mode))
 
   (use-package tree-sitter-langs
-    :straight t
+    :ensure t
     :after tree-sitter)
 #+end_src
 
@@ -534,14 +682,14 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :straight t
+    :ensure t
     :hook (lsp-enable-which-key-integration)
     :commands lsp
     :custom (lsp-keymap-prefix "C-c M-k")
     :config (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release"))
 
   (use-package lsp-ui
-    :straight t
+    :ensure t
     :after lsp-mode
     :hook (lsp-mode . lsp-ui-mode)
     :commands lsp-ui-mode)
@@ -553,7 +701,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :straight t
+    :ensure t
     :bind (("C-c g s" . magit-status))
     :hook ((git-commit-mode . (lambda () (set-fill-column 72))))
     :config
@@ -561,12 +709,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
           git-commit-summary-max-length 50))
 
   (use-package forge
-    :straight t
+    :ensure t
     :after magit
     :config (push '("git.innova-partners.com" "git.innova-partners.com/api/v3" "git.innova-partners.com" forge-github-repository) forge-alist))
 
   (use-package diff-hl
-    :straight t
+    :ensure t
     :after magit
     :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
@@ -577,7 +725,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :diminish
-    :straight t
+    :ensure t
     :bind-keymap ("s-p" . projectile-command-map)
     :custom
     (projectile-project-search-path (cddr (directory-files "~/src" t)))
@@ -588,10 +736,10 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (projectile-mode t))
 
   (use-package perspective
-    :straight t :config (persp-mode))
+    :ensure t :config (persp-mode))
 
   (use-package persp-projectile
-    :straight t
+    :ensure t
     :after perspective)
 #+END_SRC
 
@@ -606,7 +754,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :custom (js-indent-level 2))
 
   ;; (use-package web-mode
-  ;;   :straight `(web-mode :type git :host github :repo "fxbois/web-mode" :commit "3ff506aae50a47b277f2b95ff7b7a7c596664e6a")
+  ;;   :ensure t
 
   ;;   :custom
   ;;   (web-mode-markup-indent-offset 2)
@@ -629,20 +777,20 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   (use-package emmet-mode
     :hook (html-mode . emmet-mode)
-    :straight t)
+    :ensure t)
 #+end_src
 
 *** Clojure
 
 #+begin_src emacs-lisp
   (use-package clojure-mode
-    :straight t
+    :ensure t
     :hook ((clojure-mode . lsp)
            (clojurescript-mode . lsp)
            (clojurec-mode . lsp)))
 
   (use-package cider
-    :straight '(cider :tag "v1.2.0"))
+    :ensure t)
 #+end_src
 
 *** Ruby
@@ -652,19 +800,19 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :hook (ruby-mode . lsp))
 
   (use-package bundler
-    :straight t)
+    :ensure t)
 
   (use-package yard-mode
-    :straight t
+    :ensure t
     :after ruby-mode
     :hook ruby-mode)
 
   (use-package inf-ruby
-    :straight t
+    :ensure t
     :config (setenv "PAGER" (executable-find "cat")))
 
   (use-package rspec-mode
-    :straight t
+    :ensure t
     :hook ((after-init . inf-ruby-switch-setup)
            (compilation-filter-hook . inf-ruby-auto-enter))
     :custom
@@ -672,14 +820,14 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (rspec-primary-source-dirs '("app")))
 
   (use-package rubocop
-    :straight t)
+    :ensure t)
 #+END_SRC
 
 *** Python
 
 #+begin_src emacs-lisp
   (use-package elpy
-    :straight t
+    :ensure t
     :defer t
     :init (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
@@ -688,7 +836,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-    :straight t
+    :ensure t
     :hook (yaml-mode . lsp)
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
@@ -697,7 +845,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+begin_src emacs-lisp
   (use-package paredit
-    :straight t
+    :ensure t
     :hook ((lisp-mode . enable-paredit-mode)
            (emacs-lisp-mode . enable-paredit-mode)
            (clojure-mode . enable-paredit-mode)))
@@ -707,7 +855,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+begin_src emacs-lisp
   (use-package org-tree-slide
-    :straight t)
+    :ensure t)
 #+end_src
 
 * CoverMyEmacs
