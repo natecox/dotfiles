@@ -17,3 +17,14 @@
                ("Interviews" :keys "i" :file "interviews.org" :children
                 (("MINASWAN" :keys "m" :template-file "capture-templates/interviews/minaswan.orgcaptmpl")))))))
 #+end_src
+
+* CoverMyEmacs
+
+#+begin_src emacs-lisp
+  (use-package covermyemacs
+    :bind ("C-c i" . covermyemacs)
+    :custom
+    (covermyemacs-username "ncox")
+    (covermyemacs-pdev-directory "~/src/platform/dev/")
+    :load-path "~/src/natecox/covermyemacs/lisp/")
+#+end_src

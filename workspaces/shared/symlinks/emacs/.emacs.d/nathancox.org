@@ -790,7 +790,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            (clojurec-mode . lsp)))
 
   (use-package cider
-    :ensure t)
+    :ensure t
+    :custom (cider-auto-test-mode t))
 #+end_src
 
 *** Ruby
@@ -856,15 +857,4 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+begin_src emacs-lisp
   (use-package org-tree-slide
     :ensure t)
-#+end_src
-
-* CoverMyEmacs
-
-#+begin_src emacs-lisp
-  (use-package covermyemacs
-    :bind ("C-c i" . covermyemacs)
-    :custom
-    (covermyemacs-username "ncox")
-    (covermyemacs-pdev-directory "~/src/platform/dev/")
-    :load-path "~/src/natecox/covermyemacs/lisp/")
 #+end_src
