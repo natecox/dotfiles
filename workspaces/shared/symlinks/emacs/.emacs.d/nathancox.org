@@ -380,28 +380,35 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package zoom
     :ensure t
     :diminish
-    :bind ("C-x +" . zoom)
     :config (zoom-mode t))
 
   (use-package ibuffer
     :commands ibuffer-find-file
-    :bind ("C-x C-b" . ibuffer)
     :custom
     (ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold))))
 
-  (use-package ibuffer-vc
+  ;; (use-package ibuffer-vc
+  ;;   :ensure t
+  ;;   :hook (ibuffer . (lambda ()
+  ;;                      (ibuffer-vc-set-filter-groups-by-vc-root)
+  ;;                      (unless (eq ibuffer-sorting-mode 'alphabetic)
+  ;;                        (ibuffer-do-sort-by-alphabetic))))
+  ;;   :custom
+  ;;   (ibuffer-formats '((mark modified read-only " "
+  ;;                            (name 18 18 :left :elide) " "
+  ;;                            (size 9 -1 :right) " "
+  ;;                            (mode 16 16 :left :elide) " "
+  ;;                            (vc-status 16 16 :left) " "
+  ;;                            (vc-relative-file)))))
+
+  (use-package perspective
     :ensure t
-    :hook (ibuffer . (lambda ()
-                       (ibuffer-vc-set-filter-groups-by-vc-root)
-                       (unless (eq ibuffer-sorting-mode 'alphabetic)
-                         (ibuffer-do-sort-by-alphabetic))))
-    :custom
-    (ibuffer-formats '((mark modified read-only " "
-                             (name 18 18 :left :elide) " "
-                             (size 9 -1 :right) " "
-                             (mode 16 16 :left :elide) " "
-                             (vc-status 16 16 :left) " "
-                             (vc-relative-file)))))
+
+    :bind (("C-x b" . 'persp-switch-to-buffer*)
+           ("C-x C-b" . 'persp-ibuffer)
+           ("C-x k" . 'persp-kill-buffer*))
+
+    :config (persp-mode))
 
   (use-package ace-window
     :ensure t
@@ -734,9 +741,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (defadvice projectile-project-root (around ignore-remote first activate)
       (unless (file-remote-p default-directory) ad-do-it))
     (projectile-mode t))
-
-  (use-package perspective
-    :ensure t :config (persp-mode))
 
   (use-package persp-projectile
     :ensure t
