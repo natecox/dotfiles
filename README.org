@@ -1,0 +1,14 @@
+* Nate Cox's Dotfiles
+
+** Preamble
+My personal dotfiles repo. I used to use fancy dotfile manager programs but I'm too cool for that now.
+
+** Installation
+
+#+begin_src bash
+git clone https://github.com/natecox/dotfiles ~/.dotfiles
+caffeinate ~/.dotfiles/setup.sh
+#+end_src
+
+*Note*: it may be necessary to log in to the App Store before running, as `brew bundle` will invoke [[https://github.com/mas-cli/mas][mas]] which requires
+it.

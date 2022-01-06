@@ -1,2 +1,0 @@
-alias de='docker exec -e COLUMNS="$(tput cols)" -e LINES="$(tput lines)" -ti'
-alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.Command}}\t{{.Image}}"'
