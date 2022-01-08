@@ -528,6 +528,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
     (org-default-notes-file (concat org-directory "/notes.org"))
     (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+    (org-refile-use-outline-path 'file)
+    (org-outlne-path-complete-in-steps nil)
     (org-startup-indented t)
     (org-startup-folded 'content)
     (org-blank-before-new-entry '((heading . t) (plain-list-item . nil)))
