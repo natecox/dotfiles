@@ -86,70 +86,43 @@ Items that feel like they should belong in a dedicated section later, but are cr
   (use-package emacs
     :hook ((before-save . delete-trailing-whitespace))
     :bind (("s-SPC" . cycle-spacing))
-    :custom ((ispell-program-name "aspell"))
+
+    :custom
+    (auto-fill-mode nil)
+    (completion-styles '(basic substring) "gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html")
+    (confirm-nonexistent-file-or-buffer nil)
+    (cursor-in-non-selected-windows nil)
+    (custom-file null-device "use a temp file as a placeholder")
+    (custom-safe-themes t "mark all themes as safe, since we can't persist now")
+    (default fill-column 120)
+    (default-major-mode 'text-mode)
+    (dired-listing-switches "-al --group-directories-first")
+    (enable-local-variables :all "fix =defvar= warnings")
+    (fill-column 80)
+    (font-lock-maximum-decoration nil)
+    (font-lock-maximum-size nil)
+    (frame-title-format nil)
+    (indicate-empty-lines nil)
+    (inhibit-startup-echo-area-message t)
+    (inhibit-startup-message t)
+    (inhibit-startup-screen t)
+    (initial-buffer-choice nil)
+    (initial-major-mode 'text-mode)
+    (initial-scratch-message nil)
+    (insert-directory-program "gls" dired-use-ls-dired t)
+    (ispell-program-name "aspell")
+    (org-return-follows-link t)
+    (pop-up-windows nil)
+    (ring-bell-function 'ignore)
+    (sentence-end-double-space nil)
+    (temp-buffer-max-height 8)
+    (use-dialog-box nil)
+    (use-file-dialog nil)
+    (user-full-name "Nathan Cox")
+    (user-mail-address "nate@natecox.dev")
+    (window-min-height 1)
+
     :config
-
-    (setq user-full-name "Nathan Cox"
-          user-mail-address "ncox@covermymeds.com")
-
-    ;; No startup  screen
-    (setq inhibit-startup-screen t)
-
-    ;; No startup message
-    (setq inhibit-startup-message t)
-    (setq inhibit-startup-echo-area-message t)
-
-    ;; No message in scratch buffer
-    (setq initial-scratch-message nil)
-
-    ;; Initial buffer
-    (setq initial-buffer-choice nil)
-
-    ;; No frame title
-    (setq frame-title-format nil)
-
-    ;; No file dialog
-    (setq use-file-dialog nil)
-
-    ;; No dialog box
-    (setq use-dialog-box nil)
-
-    ;; No popup windows
-    (setq pop-up-windows nil)
-
-    ;; No empty line indicators
-    (setq indicate-empty-lines nil)
-
-    ;; No cursor in inactive windows
-    (setq cursor-in-non-selected-windows nil)
-
-    ;; Text mode is initial mode
-    (setq initial-major-mode 'text-mode)
-
-    ;; Text mode is default major mode
-    (setq default-major-mode 'text-mode)
-
-    ;; Moderate font lock
-    (setq font-lock-maximum-decoration nil)
-
-    ;; No limit on font lock
-    (setq font-lock-maximum-size nil)
-
-    ;; No line break space points
-    (setq auto-fill-mode nil)
-
-    ;; Fill column at 80
-    (setq fill-column 80)
-
-    ;; No confirmation for visiting non-existent files
-    (setq confirm-nonexistent-file-or-buffer nil)
-
-    ;; Completion style, see
-    ;; gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html
-    (setq completion-styles '(basic substring))
-
-    ;; Use RET to open org-mode links, including those in quick-help.org
-    (setq org-return-follows-link t)
 
     ;; Mouse active in terminal
     (unless (display-graphic-p)
@@ -198,10 +171,6 @@ Items that feel like they should belong in a dedicated section later, but are cr
 
     ;; Size of temporary buffers
     (temp-buffer-resize-mode)
-    (setq temp-buffer-max-height 8)
-
-    ;; Minimum window height
-    (setq window-min-height 1)
 
     ;; Buffer encoding
     (prefer-coding-system       'utf-8)
@@ -209,13 +178,6 @@ Items that feel like they should belong in a dedicated section later, but are cr
     (set-terminal-coding-system 'utf-8)
     (set-keyboard-coding-system 'utf-8)
     (set-language-environment   'utf-8)
-
-    ;; Unique buffer names
-    (require 'uniquify)
-    (setq uniquify-buffer-name-style 'reverse
-          uniquify-separator " • "
-          uniquify-after-kill-buffer-p t
-          uniquify-ignore-buffers-re "^\\*")
 
     ;; Default shell in term
     (unless (eq system-type 'windows-nt)
@@ -234,14 +196,6 @@ Items that feel like they should belong in a dedicated section later, but are cr
     ;; write over selected text on input... like all modern editors do
     (delete-selection-mode t)
 
-    ;; use a reasonable line length
-    (setq-default fill-column 120)
-
-    ;; Don't persist a custom file, this bites me more than it helps
-    (setq custom-file null-device)         ; use a temp file as a placeholder
-    (setq custom-safe-themes t)            ; mark all themes as safe, since we can't persist now
-    (setq enable-local-variables :all)     ; fix =defvar= warnings
-
     ;; stop emacs from littering the file system with backup files
     (setq make-backup-files nil
           auto-save-default nil
@@ -252,11 +206,7 @@ Items that feel like they should belong in a dedicated section later, but are cr
 
     ;; clean up the mode line
     (display-time-mode -1)
-    (setq column-number-mode t)
-
-    (setq insert-directory-program "gls" dired-use-ls-dired t)
-    (setq dired-listing-switches "-al --group-directories-first")
-    (setq ring-bell-function 'ignore))
+    (setq column-number-mode t))
 
   ;; customize tramp default behaviour
   (use-package tramp
@@ -377,6 +327,13 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Buffer management
 
 #+BEGIN_SRC emacs-lisp
+  (use-package uniquify
+    :custom
+    (uniquify-buffer-name-style 'reverse)
+    (uniquify-separator " • ")
+    (uniquify-after-kill-buffer-p t)
+    (uniquify-ignore-buffers-re "^\\*"))
+
   (use-package zoom
     :ensure t
     :diminish
