@@ -11,3 +11,5 @@
 	tool = opendiff
 [include]
 	path = ~/.gitconfig.local
+[init]
+	defaultBranch = main
