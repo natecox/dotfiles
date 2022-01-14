@@ -31,20 +31,6 @@
     (package-initialize))
 #+end_src
 
-** use-package
-
-use-package is the basis for how packages will be installed and configured going forwards. It provides a sane, stable
-way to encapsulate package configs into an easily digestible format.
-
-#+begin_src emacs-lisp
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-  (package-install 'use-package))
-#+end_src
-
-#+RESULTS:
-: Package ‘use-package’ installed.
-
 ** COMMENT Quelpa
 
 In the case where a package needs to be built from source locally, quelpa can grab from many sources and do this for us.
@@ -65,11 +51,25 @@ It also has a =use-package= integration so we don't need to maintain multiple co
   (require 'quelpa-use-package)
 #+end_src
 
-** Important /early/ config
+** use-package
 
-Items that feel like they should belong in a dedicated section later, but are critical to load early.
+use-package is the basis for how packages will be installed and configured going forwards. It provides a sane, stable
+way to encapsulate package configs into an easily digestible format.
 
 #+begin_src emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (use-package auto-package-update
+    :ensure t
+    :custom
+    (auto-package-update-prompt-before-update t)
+    (auto-package-update-hide-results t)
+
+    :config
+    (auto-package-update-maybe))
+
   (use-package diminish :ensure t)
 
   (use-package exec-path-from-shell
@@ -88,20 +88,15 @@ Items that feel like they should belong in a dedicated section later, but are cr
     :bind (("s-SPC" . cycle-spacing))
 
     :custom
-    (auto-fill-mode nil)
     (completion-styles '(basic substring) "gnu.org/software/emacs/manual/html_node/emacs/Completion-Styles.html")
     (confirm-nonexistent-file-or-buffer nil)
     (cursor-in-non-selected-windows nil)
-    (custom-file null-device "use a temp file as a placeholder")
+    (custom-file (concat user-emacs-directory "custom.el"))
     (custom-safe-themes t "mark all themes as safe, since we can't persist now")
-    (default fill-column 120)
-    (default-major-mode 'text-mode)
     (dired-listing-switches "-al --group-directories-first")
     (enable-local-variables :all "fix =defvar= warnings")
-    (fill-column 80)
     (font-lock-maximum-decoration nil)
     (font-lock-maximum-size nil)
-    (frame-title-format nil)
     (indicate-empty-lines nil)
     (inhibit-startup-echo-area-message t)
     (inhibit-startup-message t)
@@ -109,7 +104,6 @@ Items that feel like they should belong in a dedicated section later, but are cr
     (initial-buffer-choice nil)
     (initial-major-mode 'text-mode)
     (initial-scratch-message nil)
-    (insert-directory-program "gls" dired-use-ls-dired t)
     (ispell-program-name "aspell")
     (pop-up-windows nil)
     (ring-bell-function 'ignore)
@@ -123,6 +117,13 @@ Items that feel like they should belong in a dedicated section later, but are cr
     (window-min-height 1)
 
     :config
+
+    (setq-default fill-column 120)
+    (setq-default major-mode 'text-mode)
+    (auto-fill-mode nil)
+    (setq frame-title-format nil)
+    (setq insert-directory-program "gls" dired-use-ls-dired t)
+
 
     ;; Mouse active in terminal
     (unless (display-graphic-p)
@@ -501,6 +502,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-latex-compiler "xelatex")
     (org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
     (org-outline-path-complete-in-steps nil)
+    (org-use-property-inheritance t)
     (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
     (org-refile-use-outline-path 'file)
     (org-return-follows-link t)
