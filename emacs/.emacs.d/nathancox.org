@@ -102,10 +102,7 @@ way to encapsulate package configs into an easily digestible format.
     (inhibit-startup-message t)
     (inhibit-startup-screen t)
     (initial-buffer-choice nil)
-    (initial-major-mode 'text-mode)
-    (initial-scratch-message nil)
     (ispell-program-name "aspell")
-    (pop-up-windows nil)
     (ring-bell-function 'ignore)
     (sentence-end-double-space nil)
     (temp-buffer-max-height 8)
@@ -113,13 +110,11 @@ way to encapsulate package configs into an easily digestible format.
     (use-file-dialog nil)
     (user-full-name "Nathan Cox")
     (user-mail-address "nate@natecox.dev")
-
     (window-min-height 1)
 
     :config
 
     (setq-default fill-column 120)
-    (setq-default major-mode 'text-mode)
     (auto-fill-mode nil)
     (setq frame-title-format nil)
     (setq insert-directory-program "gls" dired-use-ls-dired t)
@@ -328,17 +323,17 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Buffer management
 
 #+BEGIN_SRC emacs-lisp
-  (use-package uniquify
-    :custom
-    (uniquify-buffer-name-style 'reverse)
-    (uniquify-separator " • ")
-    (uniquify-after-kill-buffer-p t)
-    (uniquify-ignore-buffers-re "^\\*"))
+  ;; (use-package uniquify
+  ;;   :custom
+  ;;   (uniquify-buffer-name-style 'reverse)
+  ;;   (uniquify-separator " • ")
+  ;;   (uniquify-after-kill-buffer-p t)
+  ;;   (uniquify-ignore-buffers-re "^\\*"))
 
-  (use-package zoom
-    :ensure t
-    :diminish
-    :config (zoom-mode t))
+  ;; (use-package zoom
+  ;;   :ensure t
+  ;;   :diminish
+  ;;   :config (zoom-mode t))
 
   (use-package ibuffer
     :commands ibuffer-find-file
