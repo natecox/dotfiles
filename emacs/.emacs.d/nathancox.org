@@ -61,15 +61,6 @@ way to encapsulate package configs into an easily digestible format.
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (use-package auto-package-update
-    :ensure t
-    :custom
-    (auto-package-update-prompt-before-update t)
-    (auto-package-update-hide-results t)
-
-    :config
-    (auto-package-update-maybe))
-
   (use-package diminish :ensure t)
 
   (use-package exec-path-from-shell
