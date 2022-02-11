@@ -743,6 +743,21 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :hook (html-mode . emmet-mode)
     :ensure t)
 #+end_src
+*** LISP
+
+#+begin_src emacs-lisp
+  (use-package paredit
+    :ensure t
+    :hook ((lisp-mode . enable-paredit-mode)
+           (emacs-lisp-mode . enable-paredit-mode)
+           (clojure-mode . enable-paredit-mode)))
+
+  (use-package rainbow-blocks
+    :ensure t
+    :hook ((emacs-lisp-mode . rainbow-blocks-mode)
+           (clojure-mode . rainbow-blocks-mode)
+           (elisp-mode . rainbow-blocks-mode)))
+#+end_src
 
 *** Clojure
 
@@ -806,15 +821,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
 
-** ParEdit mode
-
-#+begin_src emacs-lisp
-  (use-package paredit
-    :ensure t
-    :hook ((lisp-mode . enable-paredit-mode)
-           (emacs-lisp-mode . enable-paredit-mode)
-           (clojure-mode . enable-paredit-mode)))
-#+end_src
 
 * Presentations
 
