@@ -630,7 +630,9 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   ;; match paired brackets with colors
   (use-package rainbow-delimiters
     :ensure t
-    :hook (prog-mode . rainbow-delimiters-mode))
+    :hook (prog-mode . (lambda ()
+                         (unless (derived-mode-p 'lisp-mode 'emacs-lisp-mode 'clojure-mode)
+                           (rainbow-delimiters-mode)))))
 
   ;; more consistant syntax highlighting
   (use-package tree-sitter
