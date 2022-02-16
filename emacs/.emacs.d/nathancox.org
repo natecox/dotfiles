@@ -212,16 +212,41 @@ way to encapsulate package configs into an easily digestible format.
 
 * Look and feel
 
+** Ligatures
+#+begin_src emacs-lisp
+  (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+                 (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+                 (36 . ".\\(?:>\\)")
+                 (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+                 (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+                 (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+                 (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+                 (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+                 (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+                 (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+                 (48 . ".\\(?:x[a-zA-Z]\\)")
+                 (58 . ".\\(?:::\\|[:=]\\)")
+                 (59 . ".\\(?:;;\\|;\\)")
+                 (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+                 (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+                 (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+                 (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+                 (91 . ".\\(?:]\\)")
+                 (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+                 (94 . ".\\(?:=\\)")
+                 (119 . ".\\(?:ww\\)")
+                 (123 . ".\\(?:-\\)")
+                 (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+                 (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+                 )
+               ))
+    (dolist (char-regexp alist)
+      (set-char-table-range composition-function-table (car char-regexp)
+                            `([,(cdr char-regexp) 0 font-shape-gstring]))))
+#+end_src
 ** Theme
 
 #+begin_src emacs-lisp
-  (defun nc/respect-sytem-theme (appearance)
-    "Load theme, taking current system APPEARANCE into consideration."
-    (mapc #'disable-theme custom-enabled-themes)
-    (pcase appearance
-      ('light (modus-themes-load-operandi))
-      ('dark (modus-themes-load-vivendi))))
-
   (use-package modus-themes
     :ensure t
 
@@ -229,13 +254,37 @@ way to encapsulate package configs into an easily digestible format.
     (modus-themes-italic-constructs t)
 
     :config
-    (custom-set-faces '(default ((t (:family "Victor Mono" :height 140)))))
+    (custom-set-faces '(default ((t (:family "Victor Mono SemiBold" :height 140 :weight semibold)))))
 
     ;; If emacs has been built with system appearance detection
     ;; add a hook to change the theme to match the system
     (if (boundp 'ns-system-appearance-change-functions)
-        (add-hook 'ns-system-appearance-change-functions #'nc/respect-sytem-theme)
+        (add-hook 'ns-system-appearance-change-functions
+                  (lambda (appearance)
+                    (mapc #'disable-theme custom-enabled-themes)
+                    (pcase appearance
+                      ('light (modus-themes-load-operandi))
+                      ('dark (modus-themes-load-vivendi)))))
       (modus-themes-load-operandi)))
+
+  ;; (use-package flucui-themes
+  ;;   :ensure t
+
+  ;;   :config
+  ;;   (custom-set-faces '(default ((t (:family "Victor Mono SemiBold" :height 140)))))
+  ;;   (set-face-italic-p 'italic nil)
+
+  ;;   ;; If emacs has been built with system appearance detection
+  ;;   ;; add a hook to change the theme to match the system
+  ;;   (if (boundp 'ns-system-appearance-change-functions)
+  ;;       (add-hook 'ns-system-appearance-change-functions
+  ;;                 (lambda (appearance)
+  ;;                   (mapc #'disable-theme custom-enabled-themes)
+  ;;                   (pcase appearance
+  ;;                     ('light (flucui-themes-load-style 'light))
+  ;;                     ('dark (flucui-themes-load-style 'dark)))))
+  ;;     (flucui-themes-load-style 'light)))
+
 #+end_src
 
 ** Indentation
