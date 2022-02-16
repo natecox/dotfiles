@@ -225,9 +225,11 @@ way to encapsulate package configs into an easily digestible format.
   (use-package modus-themes
     :ensure t
 
-    :config
+    :custom
+    (modus-themes-italic-constructs t)
 
-    (custom-set-faces '(default ((t (:font "JetBrains Mono 13")))))
+    :config
+    (custom-set-faces '(default ((t (:family "Victor Mono" :height 140)))))
 
     ;; If emacs has been built with system appearance detection
     ;; add a hook to change the theme to match the system
@@ -822,7 +824,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :hook (yaml-mode . lsp)
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
-
 
 * Presentations
 
