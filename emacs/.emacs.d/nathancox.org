@@ -31,26 +31,6 @@
     (package-initialize))
 #+end_src
 
-** COMMENT Quelpa
-
-In the case where a package needs to be built from source locally, quelpa can grab from many sources and do this for us.
-
-It also has a =use-package= integration so we don't need to maintain multiple config styles.
-
-#+begin_src emacs-lisp
-  (unless (package-installed-p 'quelpa)
-    (with-temp-buffer
-      (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
-      (eval-buffer)
-      (quelpa-self-upgrade)))
-
-  (quelpa
-   '(quelpa-use-package
-     :fetcher git
-     :url "https://github.com/quelpa/quelpa-use-package.git"))
-  (require 'quelpa-use-package)
-#+end_src
-
 ** use-package
 
 use-package is the basis for how packages will be installed and configured going forwards. It provides a sane, stable
@@ -251,10 +231,20 @@ way to encapsulate package configs into an easily digestible format.
     :ensure t
 
     :custom
+    (modus-themes-headings '((1 . (rainbow overline background 1.2))
+                             (2 . (rainbow overline background 1.1))
+                             (t . (rainbow semibold))))
+    (modus-themes-bold-constructs t)
     (modus-themes-italic-constructs t)
+    (modus-themes-syntax '(faint))
+    (modus-themes-prompts nil)
+    (modus-themes-diffs 'desaturated)
+    (modus-themes-links '(background))
+    (modus-themes-org-blocks 'gray-background)
 
     :config
-    (custom-set-faces '(default ((t (:family "Victor Mono SemiBold" :height 140 :weight semibold)))))
+    (custom-set-faces
+     '(default ((t (:family "Victor Mono" :height 140)))))
 
     ;; If emacs has been built with system appearance detection
     ;; add a hook to change the theme to match the system
