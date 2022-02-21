@@ -239,7 +239,7 @@ way to encapsulate package configs into an easily digestible format.
     (modus-themes-syntax '(faint))
     (modus-themes-prompts nil)
     (modus-themes-diffs 'desaturated)
-    (modus-themes-links '(background))
+    (modus-themes-links '(color))
     (modus-themes-org-blocks 'gray-background)
 
     :config
@@ -533,6 +533,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
              "ps" "spl" "bbl" "xdv")))
     (org-latex-compiler "xelatex")
     (org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
+    (org-log-into-drawer t)
     (org-outline-path-complete-in-steps nil)
     (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
     (org-refile-use-outline-path 'file)
