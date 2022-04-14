@@ -10,9 +10,9 @@
 ** Change default font
 Note that fontspec works with only xelatex (not pdflatex).
 #+latex_header: \usepackage{fontspec}
-#+latex_header: \setsansfont[Ligatures=TeX]{Dank Mono}
+#+latex_header: \setsansfont{Menlo}
 #+latex_header: \setmainfont{Lato}
-#+latex_header: \setmonofont[Scale=0.8]{Ubuntu Mono}
+#+latex_header: \setmonofont[Scale=0.8]{Menlo}
 
 ** Sans serif fonts for section titles
 #+latex_header: \usepackage{sectsty}

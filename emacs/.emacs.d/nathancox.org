@@ -17,17 +17,25 @@
   (require 'package)
 
   (setq lexical-binding t)
-  (setq gc-cons-threshold 100000000)
   (setq auto-window-vscroll nil)
   (setq max-lisp-eval-depth 2000)
-  (setq package-enable-at-startup nil)
+
+  (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.5)
+
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              "Recover GC values after startup."
+              (setq gc-cons-threshold 800000
+                    gc-cons-percentage 0.1)))
 
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
   (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
   (add-to-list 'package-archives '("ublt" . "https://elpa.ubolonton.org/packages/") t)
 
-  (when (< emacs-major-version 27)
+  (unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
+    (setq package-enable-at-startup nil)          ; To prevent initializing twice
     (package-initialize))
 #+end_src
 
@@ -41,13 +49,21 @@ way to encapsulate package configs into an easily digestible format.
     (package-refresh-contents)
     (package-install 'use-package))
 
+  (eval-when-compile
+    (require 'use-package))
+
   (use-package diminish :ensure t)
+
+  (use-package gnu-elpa-keyring-update :ensure t)
 
   (use-package exec-path-from-shell
     :ensure t
+    :custom
+    (exec-path-from-shell-variables '("PATH"))
+    (exec-path-from-shell-arguments nil)
     :config
     (setenv "SHELL" "/usr/local/bin/zsh")
-    (setq exec-path-from-shell-variables '("PATH"))
+
     (exec-path-from-shell-initialize))
 #+end_src
 
@@ -84,6 +100,8 @@ way to encapsulate package configs into an easily digestible format.
     (window-min-height 1)
 
     :config
+
+    (set-time-zone-rule "/usr/share/zoneinfo.default/America/Los_Angeles")
 
     (setq-default fill-column 100)
     (auto-fill-mode nil)
@@ -181,7 +199,7 @@ way to encapsulate package configs into an easily digestible format.
 
   ;; use the builtin current-line highlighter
   (use-package hl-line-mode
-    :hook ((prog-mode) (text-mode)))
+    :hook ((prog-mode) (text-mode) (org-agenda-mode)))
 
   ;; keep package files out of recentf
   (use-package recentf
@@ -509,7 +527,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            :map org-mode-map
            ("M-<return>" . nc/org-insert-dwim))
 
-    :hook ((after-init . (lambda () (org-agenda nil "n"))))
+    ;; :hook ((after-init . (lambda () (org-agenda nil "n"))))
 
     :custom
     (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
@@ -519,7 +537,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-confirm-babel-evaluate nil)
     (org-default-notes-file (concat org-directory "/notes.org"))
     (org-directory "~/org")
-    (org-export-copy-to-kill-ring 'if-interactive)
+    (org-export-copy-to-kill-ring nil)
     (org-export-headline-levels 2)
     (org-export-with-author nil)
     (org-export-with-section-numbers nil)
@@ -535,11 +553,13 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f %f"))
     (org-log-into-drawer t)
     (org-outline-path-complete-in-steps nil)
+    (org-pretty-entities t)
     (org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
     (org-refile-use-outline-path 'file)
-    (org-return-follows-link t)
+    (org-return-follows-link nil)
     (org-startup-folded 'content)
     (org-startup-indented t)
+    (org-tag-alist '((:startgrouptag) ("people") (:grouptags) ("{^@.+}") (:endgrouptag)))
     (org-tags-column 80)
 
     :mode-hydra
@@ -604,7 +624,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :after org-contrib
     :config (eval-after-load "org" '(require 'ox-contrib nil t)))
 #+end_src
-
 * Terminal
 
 ** vterm
@@ -808,12 +827,14 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+begin_src emacs-lisp
   (use-package clojure-mode
     :ensure t
+    :defer t
     :hook ((clojure-mode . lsp)
            (clojurescript-mode . lsp)
            (clojurec-mode . lsp)))
 
   (use-package cider
     :ensure t
+    :defer t
     :custom (cider-auto-test-mode t))
 #+end_src
 

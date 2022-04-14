@@ -17,3 +17,5 @@ export PATH=/Users/ncox/.asdf/shims/:/Users/ncox/.cask/bin:/usr/local/sbin:/usr/
 export WORKON_HOME=$HOME/.virtualenvs
 
 export EDITOR="emacsclient -c "
+
+export TZ="/usr/share/zoneinfo.default/America/Los_Angeles"
