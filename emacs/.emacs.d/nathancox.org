@@ -335,10 +335,10 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Text manipulation
 
 #+begin_src emacs-lisp
-  (use-package undo-tree
+  (use-package vundo
     :ensure t
-    :bind (:map undo-tree-map ("C-x r" . nil)) ; resolves map conflict w/ discover.el
-    :config (global-undo-tree-mode))
+    :custom (vundo-glyph-alist vundo-unicode-symbols)
+    :bind (("s-/" . #'vundo)))
 
   (use-package expand-region
     :ensure t
