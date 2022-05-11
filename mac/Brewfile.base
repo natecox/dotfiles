@@ -51,7 +51,7 @@ brew "watchman"
 brew "yarn"
 brew "zsh"
 brew "clojure-lsp/brew/clojure-lsp-native"
-brew "d12frosted/emacs-plus/emacs-plus@29", args: ["with-nobu417-big-sur-icon"]
+brew "d12frosted/emacs-plus/emacs-plus@28", args: ["with-nobu417-big-sur-icon"]
 brew "heroku/brew/heroku"
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"], link: false
 cask "font-jetbrains-mono"

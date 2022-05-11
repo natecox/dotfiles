@@ -406,6 +406,8 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
   (use-package perspective
     :ensure t
+    :custom
+    (persp-mode-prefix-key (kbd "C-z"))
 
     :bind (("C-x b" . 'persp-switch-to-buffer*)
            ("C-x C-b" . 'persp-ibuffer)
@@ -711,18 +713,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** LSP integration
 
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook (lsp-enable-which-key-integration)
-    :commands lsp
-    :custom (lsp-keymap-prefix "C-c M-k")
-    :config (add-to-list 'exec-path "~/src/elixir-lsp/elixir-ls/release"))
-
-  (use-package lsp-ui
-    :ensure t
-    :after lsp-mode
-    :hook (lsp-mode . lsp-ui-mode)
-    :commands lsp-ui-mode)
+  (use-package eglot :ensure t)
 #+END_SRC
 
 *** TODO add pretty hydra for lsp mode
@@ -800,7 +791,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   ;;   (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode)))
 
   (use-package html-mode
-    :hook (html-mode . lsp))
+    :hook (html-mode . eglot-ensure))
 
   (use-package emmet-mode
     :hook (html-mode . emmet-mode)
@@ -828,9 +819,9 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
   (use-package clojure-mode
     :ensure t
     :defer t
-    :hook ((clojure-mode . lsp)
-           (clojurescript-mode . lsp)
-           (clojurec-mode . lsp)))
+    :hook ((clojure-mode . eglot-ensure)
+           (clojurescript-mode . eglot-ensure)
+           (clojurec-mode . eglot-ensure)))
 
   (use-package cider
     :ensure t
@@ -842,7 +833,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 
 #+BEGIN_SRC emacs-lisp
   (use-package ruby-mode
-    :hook (ruby-mode . lsp))
+    :hook (ruby-mode . eglot-ensure))
 
   (use-package bundler
     :ensure t)
@@ -882,7 +873,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :ensure t
-    :hook (yaml-mode . lsp)
+    :hook (yaml-mode . eglot-ensure)
     :config (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+END_SRC
 
