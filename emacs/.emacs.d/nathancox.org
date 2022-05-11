@@ -684,6 +684,9 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Version control
 
 #+BEGIN_SRC emacs-lisp
+  (use-package project
+    :config (push '(magit "Magit Status" ?m) project-switch-commands))
+
   (use-package magit
     :ensure t
     :bind (("C-c g s" . magit-status))
