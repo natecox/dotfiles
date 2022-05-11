@@ -373,47 +373,10 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
 ** Buffer management
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package uniquify
-  ;;   :custom
-  ;;   (uniquify-buffer-name-style 'reverse)
-  ;;   (uniquify-separator " • ")
-  ;;   (uniquify-after-kill-buffer-p t)
-  ;;   (uniquify-ignore-buffers-re "^\\*"))
-
-  ;; (use-package zoom
-  ;;   :ensure t
-  ;;   :diminish
-  ;;   :config (zoom-mode t))
-
   (use-package ibuffer
     :commands ibuffer-find-file
     :custom
     (ibuffer-filter-group-name-face '(:inherit (font-lock-string-face bold))))
-
-  ;; (use-package ibuffer-vc
-  ;;   :ensure t
-  ;;   :hook (ibuffer . (lambda ()
-  ;;                      (ibuffer-vc-set-filter-groups-by-vc-root)
-  ;;                      (unless (eq ibuffer-sorting-mode 'alphabetic)
-  ;;                        (ibuffer-do-sort-by-alphabetic))))
-  ;;   :custom
-  ;;   (ibuffer-formats '((mark modified read-only " "
-  ;;                            (name 18 18 :left :elide) " "
-  ;;                            (size 9 -1 :right) " "
-  ;;                            (mode 16 16 :left :elide) " "
-  ;;                            (vc-status 16 16 :left) " "
-  ;;                            (vc-relative-file)))))
-
-  (use-package perspective
-    :ensure t
-    :custom
-    (persp-mode-prefix-key (kbd "C-z"))
-
-    :bind (("C-x b" . 'persp-switch-to-buffer*)
-           ("C-x C-b" . 'persp-ibuffer)
-           ("C-x k" . 'persp-kill-buffer*))
-
-    :config (persp-mode))
 
   (use-package ace-window
     :ensure t
@@ -740,28 +703,6 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :hook (magit-post-refresh . diff-hl-magit-post-refresh)
     :config (global-diff-hl-mode))
 #+END_SRC
-
-** Project management
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :diminish
-    :ensure t
-    :bind-keymap ("s-p" . projectile-command-map)
-    :custom
-    (projectile-project-search-path (cddr (directory-files "~/src" t)))
-    (projectile-completion-system 'default)
-    :config
-    (defadvice projectile-project-root (around ignore-remote first activate)
-      (unless (file-remote-p default-directory) ad-do-it))
-    (projectile-mode t))
-
-  (use-package persp-projectile
-    :ensure t
-    :after perspective)
-#+END_SRC
-
-*** TODO add pretty hydra for projectile
 
 ** Languages & frameworks
 
