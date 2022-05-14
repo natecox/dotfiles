@@ -394,20 +394,25 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
            ("C-c C-j" . 'avy-resume))
     :config (avy-setup-default))
 
-  ;; better predictions based on common usage
-  (use-package prescient
-    :ensure t
-    :config (prescient-persist-mode t))
-
   ;; better interface for selecting items from a list
-  (use-package selectrum
+  (use-package vertico
     :ensure t
-    :custom (selectrum-extend-current-candidate-highlight t)
-    :config (selectrum-mode t))
+    :init (vertico-mode))
 
-  (use-package selectrum-prescient
+  (use-package corfu
     :ensure t
-    :config (selectrum-prescient-mode t))
+    :init
+    (global-corfu-mode))
+
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion))))
+    (completion-ignore-case t)
+    (read-file-name-completion-ignore-case t)
+    (read-buffer-completion-ignore-case t))
 
   ;; improved UX for searching in a buffer
   (use-package ctrlf
@@ -420,9 +425,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :bind (:map minibuffer-local-map ("C-M-a" . marginalia-cycle))
     :custom (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
     :init
-    (marginalia-mode)
-    (advice-add #'marginalia-cycle :after
-                (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit)))))
+    (marginalia-mode))
 
   (use-package consult
     :ensure t)
