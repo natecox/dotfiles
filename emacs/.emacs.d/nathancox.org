@@ -498,6 +498,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     ;; :hook ((after-init . (lambda () (org-agenda nil "n"))))
 
     :custom
+    (org-ascii-links-to-notes nil)
     (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
     (org-agenda-window-setup 'current-window)
     (org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
@@ -505,6 +506,7 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (org-confirm-babel-evaluate nil)
     (org-default-notes-file (concat org-directory "/notes.org"))
     (org-directory "~/org")
+    (org-display-remote-inline-images 'download)
     (org-export-copy-to-kill-ring nil)
     (org-export-headline-levels 2)
     (org-export-with-author nil)
