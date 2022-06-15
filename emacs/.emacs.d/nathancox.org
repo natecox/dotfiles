@@ -352,14 +352,14 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :bind (("s-i" . #'change-inner)
            ("s-o" . #'change-outer)))
 
-  (use-package drag-stuff
-    :ensure t
-    :diminish
-    :bind (("<M-down>" . drag-stuff-down)
-           ("<M-up>" . drag-stuff-up)
-           ("<M-right>" . drag-stuff-right)
-           ("<M-left>" . drag-stuff-left))
-    :config (drag-stuff-global-mode 1))
+  ;; (use-package drag-stuff
+  ;;   :ensure t
+  ;;   :diminish
+  ;;   :bind (("<M-down>" . drag-stuff-down)
+  ;;          ("<M-up>" . drag-stuff-up)
+  ;;          ("<M-right>" . drag-stuff-right)
+  ;;          ("<M-left>" . drag-stuff-left))
+  ;;   :config (drag-stuff-global-mode 1))
 
   (defun nc/run-region-as-shell-command (start end)
     "Execute region from START to END as a shell command."
