@@ -404,6 +404,12 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     :init
     (global-corfu-mode))
 
+  (use-package embark
+    :ensure t
+    :bind (("C-." . embark-act)
+           ("C-;" . embark-dwim)
+           ("C-h B" . embark-bindings)))
+
   (use-package orderless
     :ensure t
     :custom
@@ -428,10 +434,16 @@ tabs, but the industry standard is spaces. I use =dir-locals= to enable tabs for
     (marginalia-mode))
 
   (use-package consult
-    :ensure t)
+    :ensure t
+    :bind ("C-x b" . consult-buffer))
+
+  (use-package embark-consult
+    :ensure t
+    :after (embark consult)
+    :hook (embark-collect-mode . consult-preview-at-point-mode))
 #+END_SRC
 
-* Improving discoverability
+* Improving discover-ability
 
 #+begin_src emacs-lisp
   (use-package hydra
