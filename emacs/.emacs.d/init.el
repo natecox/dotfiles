@@ -88,6 +88,7 @@
   (use-short-answers t)
   (user-full-name "Nathan Cox")
   (user-mail-address "nate@natecox.dev")
+  (warning-minimum-level :emergency)
   (window-min-height 1)
 
   :config
@@ -96,7 +97,7 @@
   (setq-default fill-column 100)
   (auto-fill-mode nil)
   (setq frame-title-format nil)
-  (setq insert-directory-program "gls" dired-use-ls-dired t)
+  ; (setq insert-directory-program "gls" dired-use-ls-dired t)
 
   ;; Mouse active in terminal
   (unless (display-graphic-p)
@@ -623,6 +624,11 @@
   ;; https://github.com/joaotavora/eglot
   :ensure t)
 
+(use-package direnv
+  :ensure t
+  :custom (direnv-always-show-summary nil)
+  :config (direnv-mode))
+
 (use-package project
   :config (push '(magit "Magit Status" ?m) project-switch-commands))
 
@@ -650,6 +656,10 @@
   :after magit
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config (global-diff-hl-mode))
+
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
 
 (use-package emacs
   :custom (js-indent-level 2))
@@ -706,6 +716,11 @@
 
 (use-package ruby-mode
   :hook (ruby-mode . eglot-ensure))
+
+(use-package rustic
+  :ensure t
+  :custom
+  (rustic-lsp-client 'eglot))
 
 (use-package bundler
   :ensure t)
