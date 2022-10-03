@@ -19,7 +19,6 @@ brew "mas"
 
 brew "antigen"
 brew "coreutils"
-brew "asdf"
 brew "aspell"
 brew "bat"
 brew "ctags"

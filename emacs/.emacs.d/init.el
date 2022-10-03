@@ -274,6 +274,8 @@
 ;;; Indentation
 
 (use-package emacs
+  :custom
+  (tab-width 2)
   :config
   (setq-default indent-tabs-mode nil)   ; Always use spaces by default
   (electric-indent-mode +1))
@@ -287,7 +289,8 @@
 (use-package highlight-indent-guides
   ;; https://github.com/DarthFennec/highlight-indent-guides
   :ensure t
-  :hook (prog-mode . highlight-indent-guides-mode)
+  :hook ((prog-mode . highlight-indent-guides-mode)
+         (taskpaper-mode . highlight-indent-guides-mode))
   :custom
   (highlight-indent-guides-method 'bitmap)
   (highlight-indent-guides-responsive 'stack))
@@ -366,7 +369,7 @@
 (use-package avy
   ;; https://github.com/abo-abo/avy
   :ensure t
-  :bind (("s-t" . 'avy-goto-char)
+  :bind (("s-t" . 'avy-goto-char-timer)
          ("s-T" . 'avy-goto-line)
          ("C-c C-j" . 'avy-resume))
   :config (avy-setup-default))
@@ -486,6 +489,7 @@
   :custom
   (org-ascii-links-to-notes nil)
   (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+  (org-agenda-start-with-log-mode t)
   (org-agenda-window-setup 'current-window)
   (org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
   (org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
@@ -624,7 +628,14 @@
   :ensure t)
 
 (use-package project
+  :bind (:map project-prefix-map ("m" . magit-project-status))
   :config (push '(magit "Magit Status" ?m) project-switch-commands))
+
+
+;; Taskpaper
+
+(use-package taskpaper-mode
+  :ensure t)
 
 
 ;;;; Version control
@@ -729,6 +740,14 @@
 
 (use-package rubocop
   :ensure t)
+
+;; Rust
+
+(use-package rustic
+  :ensure t
+  :custom
+  (rustic-format-on-save t)
+  (rustic-lsp-client 'eglot))
 
 (use-package elpy
   :ensure t
