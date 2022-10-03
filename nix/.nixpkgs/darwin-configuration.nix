@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
-{
+let user = builtins.getEnv "USER";
+in {
   imports = [ <home-manager/nix-darwin> ];
 
   # List packages installed in system profile. To search by name, run:
@@ -23,12 +24,20 @@
   # $ darwin-rebuild changelog
   system.stateVersion = 4;
 
-  users.users.natecox = {
-    name = "natecox";
-    home = "/Users/natecox";
-  };
+  # Set macOS defaults (https://github.com/LnL7/nix-darwin/tree/master/modules/system/defaults)
+  system.defaults.NSGlobalDomain.InitialKeyRepeat = 25;
+  system.defaults.NSGlobalDomain.KeyRepeat = 2;
+  system.defaults.NSGlobalDomain.AppleInterfaceStyleSwitchesAutomatically =
+    true;
 
-  home-manager.users.natecox = { pkgs, ... }: {
+  system.defaults.dock.autohide = true;
+  system.defaults.dock.mru-spaces = false;
+  system.defaults.dock.orientation = "left";
+  system.defaults.dock.showhidden = true;
+
+  users.users.${user} = { home = "/Users/${user}"; };
+
+  home-manager.users.${user} = { pkgs, ... }: {
     home.stateVersion = "21.11";
 
     imports = [
@@ -38,6 +47,11 @@
       ./programs/direnv.nix
     ];
 
-    home.packages = with pkgs; [ aspell coreutils victor-mono nixfmt ];
+    home.packages = with pkgs; [
+      (aspellWithDicts (d: [ d.en ]))
+      coreutils
+      victor-mono
+      nixfmt
+    ];
   };
 }

@@ -19,7 +19,6 @@
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("ublt" . "https://elpa.ubolonton.org/packages/") t)
 
 (unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
@@ -46,12 +45,12 @@
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exec-path-from-shell
   :ensure t
+
   :custom
   (exec-path-from-shell-variables '("PATH"))
   (exec-path-from-shell-arguments nil)
-  :config
-  (setenv "SHELL" "/usr/local/bin/zsh")
 
+  :config
   (exec-path-from-shell-initialize))
 
 ;;;; Setting up sane defaults
@@ -275,6 +274,8 @@
 ;;; Indentation
 
 (use-package emacs
+  :custom
+  (tab-width 2)
   :config
   (setq-default indent-tabs-mode nil)   ; Always use spaces by default
   (electric-indent-mode +1))
@@ -288,7 +289,8 @@
 (use-package highlight-indent-guides
   ;; https://github.com/DarthFennec/highlight-indent-guides
   :ensure t
-  :hook (prog-mode . highlight-indent-guides-mode)
+  :hook ((prog-mode . highlight-indent-guides-mode)
+         (taskpaper-mode . highlight-indent-guides-mode))
   :custom
   (highlight-indent-guides-method 'bitmap)
   (highlight-indent-guides-responsive 'stack))
@@ -367,7 +369,7 @@
 (use-package avy
   ;; https://github.com/abo-abo/avy
   :ensure t
-  :bind (("s-t" . 'avy-goto-char)
+  :bind (("s-t" . 'avy-goto-char-timer)
          ("s-T" . 'avy-goto-line)
          ("C-c C-j" . 'avy-resume))
   :config (avy-setup-default))
@@ -475,6 +477,7 @@
 
 (use-package org
   :after (major-mode-hydra)
+  :pin gnu
   :bind (("C-c a" . org-agenda)
          ("C-c l" . org-store-link)
          ("C-c c" . org-capture)
@@ -487,6 +490,7 @@
   :custom
   (org-ascii-links-to-notes nil)
   (org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+  (org-agenda-start-with-log-mode t)
   (org-agenda-window-setup 'current-window)
   (org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
   (org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
@@ -578,10 +582,6 @@
   :after org-contrib
   :config (eval-after-load "org" '(require 'ox-contrib nil t)))
 
-(use-package vterm
-  ;; https://github.com/akermu/emacs-libvterm
-  :ensure t)
-
 (use-package flyspell-mode
   ;; https://www.emacswiki.org/emacs/FlySpell
   :hook ((text-mode . flyspell-mode)
@@ -630,7 +630,14 @@
   :config (direnv-mode))
 
 (use-package project
+  :bind (:map project-prefix-map ("m" . magit-project-status))
   :config (push '(magit "Magit Status" ?m) project-switch-commands))
+
+
+;; Taskpaper
+
+(use-package taskpaper-mode
+  :ensure t)
 
 
 ;;;; Version control
@@ -744,6 +751,14 @@
 
 (use-package rubocop
   :ensure t)
+
+;; Rust
+
+(use-package rustic
+  :ensure t
+  :custom
+  (rustic-format-on-save t)
+  (rustic-lsp-client 'eglot))
 
 (use-package elpy
   :ensure t
