@@ -96,7 +96,6 @@
   (setq-default fill-column 100)
   (auto-fill-mode nil)
   (setq frame-title-format nil)
-  ; (setq insert-directory-program "gls" dired-use-ls-dired t)
 
   ;; Mouse active in terminal
   (unless (display-graphic-p)
@@ -416,8 +415,10 @@
 
 (use-package orderless
   :ensure t
-  :custom (completion-styles '(orderless basic))
-          (completion-category-defaults nil)
+
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion))))
   (completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
@@ -433,6 +434,7 @@
   :ensure t)
 
 (use-package major-mode-hydra
+  :ensure t
   :demand t
   :after hydra
   :diminish
@@ -450,7 +452,23 @@
   :diminish
   :config (which-key-mode))
 
-;;;; Org mode
+;;;; Note taking
+
+(use-package denote
+  :ensure t
+
+  :after org
+
+  :custom
+  (denote-directory (expand-file-name (concat org-directory "/notes")))
+  (denote-dired-directories (list denote-directory))
+  (denote-templates
+   '((meeting . "* agenda%?\n\n* takeaways")))
+
+  :init
+  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories))
+
+;;;; Org modes
 
 ;; 1. Install macTEX with `brew install cask mactex`
 ;; 2. Download and install https://amaxwell.github.io/tlutility/
@@ -534,11 +552,6 @@
   (add-to-list 'exec-path "/Library/TeX/texbin")
   (setq-default TeX-engine 'xetex)
   (setq-default TeX-PDF-mode t))
-
-(use-package doct
-  ;; https://github.com/progfolio/doct
-  ;; Better capture templates
-  :ensure t)
 
 (use-package org
   ;; babel config
@@ -779,5 +792,3 @@
   (elfeed-feeds '(("https://d12frosted.io/atom.xml" blog emacs))))
 
 (if (file-readable-p "~/.emacs.d/local-config.el") (load-file "~/.emacs.d/local-config.el"))
-
-(setq vc-follow-symlinks nil)
