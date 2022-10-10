@@ -752,11 +752,6 @@
 (use-package ruby-mode
   :hook (ruby-mode . eglot-ensure))
 
-(use-package rustic
-  :ensure t
-  :custom
-  (rustic-lsp-client 'eglot))
-
 (use-package bundler
   :ensure t)
 
