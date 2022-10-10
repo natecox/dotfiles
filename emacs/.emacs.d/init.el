@@ -457,13 +457,28 @@
 (use-package denote
   :ensure t
 
-  :after org
+  :after (org pretty-hydra)
+
+  :bind (("C-c n" . denote-hydra/body))
 
   :custom
   (denote-directory (expand-file-name (concat org-directory "/notes")))
   (denote-dired-directories (list denote-directory))
   (denote-templates
    '((meeting . "* agenda%?\n\n* takeaways")))
+
+  :pretty-hydra
+  ((:title "Denote" :color teal :quit-key "q")
+   ("New note..."
+    (("n" denote-create-note "with defaults")
+     ("t" denote-create-note-with-template "from template")
+     ("s" denote-subdirectory "in subdirectory")
+     ("d" denote-date "for date"))
+    "Open..."
+    (("oo" denote-open-or-create "note")
+     ("od" (dired (expand-file-name (concat org-directory "/notes"))) "directory"))
+    "Links"
+    (("l" denote-link "Insert link"))))
 
   :init
   (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories))
