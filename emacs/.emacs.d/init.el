@@ -19,7 +19,6 @@
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives '("ublt" . "https://elpa.ubolonton.org/packages/") t)
 
 (unless (bound-and-true-p package--initialized) ; To avoid warnings in 27
@@ -46,12 +45,12 @@
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exec-path-from-shell
   :ensure t
+
   :custom
   (exec-path-from-shell-variables '("PATH"))
   (exec-path-from-shell-arguments nil)
-  :config
-  (setenv "SHELL" "/usr/local/bin/zsh")
 
+  :config
   (exec-path-from-shell-initialize))
 
 ;;;; Setting up sane defaults
@@ -88,6 +87,7 @@
   (use-short-answers t)
   (user-full-name "Nathan Cox")
   (user-mail-address "nate@natecox.dev")
+  (warning-minimum-level :emergency)
   (window-min-height 1)
 
   :config
@@ -96,7 +96,6 @@
   (setq-default fill-column 100)
   (auto-fill-mode nil)
   (setq frame-title-format nil)
-  (setq insert-directory-program "gls" dired-use-ls-dired t)
 
   ;; Mouse active in terminal
   (unless (display-graphic-p)
@@ -416,8 +415,10 @@
 
 (use-package orderless
   :ensure t
-  :custom (completion-styles '(orderless basic))
-          (completion-category-defaults nil)
+
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion))))
   (completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
@@ -433,6 +434,7 @@
   :ensure t)
 
 (use-package major-mode-hydra
+  :ensure t
   :demand t
   :after hydra
   :diminish
@@ -450,7 +452,38 @@
   :diminish
   :config (which-key-mode))
 
-;;;; Org mode
+;;;; Note taking
+
+(use-package denote
+  :ensure t
+
+  :after (org pretty-hydra)
+
+  :bind (("C-c n" . denote-hydra/body))
+
+  :custom
+  (denote-directory (expand-file-name (concat org-directory "/notes")))
+  (denote-dired-directories (list denote-directory))
+  (denote-templates
+   '((meeting . "* agenda%?\n\n* takeaways")))
+
+  :pretty-hydra
+  ((:title "Denote" :color teal :quit-key "q")
+   ("New note..."
+    (("n" denote-create-note "with defaults")
+     ("t" denote-create-note-with-template "from template")
+     ("s" denote-subdirectory "in subdirectory")
+     ("d" denote-date "for date"))
+    "Open..."
+    (("oo" denote-open-or-create "note")
+     ("od" (dired (expand-file-name (concat org-directory "/notes"))) "directory"))
+    "Links"
+    (("l" denote-link "Insert link"))))
+
+  :init
+  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories))
+
+;;;; Org modes
 
 ;; 1. Install macTEX with `brew install cask mactex`
 ;; 2. Download and install https://amaxwell.github.io/tlutility/
@@ -477,6 +510,7 @@
 
 (use-package org
   :after (major-mode-hydra)
+  :pin gnu
   :bind (("C-c a" . org-agenda)
          ("C-c l" . org-store-link)
          ("C-c c" . org-capture)
@@ -534,11 +568,6 @@
   (setq-default TeX-engine 'xetex)
   (setq-default TeX-PDF-mode t))
 
-(use-package doct
-  ;; https://github.com/progfolio/doct
-  ;; Better capture templates
-  :ensure t)
-
 (use-package org
   ;; babel config
   :config
@@ -580,10 +609,6 @@
   ;; https://github.com/aspiers/orgmode/blob/master/contrib/lisp/ox-confluence.el
   :after org-contrib
   :config (eval-after-load "org" '(require 'ox-contrib nil t)))
-
-(use-package vterm
-  ;; https://github.com/akermu/emacs-libvterm
-  :ensure t)
 
 (use-package flyspell-mode
   ;; https://www.emacswiki.org/emacs/FlySpell
@@ -627,6 +652,11 @@
   ;; https://github.com/joaotavora/eglot
   :ensure t)
 
+(use-package direnv
+  :ensure t
+  :custom (direnv-always-show-summary nil)
+  :config (direnv-mode))
+
 (use-package project
   :bind (:map project-prefix-map ("m" . magit-project-status))
   :config (push '(magit "Magit Status" ?m) project-switch-commands))
@@ -661,6 +691,10 @@
   :after magit
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config (global-diff-hl-mode))
+
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
 
 (use-package emacs
   :custom (js-indent-level 2))
@@ -768,5 +802,3 @@
   (elfeed-feeds '(("https://d12frosted.io/atom.xml" blog emacs))))
 
 (if (file-readable-p "~/.emacs.d/local-config.el") (load-file "~/.emacs.d/local-config.el"))
-
-(setq vc-follow-symlinks nil)
