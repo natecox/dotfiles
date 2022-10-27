@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
-let user = builtins.getEnv "USER";
+let
+  user = builtins.getEnv "USER";
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
 in {
   imports = [ <home-manager/nix-darwin> ];
 
@@ -52,6 +54,7 @@ in {
       coreutils
       victor-mono
       nixfmt
+      unstable.ihp-new
     ];
   };
 }

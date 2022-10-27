@@ -12,6 +12,10 @@ then
   nix-env -iA nixpkgs.stow
 fi
 
+### add unstable channel
+nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+nix-channel --update
+
 ### Install nix-darwin
 if ! command -v darwin-rebuild &> /dev/null
 then

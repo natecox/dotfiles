@@ -465,7 +465,7 @@
   (denote-directory (expand-file-name (concat org-directory "/notes")))
   (denote-dired-directories (list denote-directory))
   (denote-templates
-   '((meeting . "* agenda%?\n\n* takeaways")))
+   '((meeting . "* agenda\n\n* minutes\n\n* takeaways\n#+begin: columnview :hlines 1 :id global :format \"%todo(Status) %item(Topic)\" :match \"/!\"\n#+end:")))
 
   :pretty-hydra
   ((:title "Denote" :color teal :quit-key "q")
@@ -640,7 +640,8 @@
   :ensure t
   :diminish
   :hook ((ruby-mode . tree-sitter-hl-mode)
-         (rustic-mode . tree-sitter-hl-mode))
+         (rustic-mode . tree-sitter-hl-mode)
+         (haskell-mode . tree-sitter-hl-mode))
   :config (global-tree-sitter-mode))
 
 (use-package tree-sitter-langs
@@ -782,6 +783,14 @@
   :custom
   (rustic-format-on-save t)
   (rustic-lsp-client 'eglot))
+
+;; Haskell
+
+(use-package haskell-mode
+  :hook (haskell-mode . eglot-ensure))
+
+(use-package dante
+  :ensure t)
 
 (use-package elpy
   :ensure t
