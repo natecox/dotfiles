@@ -1,3 +1,6 @@
+[user]
+	name = Nate Cox
+	email = nate@natecox.dev
 [push]
 	default = simple
 [pull]

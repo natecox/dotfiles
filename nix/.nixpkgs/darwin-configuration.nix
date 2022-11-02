@@ -54,7 +54,8 @@ in {
       coreutils
       victor-mono
       nixfmt
-      unstable.ihp-new
+      iosevka
+      unstable.iosevka-comfy.comfy
     ];
   };
 }

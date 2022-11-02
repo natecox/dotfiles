@@ -257,7 +257,7 @@
 
   :config
   (custom-set-faces
-   '(default ((t (:family "Victor Mono" :height 140)))))
+   '(default ((t (:family "Iosevka Comfy" :height 140)))))
 
   ;; If emacs has been built with system appearance detection
   ;; add a hook to change the theme to match the system
@@ -659,8 +659,12 @@
   :config (direnv-mode))
 
 (use-package project
-  :bind (:map project-prefix-map ("m" . magit-project-status))
-  :config (push '(magit "Magit Status" ?m) project-switch-commands))
+  :bind (:map project-prefix-map
+              ("m" . magit-project-status)
+              ("v" . vterm))
+  :config
+  (push '(magit "Magit Status" ?m) project-switch-commands)
+  (push '(vterm "vterm" ?v) project-switch-commands))
 
 
 ;; Taskpaper
@@ -787,6 +791,7 @@
 ;; Haskell
 
 (use-package haskell-mode
+  :ensure t
   :hook (haskell-mode . eglot-ensure))
 
 (use-package dante
