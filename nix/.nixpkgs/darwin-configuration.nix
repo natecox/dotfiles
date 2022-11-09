@@ -40,7 +40,7 @@ in {
   users.users.${user} = { home = "/Users/${user}"; };
 
   home-manager.users.${user} = { pkgs, ... }: {
-    home.stateVersion = "21.11";
+    home.stateVersion = "22.05";
 
     imports = [
       ./programs/starship.nix

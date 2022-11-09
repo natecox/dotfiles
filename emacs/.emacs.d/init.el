@@ -239,49 +239,49 @@
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 
 ;;; Theme
-;; (use-package modus-themes
-;;   ;; https://protesilaos.com/emacs/modus-themes
-;;   :ensure t
-
-;;   :custom
-;;   (modus-themes-headings '((1 . (rainbow overline background 1.2))
-;;                            (2 . (rainbow overline background 1.1))
-;;                            (t . (rainbow semibold))))
-;;   (modus-themes-bold-constructs t)
-;;   (modus-themes-italic-constructs t)
-;;   (modus-themes-syntax '(faint))
-;;   (modus-themes-prompts nil)
-;;   (modus-themes-diffs 'desaturated)
-;;   (modus-themes-links '(color))
-;;   (modus-themes-org-blocks 'gray-background)
-
-;;   :config
-;;   (custom-set-faces
-;;    '(default ((t (:family "Iosevka Comfy" :height 140)))))
-
-;;   ;; If emacs has been built with system appearance detection
-;;   ;; add a hook to change the theme to match the system
-;;   (if (boundp 'ns-system-appearance-change-functions)
-;;       (add-hook 'ns-system-appearance-change-functions
-;;                 (lambda (appearance)
-;;                   (mapc #'disable-theme custom-enabled-themes)
-;;                   (pcase appearance
-;;                     ('light (modus-themes-load-operandi))
-;;                     ('dark (modus-themes-load-vivendi)))))
-;;     (modus-themes-load-operandi)))
-
-(use-package ef-themes
+(use-package modus-themes
+  ;; https://protesilaos.com/emacs/modus-themes
   :ensure t
 
   :custom
-  (ef-themes-mixed-fonts t)
-  (ef-themes-variable-pitch-ui t)
+  (modus-themes-headings '((1 . (rainbow overline background 1.2))
+                           (2 . (rainbow overline background 1.1))
+                           (t . (rainbow semibold))))
+  (modus-themes-bold-constructs t)
+  (modus-themes-italic-constructs t)
+  (modus-themes-syntax '(faint))
+  (modus-themes-prompts nil)
+  (modus-themes-diffs 'desaturated)
+  (modus-themes-links '(color))
+  (modus-themes-org-blocks 'gray-background)
 
   :config
-  (mapc #'disable-theme custom-enabled-themes)
   (custom-set-faces
    '(default ((t (:family "Iosevka Comfy" :height 140)))))
-  (ef-theme-select 'ef-dark))
+
+  ;; If emacs has been built with system appearance detection
+  ;; add a hook to change the theme to match the system
+  (if (boundp 'ns-system-appearance-change-functions)
+      (add-hook 'ns-system-appearance-change-functions
+                (lambda (appearance)
+                  (mapc #'disable-theme custom-enabled-themes)
+                  (pcase appearance
+                    ('light (modus-themes-load-operandi))
+                    ('dark (modus-themes-load-vivendi)))))
+    (modus-themes-load-operandi)))
+
+;; (use-package ef-themes
+;;   :ensure t
+
+;;   :custom
+;;   (ef-themes-mixed-fonts t)
+;;   (ef-themes-variable-pitch-ui t)
+
+;;   :config
+;;   (mapc #'disable-theme custom-enabled-themes)
+;;   (custom-set-faces
+;;    '(default ((t (:family "Iosevka Comfy" :height 140)))))
+;;   (ef-themes-select 'ef-lignt))
 
 ;;; Indentation
 
