@@ -266,22 +266,9 @@
                 (lambda (appearance)
                   (mapc #'disable-theme custom-enabled-themes)
                   (pcase appearance
-                    ('light (modus-themes-load-operandi))
-                    ('dark (modus-themes-load-vivendi)))))
-    (modus-themes-load-operandi)))
-
-;; (use-package ef-themes
-;;   :ensure t
-
-;;   :custom
-;;   (ef-themes-mixed-fonts t)
-;;   (ef-themes-variable-pitch-ui t)
-
-;;   :config
-;;   (mapc #'disable-theme custom-enabled-themes)
-;;   (custom-set-faces
-;;    '(default ((t (:family "Iosevka Comfy" :height 140)))))
-;;   (ef-themes-select 'ef-lignt))
+                    ('light (modus-themes-select 'modus-operandi))
+                    ('dark (modus-themes-select 'modus-vivendi)))))
+    (modus-themes-select 'modus-operandi)))
 
 ;;; Indentation
 

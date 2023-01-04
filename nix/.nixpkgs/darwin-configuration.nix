@@ -40,7 +40,7 @@ in {
   users.users.${user} = { home = "/Users/${user}"; };
 
   home-manager.users.${user} = { pkgs, ... }: {
-    home.stateVersion = "22.05";
+    home.stateVersion = "22.11";
 
     imports = [
       ./programs/starship.nix
@@ -51,6 +51,7 @@ in {
 
     home.packages = with pkgs; [
       (aspellWithDicts (d: [ d.en ]))
+      cmake
       coreutils
       victor-mono
       nixfmt
