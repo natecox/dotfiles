@@ -43,6 +43,7 @@ in {
     home.stateVersion = "22.11";
 
     imports = [
+      ./programs/emacs.nix
       ./programs/starship.nix
       ./programs/fzf.nix
       ./programs/zsh.nix
