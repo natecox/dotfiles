@@ -54,6 +54,7 @@ in {
       (aspellWithDicts (d: [ d.en ]))
       cmake
       coreutils
+      gh
       victor-mono
       nixfmt
       iosevka
