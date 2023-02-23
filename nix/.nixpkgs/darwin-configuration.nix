@@ -56,11 +56,9 @@ in {
       (aspellWithDicts (d: [ d.en ]))
       cmake
       coreutils
+      comic-mono
       gh
-      victor-mono
       nixfmt
-      iosevka
-      unstable.iosevka-comfy.comfy
     ];
 
     home.activation = lib.mkIf pkgs.stdenv.isDarwin {
