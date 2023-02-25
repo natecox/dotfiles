@@ -1,3 +1,3 @@
-[submodule "emacs/.emacs.d"]
+[submodule "salient"]
 	path = emacs/.emacs.d
 	url = git@github.com:natecox/salient.el.git
