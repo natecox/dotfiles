@@ -37,6 +37,8 @@ in {
   system.defaults.dock.orientation = "bottom";
   system.defaults.dock.showhidden = true;
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   users.users.${user} = { home = "/Users/${user}"; };
 
   home-manager.users.${user} = { config, pkgs, lib, ... }: {
