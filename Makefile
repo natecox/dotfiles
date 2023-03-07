@@ -5,7 +5,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
 install: install_nix install_darwin install_directories
 
-update: update_nix update_symlinks
+update: update_nix update_darwin update_symlinks
 
 uninstall: uninstall_nix
 
@@ -40,6 +40,14 @@ ifndef DARWIN_REBUILD
 	./result/bin/darwin-installer
 else
 	$(info "	...already installed, skipping")
+endif
+
+update_darwin:
+	$(info "Rebuilding darwin...")
+ifdef DARWIN_REBUILD
+	darwin-rebuild switch
+else
+	$(info "	...darwin not installed, skipping")
 endif
 
 install_directories:
