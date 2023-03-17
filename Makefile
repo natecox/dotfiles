@@ -3,9 +3,9 @@ NIX_INSTALLER := $(shell command -v /nix/nix-installer 2> /dev/null)
 NIX_BUILD := $(shell command -v nix-build 2> /dev/null)
 DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
-install: install_nix install_darwin install_directories
+install: install_nix install_directories update_symlinks install_darwin
 
-update: update_nix update_darwin update_symlinks
+update: update_nix update_symlinks update_darwin
 
 uninstall: uninstall_nix
 
@@ -33,7 +33,7 @@ endif
 install_darwin:
 	$(info "Installing darwin...")
 ifndef DARWIN_REBUILD
-	nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+	nix-channel --add https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz home-manager
 	nix-channel --update
 
 	nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
@@ -56,4 +56,5 @@ install_directories:
 
 update_symlinks:
 	$(info "Stowing files...")
+	@nix-env -iA nixpkgs.stow
 	$(shell for dir in */; do stow $$dir --no-folding; done)
