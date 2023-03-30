@@ -2,7 +2,7 @@
 
 let
   user = builtins.getEnv "USER";
-  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };  
 in {
   imports = [ <home-manager/nix-darwin> ];
 
@@ -60,9 +60,9 @@ in {
       normal_window_border_color   = "0xff505050";
       insert_window_border_color   = "0xffd75f5f";
       active_window_opacity        = "1.0";
-      normal_window_opacity        = "1.0";
+      normal_window_opacity        = "0.8";
       split_ratio                  = "0.50";
-      auto_balance                 = "on";
+      auto_balance                 = "off";
       mouse_modifier               = "fn";
       mouse_action1                = "move";
       mouse_action2                = "resize";
@@ -76,7 +76,7 @@ in {
 
     extraConfig = ''
         # rules
-        yabai -m rule --add app=Emacs manage=on
+        yabai -m rule --add app='System Preferences' manage=off
       '';
   };
 
@@ -103,6 +103,9 @@ in {
       comic-mono
       gh
       nixfmt
+      unstable.helix
+      unstable.iterm2
+      unstable.wezterm
     ];
 
     home.activation = lib.mkIf pkgs.stdenv.isDarwin {

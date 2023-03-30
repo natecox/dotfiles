@@ -3,7 +3,7 @@
     enable = true;
 
     sessionVariables = rec {
-      # EDITOR = "emacsclient";
+      EDITOR = "hx";
       NIX_TEMPLATES_ID = "$(security find-generic-password -w -s 'cli tokens' -a 'nix templates gist')";
     };
 
