@@ -2,7 +2,7 @@
 
 let
   user = builtins.getEnv "USER";
-  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };  
+  # unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };  
 in {
   imports = [ <home-manager/nix-darwin> ];
 
@@ -88,7 +88,9 @@ in {
     disabledModules = [ "targets/darwin/linkapps.nix" ];
 
     imports = [
-      ./programs/emacs.nix
+      # ./programs/emacs.nix
+      ./programs/helix.nix
+      ./programs/wezterm.nix
       ./programs/starship.nix
       ./programs/fzf.nix
       ./programs/zsh.nix
@@ -103,9 +105,7 @@ in {
       comic-mono
       gh
       nixfmt
-      unstable.helix
-      unstable.iterm2
-      unstable.wezterm
+      iterm2
     ];
 
     home.activation = lib.mkIf pkgs.stdenv.isDarwin {
