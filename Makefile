@@ -18,8 +18,11 @@ else
 endif
 
 update_nix:
-	$(info "Requesting sudo access for system update...")
-	@sudo -i sh -c 'nix-channel --update && nix-env -iA nixpkgs.nix && launchctl remove org.nixos.nix-daemon && launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist'
+	$(info "Updating nix...")
+	@nix-channel --update
+	@nix-env -iA nixpkgs.nix
+	@sudo launchctl remove org.nixos.nix-daemon
+	@sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
 
 uninstall_nix:
 	$(info "Uninstalling nix using determinate systems installer...")
