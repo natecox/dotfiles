@@ -87,15 +87,7 @@ in {
 
     disabledModules = [ "targets/darwin/linkapps.nix" ];
 
-    imports = [
-      # ./programs/emacs.nix
-      ./programs/helix.nix
-      ./programs/wezterm.nix
-      ./programs/starship.nix
-      ./programs/fzf.nix
-      ./programs/zsh.nix
-      ./programs/direnv.nix
-    ];
+    imports = map (n: "${./programs}/${n}") (builtins.attrNames (builtins.readDir ./programs));
 
     home.packages = with pkgs; [
       (aspellWithDicts (d: [ d.en ]))
