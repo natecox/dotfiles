@@ -98,6 +98,7 @@ in {
       gh
       nixfmt
       iterm2
+      zoxide
     ];
 
     home.activation = lib.mkIf pkgs.stdenv.isDarwin {
