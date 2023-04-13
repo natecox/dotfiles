@@ -26,5 +26,7 @@
         pull.ff = "only";
       };
     };
+
+    home.file.".pypirc".source = ./pypirc;
   };
 }

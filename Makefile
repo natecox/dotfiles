@@ -3,9 +3,9 @@ NIX_INSTALLER := $(shell command -v /nix/nix-installer 2> /dev/null)
 NIX_BUILD := $(shell command -v nix-build 2> /dev/null)
 DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
-install: install_nix install_directories update_symlinks install_darwin
+install: install_nix install_directories install_darwin
 
-update: update_nix update_symlinks update_darwin
+update: update_nix update_darwin
 
 uninstall: uninstall_nix
 
@@ -54,9 +54,5 @@ endif
 
 install_directories:
 	$(info "Installing standard user directories...")
-	@mkdir -p ~/{src,org}
+	@mkdir -p ~/{src}
 
-update_symlinks:
-	$(info "Stowing files...")
-	@nix-env -iA nixpkgs.stow
-	$(shell for dir in */; do stow $$dir --no-folding; done)
