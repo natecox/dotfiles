@@ -1,11 +1,5 @@
-{ config, lib, pkgs, ... }:
-
-let
-  user = builtins.getEnv "USER";
-  # unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };  
-in {
-  imports = [ <home-manager/nix-darwin> ];
-
+{ config, lib, pkgs, ... }: 
+{
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = [ ];
@@ -37,7 +31,7 @@ in {
   system.defaults.dock.orientation = "bottom";
   system.defaults.dock.showhidden = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   services.yabai = {
     enable = true;
@@ -80,46 +74,4 @@ in {
       '';
   };
 
-  users.users.${user} = { home = "/Users/${user}"; };
-
-  home-manager.users.${user} = { config, pkgs, lib, ... }: {
-    home.stateVersion = "22.11";
-
-    disabledModules = [ "targets/darwin/linkapps.nix" ];
-
-    imports = map (n: "${./programs}/${n}") (builtins.attrNames (builtins.readDir ./programs));
-
-    home.packages = with pkgs; [
-      (aspellWithDicts (d: [ d.en ]))
-      cmake
-      coreutils
-      jetbrains-mono
-      comic-mono
-      gh
-      nixfmt
-      iterm2
-      zoxide
-    ];
-
-    home.activation = lib.mkIf pkgs.stdenv.isDarwin {
-      copyApplications = let
-        apps = pkgs.buildEnv {
-          name = "home-manager-applications";
-          paths = config.home.packages;
-          pathsToLink = "/Applications";
-        };
-      in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        baseDir="$HOME/Applications/Home Manager Apps"
-        if [ -d "$baseDir" ]; then
-          rm -rf "$baseDir"
-        fi
-        mkdir -p "$baseDir"
-        for appFile in ${apps}/Applications/*; do
-          target="$baseDir/$(basename "$appFile")"
-          $DRY_RUN_CMD cp ''${VERBOSE_ARG:+-v} -fHRL "$appFile" "$baseDir"
-          $DRY_RUN_CMD chmod ''${VERBOSE_ARG:+-v} -R +w "$target"
-        done
-      '';
-    };
-  };
 }
