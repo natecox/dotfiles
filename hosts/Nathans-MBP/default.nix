@@ -9,6 +9,22 @@
 
     imports = [ ../common/packages.nix ];
 
-  };
+    programs.git = {
+      enable = true;
 
+      extraConfig = {
+        user = {
+          name = "Nate Cox";
+          email = "nate@natecox.dev";
+        };
+
+        core.excludesfile = "$HOME/.gitignore_global";
+        diff.tool = "opendiff";
+        merge.tool = "opendiff";
+        init.defaultBranch = "main";
+        push.default = "simple";
+        pull.ff = "only";
+      };
+    };
+  };
 }
