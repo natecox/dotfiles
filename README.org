@@ -4,10 +4,8 @@
 My personal dotfiles repo. Targets nix on macOS.
 
 ** Installation
-/Don't use this right now!! All of the parts are correct, but some extra work is needed to get it to run as one script./
-/The nix install script requires starting a new shell, this will probably need to be broken into two parts./
-
 #+begin_src bash
 git clone https://github.com/natecox/dotfiles ~/.dotfiles
-caffeinate ~/.dotfiles/setup.sh
+cd ~/.dotfiles
+make install
 #+end_src
