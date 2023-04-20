@@ -1,13 +1,16 @@
-{config, lib, pkgs, ...}: {
-  
-  users.users.natecox = {
-    home = "/Users/natecox";
-  };
+{ config, lib, pkgs, ... }:
+let user = "natecox";
+in {
+  users.users.${user} = { home = "/Users/${user}"; };
 
-  home-manager.users.natecox = { config, pkgs, lib, ... }: {
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = { inherit user; };
+
+  home-manager.users.${user} = { config, pkgs, lib, ... }: {
     home.stateVersion = "22.11";
 
-    imports = [ ../common/packages.nix ];
+    imports = [ ../modules/home-manager ];
 
     programs.git = {
       enable = true;

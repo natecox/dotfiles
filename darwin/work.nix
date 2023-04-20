@@ -1,13 +1,16 @@
-{config, lib, pkgs, ...}: {
-  
-  users.users.ncox= {
-    home = "/Users/ncox";
-  };
+{ config, lib, pkgs, ... }:
+let user = "ncox";
+in {
+  users.users.${user} = { home = "/Users/${user}"; };
 
-  home-manager.users.ncox= { config, pkgs, lib, ... }: {
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.extraSpecialArgs = { inherit user; };
+
+  home-manager.users.${user} = { config, pkgs, lib, ... }: {
     home.stateVersion = "22.11";
 
-    imports = [ ../common/packages.nix ];
+    imports = [ ../modules/home-manager ];
 
     programs.git = {
       enable = true;
