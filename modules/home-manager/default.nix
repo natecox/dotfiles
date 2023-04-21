@@ -16,11 +16,12 @@
     (aspellWithDicts (d: [ d.en ]))
     cmake
     coreutils
-    jetbrains-mono
     gh
+    jetbrains-mono
     nixfmt
-    zoxide
     rnix-lsp
+    tree
+    zoxide
   ];
 
   home.activation = lib.mkIf pkgs.stdenv.isDarwin {
