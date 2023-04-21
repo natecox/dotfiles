@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let user = "natecox";
-in {
+in
+{
   users.users.${user} = { home = "/Users/${user}"; };
 
   home-manager.useGlobalPkgs = true;
@@ -30,6 +31,6 @@ in {
       };
     };
 
-    home.file.".pypirc".source = ./pypirc;
+    home.file.".pypirc".source = ../modules/pypirc;
   };
 }
