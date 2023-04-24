@@ -9,7 +9,8 @@
     ./kitty.nix
     ./neovim.nix
     ./starship.nix
-    ./zsh.nix
+    # ./zsh.nix
+    ./fish.nix
   ];
 
   home.packages = with pkgs; [
@@ -21,7 +22,7 @@
     nixfmt
     rnix-lsp
     tree
-    zoxide
+    # zoxide
   ];
 
   home.sessionVariables = {
