@@ -3,9 +3,9 @@ NIX_INSTALLER := $(shell command -v /nix/nix-installer 2> /dev/null)
 NIX_BUILD := $(shell command -v nix-build 2> /dev/null)
 DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
-install: install_nix install_directories update_symlinks install_darwin
+install: install_nix install_directories install_darwin
 
-update: update_nix update_symlinks update_darwin
+update: update_nix update_darwin
 
 uninstall: uninstall_nix
 
@@ -36,11 +36,10 @@ endif
 install_darwin:
 	$(info "Installing darwin...")
 ifndef DARWIN_REBUILD
-	nix-channel --add https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz home-manager
-	nix-channel --update
-
-	nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
-	./result/bin/darwin-installer
+	nix build .#darwinConfigurations.$(hostname -s).system --extra-experimental-features "nix-command flakes"
+	printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
+	/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+	./result/sw/bin/darwin-rebuild switch --flake .
 else
 	$(info "	...already installed, skipping")
 endif
@@ -48,16 +47,12 @@ endif
 update_darwin:
 	$(info "Rebuilding darwin...")
 ifdef DARWIN_REBUILD
-	darwin-rebuild switch
+	darwin-rebuild switch --flake .
 else
 	$(info "	...darwin not installed, skipping")
 endif
 
 install_directories:
 	$(info "Installing standard user directories...")
-	@mkdir -p ~/{src,org}
+	@mkdir -p ~/{src}
 
-update_symlinks:
-	$(info "Stowing files...")
-	@nix-env -iA nixpkgs.stow
-	$(shell for dir in */; do stow $$dir --no-folding; done)
