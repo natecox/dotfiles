@@ -24,6 +24,11 @@
     zoxide
   ];
 
+  home.sessionVariables = {
+    EDITOR = "hx";
+    NIX_TEMPLATES_ID = "$(security find-generic-password -w -s 'cli tokens' -a 'nix templates gist')";
+  };
+
   home.activation = lib.mkIf pkgs.stdenv.isDarwin {
     copyApplications =
       let

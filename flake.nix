@@ -40,6 +40,7 @@
           ./hosts/home.nix
         ];
       };
+
       darwinConfigurations."CMMC02G7232ML7L" = darwin.lib.darwinSystem {
         system = "x86_64-darwin";
         modules = [
