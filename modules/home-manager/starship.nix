@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }: {
   programs.starship = {
     enable = true;
-    settings = { };
+    settings = {
+      command_timeout = 1000;
+    };
   };
 }

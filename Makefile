@@ -1,7 +1,14 @@
+.DEFAULT_GOAL = update
 NIX_ENV := $(shell command -v nix-env 2> /dev/null)
 NIX_INSTALLER := $(shell command -v /nix/nix-installer 2> /dev/null)
 NIX_BUILD := $(shell command -v nix-build 2> /dev/null)
 DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
+
+.PHONY : \
+	install update uninstall \
+	install_nix update_nix uninstall_nix \
+	install_darwin update_darwin \
+	install_directories
 
 install: install_nix install_directories install_darwin
 

@@ -4,6 +4,10 @@
 
     shellAliases = { nixt = "gh gist view $NIX_TEMPLATES_ID -rf"; };
 
+    interactiveShellInit = ''
+      set fish_greeting # Disable greeting
+    '';
+
     plugins = with pkgs.fishPlugins; [
       {
         name = "z";
