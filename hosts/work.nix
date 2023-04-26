@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 let user = "ncox";
-in {
+in
+{
   users.users.${user} = { home = "/Users/${user}"; };
 
   home-manager.useGlobalPkgs = true;

@@ -36,41 +36,52 @@
     enable = true;
     package = pkgs.yabai;
     enableScriptingAddition = false;
+
     config = {
+      layout = "bsp";
+      auto_balance = "off";
+      split_ratio = "0.50";
+
       focus_follows_mouse = "off";
       mouse_follows_focus = "off";
-      window_placement = "first_child";
-      window_opacity = "off";
-      window_opacity_duration = "0.0";
-      window_border = "off";
-      window_border_placement = "inset";
-      window_border_width = 2;
-      window_border_radius = 3;
-      active_window_border_topmost = "off";
-      window_topmost = "on";
-      window_shadow = "float";
-      active_window_border_color = "0xff5c7e81";
-      normal_window_border_color = "0xff505050";
+
+      active_window_border_color = "0xffe1e3e4";
+      insert_feedback_color = "0xff9dd274";
       insert_window_border_color = "0xffd75f5f";
+      normal_window_border_color = "0xff2a2f38";
+
       active_window_opacity = "1.0";
-      normal_window_opacity = "0.8";
-      split_ratio = "0.50";
-      auto_balance = "off";
-      mouse_modifier = "fn";
-      mouse_action1 = "move";
-      mouse_action2 = "resize";
-      layout = "bsp";
-      top_padding = 10;
+      normal_window_opacity = "0.95";
+
+      window_animation_duration = "0.22";
+      window_border = "on";
+      window_border_placement = "inset";
+      window_border_radius = 11;
+      window_border_width = 2;
+      window_opacity = "on";
+      window_opacity_duration = "0.15";
+      window_placement = "first_child";
+      window_shadow = "float";
+      window_topmost = "off";
+      window_zoom_persist = "off";
+
       bottom_padding = 10;
       left_padding = 10;
       right_padding = 10;
+      top_padding = 10;
       window_gap = 10;
+
+      mouse_action1 = "move";
+      mouse_action2 = "resize";
+      mouse_modifier = "fn";
     };
 
     extraConfig = ''
       # rules
-      yabai -m rule --add app='System Preferences' manage=off
+      yabai -m rule --add app="^(Calculator|Software Update|Dictionary|System Preferences|System Settings|Photo Booth|Archive Utility|App Store|Steam|Activity Monitor)$" manage=off
+      yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+      yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
+      yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
     '';
   };
-
 }
