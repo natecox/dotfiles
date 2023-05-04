@@ -2,8 +2,6 @@
   programs.fish = {
     enable = true;
 
-    shellAliases = { nixt = "gh gist view $NIX_TEMPLATES_ID -rf"; };
-
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
     '';

@@ -2,8 +2,6 @@
   programs.zsh = {
     enable = true;
 
-    shellAliases = { nixt = "gh gist view $NIX_TEMPLATES_ID -rf"; };
-
     initExtra = ''
       eval "$(zoxide init zsh)"
     '';
