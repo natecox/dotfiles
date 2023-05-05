@@ -32,6 +32,12 @@
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  homebrew = {
+    enable = true;
+
+    casks = [ "maccy" ];
+  };
+
   services.yabai = {
     enable = true;
     package = pkgs.yabai;
