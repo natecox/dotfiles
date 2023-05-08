@@ -23,7 +23,6 @@
     nixfmt
     rnix-lsp
     tree
-    # zoxide
   ];
 
   home.sessionVariables = {
