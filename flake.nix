@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:natecox/home-manager/add-git-cliff";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
