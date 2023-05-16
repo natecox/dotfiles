@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
-      url = "github:natecox/home-manager/add-git-cliff";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -18,15 +18,8 @@
     neorg-overlay.url = "github:nvim-neorg/nixpkgs-neorg-overlay";
   };
 
-  outputs =
-    { self
-    , nixpkgs
-    , darwin
-    , home-manager
-    , neovim-nightly-overlay
-    , neorg-overlay
-    , ...
-    }@inputs: {
+  outputs = { self, nixpkgs, darwin, home-manager, neovim-nightly-overlay
+    , neorg-overlay, ... }@inputs: {
       nixpkgs.overlays = [
         neovim-nightly-overlay.overlays.default
         neorg-overlay.overlays.default
