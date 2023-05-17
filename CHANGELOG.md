@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Bug Fixes
+
+- Reenable zsh config
+- Enable mac option as alt
+
 ### Features
 
 - Add git-cliff config

@@ -19,6 +19,7 @@
         "{title}{' :{}:'.format(num_windows) if num_windows > 1 else ''}";
       window_padding_width = 10;
       placement_strategy = "center";
+      macos_option_as_alt = "yes";
     };
   };
 }
