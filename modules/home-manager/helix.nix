@@ -36,24 +36,24 @@
       keys.insert = { "C-g" = "normal_mode"; };
     };
 
-    languages = [
-      {
-        name = "rust";
-        indent = {
-          tab-width = 4;
-          unit = "	";
-        };
-      }
-      {
-        name = "nix";
-        auto-format = true;
-        formatter = {
-          command = "nixfmt";
-        };
-        language-server = {
-          command = "rnix-lsp";
-        };
-      }
-    ];
+    languages = {
+      language-server.rnix-lsp = { command = "rnix-lsp"; };
+
+      language = [
+        {
+          name = "rust";
+          indent = {
+            tab-width = 4;
+            unit = "	";
+          };
+        }
+        {
+          name = "nix";
+          auto-format = true;
+          formatter = { command = "nixfmt"; };
+          language-server = "rnix-lsp";
+        }
+      ];
+    };
   };
 }
