@@ -37,7 +37,6 @@
     };
 
     languages = {
-      language-server.rnix-lsp = { command = "rnix-lsp"; };
 
       language = [
         {
@@ -51,7 +50,7 @@
           name = "nix";
           auto-format = true;
           formatter = { command = "nixfmt"; };
-          language-server = "rnix-lsp";
+          language-server = { command = "rnix-lsp"; };
         }
       ];
     };
