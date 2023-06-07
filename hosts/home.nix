@@ -1,8 +1,9 @@
 { config, lib, pkgs, ... }:
 let user = "natecox";
-in
-{
+in {
   users.users.${user} = { home = "/Users/${user}"; };
+
+  nix.settings.trusted-users = [ "root" user ];
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;

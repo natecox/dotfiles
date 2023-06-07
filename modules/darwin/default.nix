@@ -35,7 +35,7 @@
   homebrew = {
     enable = true;
 
-    casks = [ "maccy" ];
+    casks = [ "maccy" "busycal" ];
   };
 
   services.yabai = {
@@ -51,21 +51,6 @@
       focus_follows_mouse = "off";
       mouse_follows_focus = "off";
 
-      active_window_border_color = "0xffe1e3e4";
-      insert_feedback_color = "0xff9dd274";
-      insert_window_border_color = "0xffd75f5f";
-      normal_window_border_color = "0xff2a2f38";
-
-      active_window_opacity = "1.0";
-      normal_window_opacity = "0.95";
-
-      window_animation_duration = "0.22";
-      window_border = "on";
-      window_border_placement = "inset";
-      window_border_radius = 11;
-      window_border_width = 2;
-      window_opacity = "on";
-      window_opacity_duration = "0.15";
       window_placement = "first_child";
       window_shadow = "float";
       window_topmost = "off";
