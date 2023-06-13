@@ -42,5 +42,14 @@
           ./hosts/work.nix
         ];
       };
+
+      darwinConfigurations."CMMG2YGKGYYXJ" = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          home-manager.darwinModules.home-manager
+          ./modules/darwin
+          ./hosts/work.nix
+        ];
+      };
     };
 }

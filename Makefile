@@ -26,8 +26,7 @@ endif
 
 update_nix:
 	$(info "Updating nix...")
-	@nix-channel --update
-	@nix-env -iA nixpkgs.nix
+	@nix flake update
 	@sudo launchctl remove org.nixos.nix-daemon
 	@sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
 
@@ -43,9 +42,9 @@ endif
 install_darwin:
 	$(info "Installing darwin...")
 ifndef DARWIN_REBUILD
-	nix build .#darwinConfigurations.$(hostname -s).system --extra-experimental-features "nix-command flakes"
+	nix build .#darwinConfigurations.$$(hostname -s).system --extra-experimental-features "nix-command flakes"
 	printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
-	/System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+	sudo /System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
 	./result/sw/bin/darwin-rebuild switch --flake .
 else
 	$(info "	...already installed, skipping")

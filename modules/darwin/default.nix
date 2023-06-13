@@ -30,12 +30,12 @@
   system.defaults.dock.orientation = "bottom";
   system.defaults.dock.showhidden = true;
 
-  # nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   homebrew = {
     enable = true;
 
-    casks = [ "maccy" "busycal" ];
+    casks = [ "maccy" "betterdisplay" ];
   };
 
   services.yabai = {
