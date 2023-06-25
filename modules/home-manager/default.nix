@@ -18,8 +18,10 @@
     (aspellWithDicts (d: [ d.en ]))
     cmake
     coreutils
+    delta
     gh
     jetbrains-mono
+    intel-one-mono
     nixfmt
     rnix-lsp
     tree
@@ -30,6 +32,8 @@
     NIX_TEMPLATES_ID =
       "$(security find-generic-password -w -s 'cli tokens' -a 'nix templates gist')";
   };
+
+  manual.manpages.enable = false;
 
   home.activation = lib.mkIf pkgs.stdenv.isDarwin {
     copyApplications = let

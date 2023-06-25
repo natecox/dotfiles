@@ -35,7 +35,7 @@
   homebrew = {
     enable = true;
 
-    casks = [ "maccy" "betterdisplay" ];
+    casks = [ "maccy" "betterdisplay" "logseq" ];
   };
 
   services.yabai = {

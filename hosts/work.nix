@@ -10,7 +10,7 @@ in {
   home-manager.extraSpecialArgs = { inherit user; };
 
   home-manager.users.${user} = { config, pkgs, lib, ... }: {
-    home.stateVersion = "22.11";
+    home.stateVersion = "23.05";
 
     imports = [ ../modules/home-manager ];
 
@@ -24,11 +24,20 @@ in {
         };
 
         core.excludesfile = "$HOME/.gitignore_global";
-        diff.tool = "opendiff";
-        merge.tool = "opendiff";
+        core.pager = "delta";
+
+        diff.tool = "delta";
+
         init.defaultBranch = "main";
-        push.default = "simple";
+
+        interactive.diffFilter = "delta --color-only";
+
+        merge.conflicStyle = "diff3";
+        merge.tool = "delta";
+
         pull.ff = "only";
+
+        push.default = "simple";
       };
     };
   };

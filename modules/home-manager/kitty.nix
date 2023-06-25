@@ -5,7 +5,7 @@
     theme = "Catppuccin-Mocha";
 
     font = {
-      name = "JetBrains Mono";
+      name = "IntelOne Mono";
       size = 14;
     };
 
