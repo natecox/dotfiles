@@ -5,6 +5,7 @@
   imports = [
     ./direnv.nix
     ./fzf.nix
+    ./git.nix
     ./git-cliff.nix
     ./helix.nix
     ./kitty.nix

@@ -14,30 +14,10 @@ in {
 
     imports = [ ../modules/home-manager ];
 
-    programs.git = {
-      enable = true;
-
-      extraConfig = {
-        user = {
-          name = "Nate Cox";
-          email = "nate@natecox.dev";
-        };
-
-        core.excludesfile = "$HOME/.gitignore_global";
-        core.pager = "delta";
-
-        diff.tool = "delta";
-
-        init.defaultBranch = "main";
-
-        interactive.diffFilter = "delta --color-only";
-
-        merge.conflicStyle = "diff3";
-        merge.tool = "delta";
-
-        pull.ff = "only";
-
-        push.default = "simple";
+    programs.git.extraConfig = {
+      user = {
+        name = "Nate Cox";
+        email = "nate@natecox.dev";
       };
     };
 
