@@ -6,6 +6,8 @@
       set fish_greeting # Disable greeting
     '';
 
+    shellAliases = { "lg" = "lazygit"; };
+
     plugins = with pkgs.fishPlugins; [
       {
         name = "z";
