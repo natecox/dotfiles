@@ -7,7 +7,7 @@
       core.excludesfile = "$HOME/.gitignore_global";
       core.pager = "delta";
 
-      delta.side-by-side = true;
+      delta.side-by-side = false;
 
       diff.tool = "delta";
 

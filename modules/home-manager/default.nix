@@ -7,8 +7,10 @@
     ./fzf.nix
     ./git.nix
     ./git-cliff.nix
+    ./gitui.nix
     ./helix.nix
     ./kitty.nix
+    ./lazygit.nix
     ./neovim.nix
     ./starship.nix
     ./zsh.nix
