@@ -11,6 +11,8 @@
       editor = {
         line-number = "relative";
 
+        cursorline = true;
+
         soft-wrap = { enable = true; };
 
         statusline = {
@@ -24,20 +26,15 @@
           ];
         };
 
-        lsp = { display-inlay-hints = true; };
-
         indent-guides = {
           render = true;
           character = "┊";
           skip_levels = 1;
         };
       };
-
-      keys.insert = { "C-g" = "normal_mode"; };
     };
 
     languages = {
-
       language = [
         {
           name = "rust";
@@ -51,6 +48,13 @@
           auto-format = true;
           formatter = { command = "nixfmt"; };
           language-server = { command = "rnix-lsp"; };
+        }
+        {
+          name = "html";
+          language-server = {
+            command = "emmet-ls";
+            args = [ "--stdio" ];
+          };
         }
       ];
     };

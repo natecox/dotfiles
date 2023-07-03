@@ -4,6 +4,7 @@
 
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
+      fish_add_path $HOME/.cargo/bin
     '';
 
     shellAliases = { "lg" = "lazygit"; };
