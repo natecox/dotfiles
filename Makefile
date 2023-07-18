@@ -19,7 +19,7 @@ uninstall: uninstall_nix
 install_nix:
 	$(info "Installing nix using determinate systems installer...")
 ifndef NIX_ENV
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 else
 	$(info "	...already installed, skipping.")
 endif

@@ -30,11 +30,7 @@
     tree
   ];
 
-  home.sessionVariables = {
-    EDITOR = "hx";
-    NIX_TEMPLATES_ID =
-      "$(security find-generic-password -w -s 'cli tokens' -a 'nix templates gist')";
-  };
+  home.sessionVariables = { EDITOR = "hx"; };
 
   manual.manpages.enable = false;
 
