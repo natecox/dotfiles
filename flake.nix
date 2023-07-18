@@ -51,5 +51,11 @@
           ./hosts/work.nix
         ];
       };
+
+      homeConfigurations."natecox.dev" =
+        home-manager.lib.homeManagerConfiguration {
+          system = "aarch64";
+          modules = [ ./hosts/home.nix ];
+        };
     };
 }
