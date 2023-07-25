@@ -12,7 +12,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
 install: install_nix install_directories install_darwin
 
-update: update_nix update_darwin
+update: update_nix update_darwin update_home_manager
 
 uninstall: uninstall_nix
 
@@ -51,11 +51,15 @@ else
 endif
 
 update_darwin:
-	$(info "Rebuilding darwin...")
 ifdef DARWIN_REBUILD
+	$(info "Rebuilding darwin...")
 	darwin-rebuild switch --flake .
-else
-	$(info "	...darwin not installed, skipping")
+endif
+
+update_home_manager:
+ifndef DARWIN_REBUILD
+	$(info "Rebuilding home-manager...")
+	home-manager switch --flake .
 endif
 
 install_directories:

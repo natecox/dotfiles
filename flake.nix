@@ -25,27 +25,15 @@
         neorg-overlay.overlays.default
       ];
 
-      nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
       defaultPackage.aarch64-linux = home-manager.defaultPackage.aarch64-linux;
 
       darwinConfigurations = {
-
         "Nates-MBP" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
             ./hosts/home.nix
-          ];
-        };
-
-        "CMMC02G7232ML7L" = darwin.lib.darwinSystem {
-          system = "x86_64-darwin";
-          modules = [
-            home-manager.darwinModules.home-manager
-            ./modules/darwin
-            ./hosts/work.nix
           ];
         };
 

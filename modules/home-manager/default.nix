@@ -26,6 +26,7 @@
     gh
     jetbrains-mono
     intel-one-mono
+    agave
     nixfmt
     rnix-lsp
     tree
