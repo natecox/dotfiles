@@ -27,8 +27,8 @@ endif
 update_nix:
 	$(info "Updating nix...")
 	@nix flake update
-	@sudo launchctl remove org.nixos.nix-daemon
-	@sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+	# @sudo launchctl remove org.nixos.nix-daemon
+	# @sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
 
 uninstall_nix:
 	$(info "Uninstalling nix using determinate systems installer...")
