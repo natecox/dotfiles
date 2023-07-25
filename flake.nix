@@ -30,7 +30,7 @@
       defaultPackage.aarch64-linux = home-manager.defaultPackage.aarch64-linux;
 
       darwinConfigurations = {
-        
+
         "Nates-MBP" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
           modules = [
@@ -60,7 +60,7 @@
       };
 
       homeConfigurations = {
-       "natecox" = home-manager.lib.homeManagerConfiguration {
+        "natecox" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.aarch64-linux;
           modules = [ ./hosts/homeserver.nix ];
         };

@@ -15,6 +15,7 @@
     ./starship.nix
     ./zsh.nix
     ./fish.nix
+    ./tmux.nix
   ];
 
   home.packages = with pkgs; [

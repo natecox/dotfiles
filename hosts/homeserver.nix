@@ -13,6 +13,8 @@ in {
       TERM = "xterm-256color";
       COLORTERM = "24bit";
     };
+
+    packages = with pkgs; [ nomad_1_6 ];
   };
 
   imports = [ ../modules/home-manager ];
