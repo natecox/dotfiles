@@ -26,7 +26,8 @@
     gh
     jetbrains-mono
     intel-one-mono
-    agave
+    (nerdfonts.override { })
+    nerd-font-patcher
     nixfmt
     rnix-lsp
     tree

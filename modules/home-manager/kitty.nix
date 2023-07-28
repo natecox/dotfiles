@@ -5,8 +5,8 @@
     theme = "Catppuccin-Mocha";
 
     font = {
-      name = "IntelOne Mono";
-      size = 14;
+      name = "Agave Nerd Font";
+      size = 16;
     };
 
     settings = {
