@@ -12,6 +12,7 @@
     ./kitty.nix
     ./lazygit.nix
     ./neovim.nix
+    ./nushell.nix
     ./starship.nix
     ./zsh.nix
     ./fish.nix
@@ -31,6 +32,7 @@
     nixfmt
     rnix-lsp
     tree
+    ffmpeg
   ];
 
   home.sessionVariables = { EDITOR = "hx"; };
