@@ -33,6 +33,7 @@
     rnix-lsp
     tree
     ffmpeg
+    nodePackages.yaml-language-server
   ];
 
   home.sessionVariables = { EDITOR = "hx"; };
