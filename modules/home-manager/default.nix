@@ -34,9 +34,12 @@
     tree
     ffmpeg
     nodePackages.yaml-language-server
+    zoxide
   ];
 
   home.sessionVariables = { EDITOR = "hx"; };
+
+  home.file.".config/nushell/.zoxide.nu".source = ../zoxide.nu;
 
   manual.manpages.enable = false;
 
