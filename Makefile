@@ -64,5 +64,5 @@ endif
 
 install_directories:
 	$(info "Installing standard user directories...")
-	@mkdir -p ~/{src}
+	@mkdir -p ~/src
 
