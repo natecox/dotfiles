@@ -35,6 +35,17 @@
     };
 
     languages = {
+      language-server = {
+        emmet-ls = {
+          command = "emmet-ls";
+          args = [ "--stdio" ];
+        };
+
+        rnix-lsp = {
+          command = "rnix-lsp";
+        };
+      };
+      
       language = [
         {
           name = "rust";
@@ -43,18 +54,17 @@
             unit = "	";
           };
         }
+
         {
           name = "nix";
           auto-format = true;
           formatter = { command = "nixfmt"; };
-          language-server = { command = "rnix-lsp"; };
+          language-servers = [ "rnix-lsp" ];
         }
+
         {
           name = "html";
-          language-server = {
-            command = "emmet-ls";
-            args = [ "--stdio" ];
-          };
+          language-servers = [ "emmet-ls" ];
         }
       ];
     };
