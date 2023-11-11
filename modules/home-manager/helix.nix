@@ -13,6 +13,8 @@
 
         cursorline = true;
 
+        file-picker = { hidden = false; };
+
         soft-wrap = { enable = true; };
 
         statusline = {
@@ -41,11 +43,9 @@
           args = [ "--stdio" ];
         };
 
-        rnix-lsp = {
-          command = "rnix-lsp";
-        };
+        rnix-lsp = { command = "rnix-lsp"; };
       };
-      
+
       language = [
         {
           name = "rust";
