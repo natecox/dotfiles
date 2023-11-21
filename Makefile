@@ -8,11 +8,11 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 	install update uninstall \
 	install_nix update_nix uninstall_nix \
 	install_darwin update_darwin \
-	install_directories
+	install_directories commit_changes
 
 install: install_nix install_directories install_darwin
 
-update: update_nix update_darwin update_home_manager
+update: update_nix update_darwin update_home_manager commit_changes
 
 uninstall: uninstall_nix
 
@@ -66,3 +66,10 @@ install_directories:
 	$(info "Installing standard user directories...")
 	@mkdir -p ~/src
 
+commit_changes:
+	@if ! git diff --exit-code flake.lock 2> /dev/null; then \
+		git commit -m "Lockfile update" flake.lock; \
+		git push; \
+	fi
+	
+	
