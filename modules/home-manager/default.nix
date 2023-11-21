@@ -25,9 +25,9 @@
     coreutils
     delta
     gh
-    jetbrains-mono
-    intel-one-mono
-    (nerdfonts.override { })
+    # jetbrains-mono
+    # intel-one-mono
+    (nerdfonts.override { fonts = [ "Agave" ]; })
     nerd-font-patcher
     nixfmt
     rnix-lsp

@@ -12,7 +12,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
 install: install_nix install_directories install_darwin
 
-update: update_nix update_darwin update_home_manager commit_changes
+update: update_nix update_darwin update_home_manager
 
 uninstall: uninstall_nix
 
