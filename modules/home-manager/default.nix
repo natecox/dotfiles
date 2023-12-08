@@ -7,7 +7,6 @@
     ./fzf.nix
     ./git.nix
     ./git-cliff.nix
-    ./gitui.nix
     ./helix.nix
     ./kitty.nix
     ./lazygit.nix
@@ -32,7 +31,6 @@
     nixfmt
     rnix-lsp
     tree
-    ffmpeg
     nodePackages.yaml-language-server
     zoxide
     pijul
