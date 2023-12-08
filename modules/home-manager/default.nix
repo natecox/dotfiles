@@ -35,6 +35,7 @@
     ffmpeg
     nodePackages.yaml-language-server
     zoxide
+    pijul
   ];
 
   home.sessionVariables = { EDITOR = "hx"; };
