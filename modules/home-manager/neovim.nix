@@ -21,6 +21,6 @@
       lspkind-nvim
     ];
 
-    extraLuaConfig = lib.fileContents ./neovim.lua;
+    # extraLuaConfig = lib.fileContents ./neovim.lua;
   };
 }

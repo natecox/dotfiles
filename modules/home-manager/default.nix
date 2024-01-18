@@ -10,7 +10,7 @@
     ./helix.nix
     ./kitty.nix
     ./lazygit.nix
-    ./neovim.nix
+    # ./neovim.nix
     ./nushell.nix
     ./starship.nix
     ./zsh.nix
@@ -34,6 +34,8 @@
     nodePackages.yaml-language-server
     zoxide
     pijul
+    lunarvim
+    jq
   ];
 
   home.sessionVariables = { EDITOR = "hx"; };
