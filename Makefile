@@ -12,7 +12,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 
 install: install_nix install_directories install_darwin
 
-update: update_nix update_darwin update_home_manager
+update: update_nix update_darwin update_home_manager collect_garbage
 
 uninstall: uninstall_nix
 
@@ -29,6 +29,10 @@ update_nix:
 	@nix flake update
 	# @sudo launchctl remove org.nixos.nix-daemon
 	# @sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
+
+collect_garbage:
+	$(info "Collecting garbage...")
+	@nix-store --gc
 
 uninstall_nix:
 	$(info "Uninstalling nix using determinate systems installer...")
