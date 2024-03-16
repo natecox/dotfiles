@@ -28,8 +28,8 @@
     # intel-one-mono
     (nerdfonts.override { fonts = [ "Agave" ]; })
     nerd-font-patcher
+    nil
     nixfmt
-    rnix-lsp
     tree
     nodePackages.yaml-language-server
     zoxide

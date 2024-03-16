@@ -43,7 +43,7 @@
           args = [ "--stdio" ];
         };
 
-        rnix-lsp = { command = "rnix-lsp"; };
+        nil = { command = "nil"; };
       };
 
       language = [
@@ -59,7 +59,7 @@
           name = "nix";
           auto-format = true;
           formatter = { command = "nixfmt"; };
-          language-servers = [ "rnix-lsp" ];
+          language-servers = [ "nil" ];
         }
 
         {
