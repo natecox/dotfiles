@@ -1,1 +1,1 @@
-{ config, lib, pkgs, ... }: { programs.git-cliff = { enable = true; }; }
+{ ... }: { programs.git-cliff = { enable = true; }; }

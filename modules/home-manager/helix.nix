@@ -1,9 +1,9 @@
-{ config, lib, pkgs, ... }: {
+{ inputs, pkgs, ... }: {
 
   programs.helix = {
     enable = true;
 
-    package = pkgs.helix;
+    package = inputs.helix.packages.${pkgs.system}.default;
 
     settings = {
       theme = "catppuccin_mocha";

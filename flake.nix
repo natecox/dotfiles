@@ -14,13 +14,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    helix.url = "github:helix-editor/helix/master";
+
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     neorg-overlay.url = "github:nvim-neorg/nixpkgs-neorg-overlay";
   };
 
-  outputs = inputs@{ self, nixpkgs, darwin, home-manager, neovim-nightly-overlay
-    , neorg-overlay, ... }: {
+  outputs = inputs@{ self, nixpkgs, darwin, home-manager, helix
+    , neovim-nightly-overlay, neorg-overlay, ... }: {
       nixpkgs.overlays = [
+        helix.overlays.default
         neovim-nightly-overlay.overlays.default
         neorg-overlay.overlays.default
       ];
@@ -39,6 +42,7 @@
 
         "CMMG2YGKGYYXJ" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
+          specialArgs = { inherit inputs; };
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
