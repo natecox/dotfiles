@@ -10,7 +10,7 @@ in {
   home-manager.extraSpecialArgs = { inherit user inputs; };
 
   home-manager.users.${user} = { config, pkgs, lib, ... }: {
-    home.stateVersion = "23.05";
+    home.stateVersion = "23.11";
 
     imports = [ ../modules/home-manager ];
 

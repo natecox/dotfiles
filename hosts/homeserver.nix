@@ -6,7 +6,7 @@ in {
   programs.home-manager.enable = true;
 
   home = {
-    stateVersion = "23.05";
+    stateVersion = "23.11";
     username = "${user}";
     homeDirectory = "/home/${user}";
     sessionVariables = {
