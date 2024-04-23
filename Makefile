@@ -3,6 +3,7 @@ NIX_ENV := $(shell command -v nix-env 2> /dev/null)
 NIX_INSTALLER := $(shell command -v /nix/nix-installer 2> /dev/null)
 NIX_BUILD := $(shell command -v nix-build 2> /dev/null)
 DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
+HOME_MANAGER := $(shell command -v home-manager 2> /dev/null)
 
 .PHONY : \
 	install update uninstall \
@@ -10,7 +11,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 	install_darwin update_darwin \
 	install_directories commit_changes
 
-install: install_nix install_directories install_darwin
+install: install_nix install_directories
 
 update: update_nix update_darwin update_home_manager collect_garbage
 
@@ -53,6 +54,15 @@ ifndef DARWIN_REBUILD
 else
 	$(info "	...already installed, skipping")
 endif
+
+install_home_manager:
+	$(info "Installing home manager...")
+ifndef HOME_MANAGER
+	nix build .#homeConfigurations.$$(whoami).activationPackage --extra-experimental-features "nix-command flakes"
+	nix run . -- build --flake .
+else
+	$(info "	...already installed, skipping")
+endif	
 
 update_darwin:
 ifdef DARWIN_REBUILD

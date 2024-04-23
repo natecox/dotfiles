@@ -29,6 +29,7 @@
       ];
 
       defaultPackage.aarch64-linux = home-manager.defaultPackage.aarch64-linux;
+      defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
 
       darwinConfigurations = {
         "Nates-MBP" = darwin.lib.darwinSystem {
@@ -53,8 +54,9 @@
 
       homeConfigurations = {
         "natecox" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-linux;
-          modules = [ ./hosts/homeserver.nix ];
+          extraSpecialArgs = { inherit inputs; };
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [ ./hosts/ally.nix ];
         };
       };
     };
