@@ -28,7 +28,7 @@
     (nerdfonts.override { fonts = [ "Agave" ]; })
     nerd-font-patcher
     nil
-    nixfmt
+    nixfmt-rfc-style
     tree
     nodePackages.yaml-language-server
     zoxide
