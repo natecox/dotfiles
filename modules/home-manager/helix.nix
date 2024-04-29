@@ -1,9 +1,10 @@
-{ inputs, pkgs, ... }: {
+{ pkgs, ... }: {
 
   programs.helix = {
     enable = true;
 
-    package = inputs.helix.packages.${pkgs.system}.default;
+    # package = inputs.helix.packages.${pkgs.system}.default;
+    package = pkgs.helix;
 
     settings = {
       theme = "catppuccin_mocha";
