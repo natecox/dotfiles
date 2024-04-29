@@ -9,7 +9,9 @@ HOME_MANAGER := $(shell command -v home-manager 2> /dev/null)
 	install update uninstall \
 	install_nix update_nix uninstall_nix \
 	install_darwin update_darwin \
-	install_directories commit_changes
+	install_home_manager update_home_manager \
+	install_directories commit_changes \
+	collect_garbage
 
 install: install_nix install_directories
 
@@ -28,12 +30,6 @@ endif
 update_nix:
 	$(info "Updating nix...")
 	@nix flake update
-	# @sudo launchctl remove org.nixos.nix-daemon
-	# @sudo launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-
-collect_garbage:
-	$(info "Collecting garbage...")
-	@nix-store --gc
 
 uninstall_nix:
 	$(info "Uninstalling nix using determinate systems installer...")
@@ -55,6 +51,12 @@ else
 	$(info "	...already installed, skipping")
 endif
 
+update_darwin:
+ifdef DARWIN_REBUILD
+	$(info "Rebuilding darwin...")
+	@darwin-rebuild switch --flake .
+endif
+
 install_home_manager:
 	$(info "Installing home manager...")
 ifndef HOME_MANAGER
@@ -64,16 +66,10 @@ else
 	$(info "	...already installed, skipping")
 endif	
 
-update_darwin:
-ifdef DARWIN_REBUILD
-	$(info "Rebuilding darwin...")
-	darwin-rebuild switch --flake .
-endif
-
 update_home_manager:
 ifndef DARWIN_REBUILD
 	$(info "Rebuilding home-manager...")
-	home-manager switch --flake .
+	@home-manager switch --flake .
 endif
 
 install_directories:
@@ -82,8 +78,10 @@ install_directories:
 
 commit_changes:
 	@if ! git diff --exit-code flake.lock 2> /dev/null; then \
-		git commit -m "Lockfile update" flake.lock; \
-		git push; \
+		@git commit -m "Lockfile update" flake.lock; \
+		@git push; \
 	fi
 	
-	
+collect_garbage:
+	$(info "Collecting garbage...")
+	@nix store gc

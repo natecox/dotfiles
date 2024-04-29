@@ -23,9 +23,8 @@
     cmake
     coreutils
     delta
+    devenv
     gh
-    # jetbrains-mono
-    # intel-one-mono
     (nerdfonts.override { fonts = [ "Agave" ]; })
     nerd-font-patcher
     nil
