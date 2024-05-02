@@ -1,5 +1,5 @@
-{ pkgs, ... }: {
-
+{ pkgs, ... }:
+{
   programs.helix = {
     enable = true;
 
@@ -14,9 +14,13 @@
 
         cursorline = true;
 
-        file-picker = { hidden = false; };
+        file-picker = {
+          hidden = false;
+        };
 
-        soft-wrap = { enable = true; };
+        soft-wrap = {
+          enable = true;
+        };
 
         statusline = {
           right = [
@@ -35,6 +39,15 @@
           skip_levels = 1;
         };
       };
+
+      keys.normal = {
+        "C-g" = [
+          ":new"
+          ":insert-output lazygit"
+          ":buffer-close!"
+          ":redraw"
+        ];
+      };
     };
 
     languages = {
@@ -44,7 +57,9 @@
           args = [ "--stdio" ];
         };
 
-        nil = { command = "nil"; };
+        nil = {
+          command = "nil";
+        };
       };
 
       language = [
@@ -59,7 +74,9 @@
         {
           name = "nix";
           auto-format = true;
-          formatter = { command = "nixfmt"; };
+          formatter = {
+            command = "nixfmt";
+          };
           language-servers = [ "nil" ];
         }
 
