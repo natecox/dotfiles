@@ -34,6 +34,7 @@
       darwinConfigurations = {
         "Nates-MBP" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
+          specialArgs = { inherit inputs; };
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
