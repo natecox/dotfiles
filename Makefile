@@ -6,7 +6,7 @@ DARWIN_REBUILD := $(shell command -v darwin-rebuild 2> /dev/null)
 HOME_MANAGER := $(shell command -v home-manager 2> /dev/null)
 
 .PHONY : \
-	install update uninstall \
+	install update uninstall config\
 	install_nix update_nix uninstall_nix \
 	install_darwin update_darwin \
 	install_home_manager update_home_manager \
@@ -16,6 +16,8 @@ HOME_MANAGER := $(shell command -v home-manager 2> /dev/null)
 install: install_nix install_directories
 
 update: update_nix update_darwin update_home_manager collect_garbage
+
+config: update_darwin update_home_manager
 
 uninstall: uninstall_nix
 
