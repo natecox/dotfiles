@@ -57,7 +57,7 @@
         "natecox" = home-manager.lib.homeManagerConfiguration {
           extraSpecialArgs = { inherit inputs; };
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./hosts/ally.nix ];
+          modules = [ ./hosts/mba.nix ];
         };
       };
     };

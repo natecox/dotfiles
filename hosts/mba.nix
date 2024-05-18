@@ -2,7 +2,8 @@
 let
   user = "natecox";
   system = "x86_64-linux";
-in {
+in
+{
   programs.home-manager.enable = true;
 
   home = {
@@ -14,10 +15,13 @@ in {
       COLORTERM = "24bit";
     };
 
-    # packages = with pkgs; [ nixgl.nixGLDefault ];
+    # packages = with pkgs; [];
   };
 
-  imports = [ ../modules/home-manager ];
+  imports = [
+    ../modules/home-manager
+    ../modules/home-manager/foot.nix
+  ];
 
   programs.git.extraConfig = {
     user = {
