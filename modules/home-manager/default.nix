@@ -14,7 +14,6 @@
     ./git.nix
     ./git-cliff.nix
     ./helix.nix
-    ./kitty.nix
     ./lazygit.nix
     # ./neovim.nix
     ./nushell.nix
