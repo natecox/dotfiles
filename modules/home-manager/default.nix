@@ -15,7 +15,6 @@
     ./git-cliff.nix
     ./helix.nix
     ./lazygit.nix
-    # ./neovim.nix
     ./nushell.nix
     ./starship.nix
     ./zsh.nix
@@ -38,8 +37,8 @@
     nodePackages.yaml-language-server
     zoxide
     pijul
-    # lunarvim
     jq
+    markdown-oxide
   ];
 
   home.sessionVariables = {

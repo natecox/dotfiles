@@ -15,17 +15,19 @@
     };
 
     # helix.url = "github:helix-editor/helix/master";
-
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    neorg-overlay.url = "github:nvim-neorg/nixpkgs-neorg-overlay";
   };
 
-  outputs = inputs@{ self, nixpkgs, darwin, home-manager, neovim-nightly-overlay
-    , neorg-overlay, ... }: {
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      darwin,
+      home-manager,
+      ...
+    }:
+    {
       nixpkgs.overlays = [
         # helix.overlays.default
-        neovim-nightly-overlay.overlays.default
-        neorg-overlay.overlays.default
       ];
 
       defaultPackage.aarch64-linux = home-manager.defaultPackage.aarch64-linux;
@@ -34,7 +36,9 @@
       darwinConfigurations = {
         "Nates-MBP" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+          };
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
@@ -44,7 +48,9 @@
 
         "CMMG2YGKGYYXJ" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+          };
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
@@ -55,7 +61,9 @@
 
       homeConfigurations = {
         "natecox" = home-manager.lib.homeManagerConfiguration {
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = {
+            inherit inputs;
+          };
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           modules = [ ./hosts/mba.nix ];
         };
