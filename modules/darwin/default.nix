@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = [ ];
@@ -22,20 +23,27 @@
   # Set macOS defaults (https://github.com/LnL7/nix-darwin/tree/master/modules/system/defaults)
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 25;
   system.defaults.NSGlobalDomain.KeyRepeat = 2;
-  system.defaults.NSGlobalDomain.AppleInterfaceStyleSwitchesAutomatically =
-    true;
+  system.defaults.NSGlobalDomain.AppleInterfaceStyleSwitchesAutomatically = true;
 
   system.defaults.dock.autohide = true;
   system.defaults.dock.mru-spaces = false;
   system.defaults.dock.orientation = "bottom";
   system.defaults.dock.showhidden = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   homebrew = {
     enable = true;
 
-    casks = [ "maccy" "betterdisplay" "logseq" "muzzle" ];
+    casks = [
+      "betterdisplay"
+      "gpg-suite-no-mail"
+      "maccy"
+      "muzzle"
+    ];
   };
 
   services.yabai = {

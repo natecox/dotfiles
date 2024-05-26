@@ -1,8 +1,11 @@
-{ ... }: {
+{ ... }:
+{
   programs.git = {
     enable = true;
 
     extraConfig = {
+
+      commit.gpgsign = true;
 
       core.excludesfile = "$HOME/.gitignore_global";
       core.pager = "delta";
