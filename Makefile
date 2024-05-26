@@ -46,8 +46,8 @@ install_darwin:
 	$(info "Installing darwin...")
 ifndef DARWIN_REBUILD
 	nix build .#darwinConfigurations.$$(hostname -s).system --extra-experimental-features "nix-command flakes"
-	printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
-	sudo /System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
+	# printf 'run\tprivate/var/run\n' | sudo tee -a /etc/synthetic.conf
+	# sudo /System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t
 	./result/sw/bin/darwin-rebuild switch --flake .
 else
 	$(info "	...already installed, skipping")
