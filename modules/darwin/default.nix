@@ -38,6 +38,12 @@
   homebrew = {
     enable = true;
 
+    onActivation = {
+      autoUpdate = true;
+      cleanup = "uninstall";
+      upgrade = true;
+    };
+
     casks = [
       "betterdisplay"
       "gpg-suite-no-mail"
