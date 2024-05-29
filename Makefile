@@ -80,8 +80,8 @@ install_directories:
 
 commit_changes:
 	@if ! git diff --exit-code flake.lock 2> /dev/null; then \
-		@git commit -m "Lockfile update" flake.lock; \
-		@git push; \
+		git commit -m "Lockfile update" flake.lock; \
+		git push; \
 	fi
 	
 collect_garbage:
