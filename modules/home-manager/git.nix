@@ -6,6 +6,7 @@
     extraConfig = {
 
       commit.gpgsign = true;
+      user.signingkey = "A7E9F186";
 
       core.excludesfile = "$HOME/.gitignore_global";
       core.pager = "delta";

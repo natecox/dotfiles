@@ -1,8 +1,11 @@
-{ ... }: {
+{ ... }:
+{
   programs.lazygit = {
     enable = true;
 
     settings = {
+      promptToReturnFromSubprocess = false;
+
       git = {
         paging = {
           colorArg = "always";
@@ -12,7 +15,10 @@
 
       gui.theme = {
         lightTheme = "false";
-        activeBorderColor = [ "#a6e3a1" "bold" ];
+        activeBorderColor = [
+          "#a6e3a1"
+          "bold"
+        ];
         inactiveBorderColor = [ "#cdd6f4" ];
         optionsTextColor = [ "#89b4fa" ];
         selectedLineBgColor = [ "#313244" ];
