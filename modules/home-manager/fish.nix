@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   programs.fish = {
     enable = true;
 
@@ -7,9 +8,11 @@
       fish_add_path $HOME/.cargo/bin
     '';
 
-    shellAliases = { "lg" = "lazygit"; };
+    shellAliases = {
+      "lg" = "lazygit";
+    };
 
-    plugins = with pkgs.fishPlugins; [
+    plugins = [
       {
         name = "z";
         src = pkgs.fetchFromGitHub {
