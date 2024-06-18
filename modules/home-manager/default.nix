@@ -17,6 +17,7 @@
     ./lazygit.nix
     ./nushell.nix
     ./starship.nix
+    # ./oh-my-posh.nix
     ./zsh.nix
     ./fish.nix
     ./tmux.nix
