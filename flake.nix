@@ -65,7 +65,7 @@
             inherit inputs;
           };
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./hosts/mba.nix ];
+          modules = [ ./hosts/framework13.nix ];
         };
       };
     };
