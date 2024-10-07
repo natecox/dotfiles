@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.packages = with pkgs; [
     (aspellWithDicts (d: [ d.en ]))
@@ -8,6 +13,7 @@
     delta
     devenv
     exercism
+    freecad-wayland
     gh
     gitoxide
     jq

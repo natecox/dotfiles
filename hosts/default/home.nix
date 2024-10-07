@@ -17,6 +17,7 @@
 
   imports = [
     ../../modules/home-manager
+    ../../modules/home-manager/git.nix
     ../../modules/home-manager/lazygit.nix
     ../../modules/home-manager/editors/helix.nix
     ../../modules/home-manager/terminals/fish.nix
@@ -82,37 +83,10 @@
   programs.fish.enable = true;
   programs.helix.enable = true;
 
-  programs.git = {
-    enable = true;
-
-    extraConfig = {
-
-      commit.gpgsign = true;
-
-      user = {
-        name = "Nate Cox";
-        email = "nate@natecox.dev";
-        signingkey = "A7E9F186";
-      };
-
-      core.excludesfile = "$HOME/.gitignore_global";
-      core.pager = "delta";
-
-      delta.side-by-side = false;
-
-      diff.tool = "delta";
-
-      init.defaultBranch = "main";
-
-      interactive.diffFilter = "delta --color-only";
-
-      merge.conflicStyle = "diff3";
-      merge.tool = "delta";
-
-      pull.ff = "only";
-
-      push.default = "simple";
-    };
+  programs.git.extraConfig.user = {
+    name = "Nate Cox";
+    email = "nate@natecox.dev";
+    signingkey = "A7E9F186";
   };
 
   # Let Home Manager install and manage itself.
