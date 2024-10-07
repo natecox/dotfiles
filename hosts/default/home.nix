@@ -20,6 +20,7 @@
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/lazygit.nix
     ../../modules/home-manager/editors/helix.nix
+    ../../modules/home-manager/hyprland
     ../../modules/home-manager/terminals/fish.nix
     ../../modules/home-manager/terminals/starship.nix
   ];
@@ -30,6 +31,7 @@
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
+    pkgs.signal-desktop
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -82,6 +84,10 @@
 
   programs.fish.enable = true;
   programs.helix.enable = true;
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+  };
 
   programs.git.extraConfig.user = {
     name = "Nate Cox";
