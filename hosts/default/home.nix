@@ -20,6 +20,7 @@
     ../../modules/home-manager/lazygit.nix
     ../../modules/home-manager/editors/helix.nix
     ../../modules/home-manager/terminals/fish.nix
+    ../../modules/home-manager/terminals/starship.nix
   ];
 
   # The home.packages option allows you to install Nix packages into your
