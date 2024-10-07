@@ -11,13 +11,18 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/hyprland.nix
+    # ../../modules/nixos/gnome.nix
   ];
 
   # Framework specific changes
   services.fwupd.enable = true;
   services.hardware.bolt.enable = true;
+
+  # Bluetooth
   services.blueman.enable = true;
   hardware.bluetooth.enable = true;
+
   # Bootloader.
   boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
   boot.kernelParams = [ "initcall_blacklist=simpledrm_platform_driver_init" ];
@@ -65,14 +70,6 @@
 
     videoDrivers = [ "modesetting" ];
 
-    # Enable the GNOME Desktop Environment.
-    # displayManager.gdm = {
-    #   enable = true;
-    #   wayland = true;
-    # };
-
-    # desktopManager.gnome.enable = true;
-
     # Configure keymap in X11
     xkb = {
       layout = "us";
@@ -80,12 +77,6 @@
     };
 
     excludePackages = with pkgs; [ xterm ];
-  };
-
-  services.displayManager.sddm = {
-    enable = true;
-    theme = "catppuccin-mocha";
-    package = pkgs.kdePackages.sddm;
   };
 
   # Enable CUPS to print documents.
@@ -153,20 +144,9 @@
     gnumake
     gnome-settings-daemon
     vivaldi
-    kitty
-    (catppuccin-sddm.override {
-      flavor = "mocha";
-      font = "Noto Sans";
-      fontSize = "9";
-      loginBackground = false;
-    })
-    swaynotificationcenter
   ];
 
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    WLR_NO_HARDWARE_CURSORS = "1";
-  };
+  environment.sessionVariables = { };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -186,11 +166,6 @@
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
       dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
       localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
-    };
-
-    hyprland = {
-      enable = true;
-      xwayland.enable = true;
     };
   };
 
