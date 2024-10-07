@@ -2,12 +2,17 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
 {
-  imports =
-    [ 
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   # Framework specific changes
   services.fwupd.enable = true;
@@ -24,7 +29,10 @@
   networking.hostName = "framework13"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  nix.settings.experimental-features = [ "nix-command" "flakes "];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes "
+  ];
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -102,17 +110,22 @@
   users.users.natecox = {
     isNormalUser = true;
     description = "Nate Cox";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     shell = pkgs.fish;
 
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
   home-manager = {
     # also pass inputs to home-manager modules
-    extraSpecialArgs = {inherit inputs;};
+    extraSpecialArgs = {
+      inherit inputs;
+    };
     users = {
       "natecox" = import ./home.nix;
     };
@@ -124,8 +137,9 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
+    gnumake
     gnome-settings-daemon
     vivaldi
   ];
