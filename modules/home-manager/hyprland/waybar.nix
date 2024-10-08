@@ -2,41 +2,38 @@
 {
   programs.waybar = {
     enable = true;
-    catppuccin.enable = false;
+    catppuccin.enable = true;
 
     settings = [
       {
+        layer = "top";
+        position = "top";
         modules-left = [
           "hyprland/workspaces"
-          "sway/mode"
-          "sway/scratchpad"
-          "custom/media"
         ];
-        modules-center = [ "hyprland/window" ];
+        modules-center = [
+          "hyprland/windows"
+        ];
         modules-right = [
-          # "mpd"
-          # "idle_inhibitor"
           "pulseaudio"
-          # "network"
-          "bluetooth"
-          "power-profiles-daemon"
-          # "cpu"
-          # "memory"
-          # "temperature"
           "backlight"
-          "keyboard-state"
-          "sway/language"
           "battery"
           "clock"
           "tray"
+          "custom/lock"
           "custom/power"
         ];
-        "hyprland/workspaces" = {
-          "format" = "{icon}";
-          "on-scroll-up" = "hyprctl dispatch workspace e+1";
-          "on-scroll-down" = "hyprctl dispatch workspace e-1";
+        tray = {
+          icon-size = 21;
+          spacing = 10;
+        };
+        pulseaudio = {
+          format = " {volume}%";
+          on-click = "pavucontrol";
         };
       }
     ];
+
+    style = builtins.readFile ./waybar.css;
   };
 }
