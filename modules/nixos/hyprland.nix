@@ -7,13 +7,16 @@
   };
 
   environment.systemPackages = with pkgs; [
+    brightnessctl
     kitty
+    pavucontrol
+    pulseaudio
+    pamixer
+    playerctl
     swaynotificationcenter
+    wev
     (catppuccin-sddm.override {
       flavor = "mocha";
-      font = "Noto Sans";
-      fontSize = "9";
-      loginBackground = false;
     })
   ];
 

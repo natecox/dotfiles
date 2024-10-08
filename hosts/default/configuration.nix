@@ -103,6 +103,11 @@
 
   programs.fish.enable = true;
 
+  fonts.packages = with pkgs; [
+    agave
+    font-awesome
+  ];
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.natecox = {
     isNormalUser = true;
