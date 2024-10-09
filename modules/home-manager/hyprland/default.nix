@@ -2,6 +2,7 @@
 {
   imports = [
     ./waybar.nix
+    # ./eww.nix
   ];
 
   wayland.windowManager.hyprland = {
@@ -35,16 +36,16 @@
         "$mod, k, exec, kitty"
         "$mod, f, exec, firefox"
         "$mod, space, exec, rofi -show drun"
-        ", XF86AudioRaiseVolume, exec, pamixer -i 5"
-        ", XF86AudioLowerVolume, exec, pamixer -d 5"
-        ", XF86AudioMicMute, exec, pamixer --default-source -m"
-        ", XF86AudioMute, exec, pamixer -t"
+        ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
+        ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
+        ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"
+        ", XF86AudioMute, exec, swayosd-client --output-volume mute-toggle"
         ", XF86AudioPlay, exec, playerctl play-pause"
         ", XF86AudioPause, exec, playerctl play-pause"
         ", XF86AudioNext, exec, playerctl next"
         ", XF86AudioPrev, exec, playerctl previous"
-        ", XF86MonBrightnessUp, exec, brightnessctl s +5%"
-        ", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
+        ", XF86MonBrightnessUp, exec, swayosd-client --brightness raise"
+        ", XF86MonBrightnessDown, exec, swayosd-client --brightness lower"
         ", XF86KbdBrightnessUp, exec, brightnessctl -d *::kbd_backlight set +33%"
         ", XF86KbdBrightnessDown, exec, brightnessctl -d *::kbd_backlight set 33%-"
       ];
@@ -55,12 +56,17 @@
 
       exec-once = [
         "swaync"
+        "swayosd-server"
         "waybar"
       ];
     };
   };
 
   programs.rofi = {
+    enable = true;
+  };
+
+  services.swayosd = {
     enable = true;
   };
 }

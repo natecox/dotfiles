@@ -105,35 +105,14 @@
 
   fonts = {
     packages = with pkgs; [
-      twemoji-color-font
-      noto-fonts
-      noto-fonts-cjk
-      noto-fonts-emoji
       (nerdfonts.override {
         fonts = [
           "Agave"
           "FantasqueSansMono"
         ];
       })
+      font-awesome
     ];
-
-    fontconfig = {
-      defaultFonts = {
-        monospace = [
-          "FantasqueSansMono Nerd Font"
-          "Noto Color Emoji"
-        ];
-        sansSerif = [
-          "Noto Sans"
-          "Noto Color Emoji"
-        ];
-        serif = [
-          "Noto Serif"
-          "Noto Color Emoji"
-        ];
-        emoji = [ "Noto Color Emoji" ];
-      };
-    };
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

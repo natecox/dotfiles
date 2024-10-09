@@ -1,4 +1,3 @@
-
 * {
   font-family: FantasqueSansMono Nerd Font;
   font-size: 17px;
@@ -34,14 +33,11 @@
   border-radius: 1rem;
 }
 
-#custom-music,
 #tray,
 #backlight,
 #clock,
 #battery,
-#pulseaudio,
-#custom-lock,
-#custom-power {
+#pulseaudio {
   background-color: @surface0;
   padding: 0.5rem 1rem;
   margin: 5px 0;
@@ -77,22 +73,6 @@
   color: @maroon;
   border-radius: 1rem 0px 0px 1rem;
   margin-left: 1rem;
-}
-
-#custom-music {
-  color: @mauve;
-  border-radius: 1rem;
-}
-
-#custom-lock {
-    border-radius: 1rem 0px 0px 1rem;
-    color: @lavender;
-}
-
-#custom-power {
-    margin-right: 1rem;
-    border-radius: 0px 1rem 1rem 0px;
-    color: @red;
 }
 
 #tray {

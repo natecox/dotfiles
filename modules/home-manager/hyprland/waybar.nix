@@ -12,7 +12,7 @@
           "hyprland/workspaces"
         ];
         modules-center = [
-          "hyprland/windows"
+          "hyprland/window"
         ];
         modules-right = [
           "pulseaudio"
@@ -20,15 +20,13 @@
           "battery"
           "clock"
           "tray"
-          "custom/lock"
-          "custom/power"
         ];
         tray = {
           icon-size = 21;
           spacing = 10;
         };
         pulseaudio = {
-          format = " {volume}%";
+          format = "{volume}%";
           on-click = "pavucontrol";
         };
       }
