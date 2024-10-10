@@ -33,6 +33,8 @@
     };
   };
 
+  security.pam.services.sddm.enableGnomeKeyring = true;
+
   services = {
     # Automount
     devmon.enable = true;
@@ -61,5 +63,7 @@
       };
     };
     thermald.enable = true;
+
+    gnome.gnome-keyring.enable = true;
   };
 }
