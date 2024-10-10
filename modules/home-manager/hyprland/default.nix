@@ -33,7 +33,7 @@
 
       bind = [
         "$mod, q, killactive,"
-        "$mod, k, exec, kitty"
+        "$mod, return, exec, kitty"
         "$mod, f, exec, firefox"
         "$mod, space, exec, rofi -show drun"
         ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
@@ -58,15 +58,24 @@
         "swaync"
         "swayosd-server"
         "waybar"
+        "udiskie"
       ];
     };
   };
 
-  programs.rofi = {
-    enable = true;
+  programs = {
+    rofi = {
+      enable = true;
+    };
+
+    yazi = {
+      enable = true;
+      catppuccin.enable = true;
+    };
   };
 
-  services.swayosd = {
-    enable = true;
+  services = {
+    swayosd.enable = true;
   };
+
 }
