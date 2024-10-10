@@ -1,10 +1,12 @@
 { pkgs, ... }:
 {
-  services.displayManager.sddm = {
-    enable = true;
-    theme = "catppuccin-mocha";
-    package = pkgs.kdePackages.sddm;
-  };
+  # services.displayManager.sddm = {
+  #   enable = true;
+  #   theme = "catppuccin-mocha";
+  #   package = pkgs.kdePackages.sddm;
+  # };
+
+  services.xserver.displayManager.gdm.enable = true;
 
   environment.systemPackages = with pkgs; [
     brightnessctl
