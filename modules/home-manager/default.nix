@@ -40,6 +40,7 @@
     nixfmt-rfc-style
     nodePackages.yaml-language-server
     pijul
+    static-web-server
     tree
     zoxide
   ];

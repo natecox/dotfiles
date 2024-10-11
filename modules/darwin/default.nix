@@ -49,6 +49,7 @@
       "gpg-suite-no-mail"
       "maccy"
       "muzzle"
+      "proton-pass"
     ];
   };
 
