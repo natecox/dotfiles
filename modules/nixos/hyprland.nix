@@ -7,6 +7,7 @@
   # };
 
   services.xserver.displayManager.gdm.enable = true;
+  security.pam.services.gdm-password.enableGnomeKeyring = true;
 
   environment.systemPackages = with pkgs; [
     brightnessctl
@@ -18,6 +19,7 @@
     swaynotificationcenter
     wev
     udiskie
+    nwg-bar
     (catppuccin-sddm.override {
       flavor = "mocha";
     })
@@ -34,8 +36,6 @@
       xwayland.enable = true;
     };
   };
-
-  security.pam.services.sddm.enableGnomeKeyring = true;
 
   services = {
     # Automount
