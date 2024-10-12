@@ -5,6 +5,11 @@
   ...
 }:
 {
+  imports = [
+    ./direnv.nix
+    ./terminals/kitty.nix
+  ];
+
   home.packages = with pkgs; [
     (aspellWithDicts (d: [ d.en ]))
     (nerdfonts.override { fonts = [ "Agave" ]; })
@@ -24,8 +29,5 @@
     zoxide
   ];
 
-  programs.kitty = {
-    enable = true;
-    catppuccin.enable = true;
-  };
+  programs.fzf.enable = true;
 }
