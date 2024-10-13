@@ -36,7 +36,7 @@
         "$mod, return, exec, kitty"
         "$mod, f, exec, firefox"
         "$mod, space, exec, rofi -show drun"
-        "$mod, escape, exec, nwg-bar"
+        "$mod, escape, exec, wlogout"
         ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
         ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
         ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"

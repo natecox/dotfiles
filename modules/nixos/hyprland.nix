@@ -19,7 +19,7 @@
     swaynotificationcenter
     wev
     udiskie
-    nwg-bar
+    wlogout
     (catppuccin-sddm.override {
       flavor = "mocha";
     })
