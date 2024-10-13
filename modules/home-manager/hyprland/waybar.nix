@@ -9,10 +9,10 @@
         layer = "top";
         position = "top";
         modules-left = [
-          "hyprland/workspaces"
+          "hyprland/window"
         ];
         modules-center = [
-          "hyprland/window"
+          "hyprland/workspaces"
         ];
         modules-right = [
           "pulseaudio"
@@ -26,8 +26,32 @@
           spacing = 10;
         };
         pulseaudio = {
-          format = "{volume}%";
+          format = "{icon}  {volume}%";
+          format-muted = "󰝟";
+          format-icons = {
+            default = [
+              ""
+              ""
+            ];
+          };
           on-click = "pavucontrol";
+        };
+        backlight = {
+          format = "{icon}  {percent}%";
+          format-icons = [
+            "󰃞"
+            "󰃠"
+          ];
+        };
+        battery = {
+          format = "{icon}  {capacity}%";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
         };
       }
     ];

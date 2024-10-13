@@ -1,6 +1,6 @@
 * {
-  font-family: FantasqueSansMono Nerd Font;
-  font-size: 17px;
+  font-family: Agave Nerd Font;
+  font-size: 16px;
   min-height: 0;
 }
 
@@ -39,13 +39,13 @@
 #battery,
 #pulseaudio {
   background-color: @surface0;
+  border-radius: 1rem;
   padding: 0.5rem 1rem;
-  margin: 5px 0;
+  margin: 5px 0.3rem;
 }
 
 #clock {
   color: @blue;
-  border-radius: 0px 1rem 1rem 0px;
   margin-right: 1rem;
 }
 
@@ -65,17 +65,16 @@
   color: @yellow;
 }
 
-#backlight, #battery {
-    border-radius: 0;
-}
-
 #pulseaudio {
   color: @maroon;
-  border-radius: 1rem 0px 0px 1rem;
   margin-left: 1rem;
 }
 
 #tray {
   margin-right: 1rem;
   border-radius: 1rem;
+}
+
+#window {
+  margin-left: 1rem;
 }
