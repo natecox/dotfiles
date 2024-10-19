@@ -11,13 +11,21 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/hyprland.nix
-    # ../../modules/nixos/gnome.nix
+    # ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/sway.nix
+    ../../modules/nixos/gnome.nix
   ];
 
   # Framework specific changes
   services.fwupd.enable = true;
   services.hardware.bolt.enable = true;
+
+  # Power Management
+  powerManagement = {
+    enable = true;
+    powertop.enable = true;
+  };
+  services.thermald.enable = true;
 
   # Bluetooth
   services.blueman.enable = true;
@@ -157,13 +165,14 @@
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
     blightmud
-    (calibre.override {
-      unrarSupport = true;
-    })
+    # (calibre.override {
+    #   unrarSupport = true;
+    # })
     gnumake
-    gnome-settings-daemon
+    # gnome-settings-daemon
+    nyxt
+    powertop
     rclone
-    vivaldi
   ];
 
   environment.sessionVariables = { };

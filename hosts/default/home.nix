@@ -14,6 +14,7 @@
     ../../modules/home-manager/editors/helix.nix
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/hyprland
+    ../../modules/home-manager/sway.nix
     ../../modules/home-manager/lazygit.nix
     ../../modules/home-manager/terminals/fish.nix
     ../../modules/home-manager/terminals/starship.nix

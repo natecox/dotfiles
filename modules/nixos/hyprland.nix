@@ -6,9 +6,6 @@
   #   package = pkgs.kdePackages.sddm;
   # };
 
-  services.xserver.displayManager.gdm.enable = true;
-  security.pam.services.gdm-password.enableGnomeKeyring = true;
-
   environment.systemPackages = with pkgs; [
     brightnessctl
     kitty
@@ -20,9 +17,10 @@
     wev
     udiskie
     wlogout
-    (catppuccin-sddm.override {
-      flavor = "mocha";
-    })
+    xdg-desktop-portal-hyprland
+    # (catppuccin-sddm.override {
+    #   flavor = "mocha";
+    # })
   ];
 
   environment.sessionVariables = {
@@ -43,29 +41,9 @@
     gvfs.enable = true;
     udisks2.enable = true;
 
-    # Power Management
-    tlp = {
-      enable = true;
-      settings = {
-        CPU_SCALING_GOVERNOR_ON_AC = "performance";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-        CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-        CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-
-        CPU_MIN_PERF_ON_AC = 0;
-        CPU_MAX_PERF_ON_AC = 100;
-        CPU_MIN_PERF_ON_BAT = 0;
-        CPU_MAX_PERF_ON_BAT = 20;
-
-        #Optional helps save long term battery health
-        START_CHARGE_THRESH_BAT0 = 40; # 40 and bellow it starts to charge
-        STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
-
-      };
-    };
-    thermald.enable = true;
-
     gnome.gnome-keyring.enable = true;
+    xserver.displayManager.gdm.enable = true;
   };
+
+  security.pam.services.gdm-password.enableGnomeKeyring = true;
 }

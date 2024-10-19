@@ -5,7 +5,7 @@
 
     font = {
       name = "Agave Nerd Font";
-      size = 13;
+      size = 14;
     };
 
     settings = {
