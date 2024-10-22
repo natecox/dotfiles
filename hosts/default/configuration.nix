@@ -12,6 +12,7 @@
   imports = [
     ./hardware-configuration.nix
     # ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/suspend-then-hibernate.nix
     ../../modules/nixos/sway.nix
     ../../modules/nixos/gnome.nix
   ];
@@ -173,6 +174,8 @@
     nyxt
     powertop
     rclone
+    # Secure boot
+    sbctl
   ];
 
   environment.sessionVariables = { };
