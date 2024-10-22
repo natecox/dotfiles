@@ -33,13 +33,25 @@
   hardware.bluetooth.enable = true;
 
   # Bootloader.
-  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-  boot.kernelParams = [ "initcall_blacklist=simpledrm_platform_driver_init" ];
+  boot = {
+    kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
+    kernelParams = [ "initcall_blacklist=simpledrm_platform_driver_init" ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+    loader.systemd-boot.enable = lib.mkForce false;
+    loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-ae91a3e1-56cb-49dc-8d33-adcf6a65dccf".device = "/dev/disk/by-uuid/ae91a3e1-56cb-49dc-8d33-adcf6a65dccf";
+    initrd.systemd.enable = true;
+    initrd.luks.devices."luks-ae91a3e1-56cb-49dc-8d33-adcf6a65dccf".device = "/dev/disk/by-uuid/ae91a3e1-56cb-49dc-8d33-adcf6a65dccf";
+
+    # Secure boot
+    # https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md
+    # https://jnsgr.uk/2024/04/nixos-secure-boot-tpm-fde/
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/etc/secureboot";
+    };
+  };
+
   networking.hostName = "framework13"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

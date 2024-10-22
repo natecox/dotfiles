@@ -9,6 +9,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     catppuccin.url = "github:catppuccin/nix";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,6 +22,7 @@
       home-manager,
       nixos-hardware,
       catppuccin,
+      lanzaboote,
       ...
     }@inputs:
     {
@@ -29,6 +34,7 @@
           nixos-hardware.nixosModules.framework-13th-gen-intel
           catppuccin.nixosModules.catppuccin
           inputs.home-manager.nixosModules.default
+          lanzaboote.nixosModules.lanzaboote
           ./hosts/default/configuration.nix
         ];
       };
