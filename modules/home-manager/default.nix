@@ -25,6 +25,7 @@
     nerd-font-patcher
     nil
     nixfmt-rfc-style
+    tintin
     tree
     zoxide
   ];

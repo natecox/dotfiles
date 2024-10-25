@@ -12,7 +12,7 @@
   imports = [
     ./hardware-configuration.nix
     # ../../modules/nixos/hyprland.nix
-    ../../modules/nixos/suspend-then-hibernate.nix
+    # ../../modules/nixos/suspend-then-hibernate.nix
     ../../modules/nixos/sway.nix
     ../../modules/nixos/gnome.nix
   ];
@@ -20,6 +20,7 @@
   # Framework specific changes
   services.fwupd.enable = true;
   services.hardware.bolt.enable = true;
+  services.fprintd.enable = true;
 
   # Power Management
   powerManagement = {
@@ -150,7 +151,13 @@
     shell = pkgs.fish;
 
     packages = with pkgs; [
-      #  thunderbird
+      blightmud
+      mudlet
+      # (calibre.override {
+      #   unrarSupport = true;
+      # })
+      nyxt
+      rclone
     ];
   };
 
@@ -175,17 +182,9 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-    blightmud
-    # (calibre.override {
-    #   unrarSupport = true;
-    # })
     gnumake
-    # gnome-settings-daemon
-    nyxt
     powertop
-    rclone
+
     # Secure boot
     sbctl
   ];
