@@ -50,6 +50,13 @@
       "maccy"
       "muzzle"
       "proton-pass"
+
+      ## browsers
+      # "librewolf"
+      "arc"
+      "firefox"
+      "floorp"
+      "zen-browser"
     ];
   };
 
