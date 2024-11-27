@@ -13,7 +13,7 @@
 
       input = {
         kb_layout = "us";
-        kb_variant = "colemak_dh";
+        kb_variant = "colemak_dh_iso";
 
         touchpad = {
           natural_scroll = true;
@@ -29,6 +29,11 @@
           kb_layout = "us";
           kb_variant = "";
         }
+        {
+          name = "zmk-project-corne-keyboard";
+          kb_layout = "us";
+          kb_variant = "";
+        }
       ];
 
       bind = [
@@ -37,6 +42,12 @@
         "$mod, f, exec, firefox"
         "$mod, space, exec, rofi -show drun"
         "$mod, escape, exec, wlogout"
+        "$mod shift, 1, movetoworkspace, 1"
+        "$mod shift, 2, movetoworkspace, 2"
+        "$mod shift, 3, movetoworkspace, 3"
+        "$mod shift, 4, movetoworkspace, 4"
+        "$mod shift, 5, movetoworkspace, 5"
+        "$mod shift, 6, movetoworkspace, 6"
         ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
         ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
         ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"

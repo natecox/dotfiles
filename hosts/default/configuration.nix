@@ -11,10 +11,11 @@
 {
   imports = [
     ./hardware-configuration.nix
-    # ../../modules/nixos/hyprland.nix
-    # ../../modules/nixos/suspend-then-hibernate.nix
-    ../../modules/nixos/sway.nix
-    ../../modules/nixos/gnome.nix
+    ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/suspend-then-hibernate.nix
+    # ../../modules/nixos/sway.nix
+    # ../../modules/nixos/gnome.nix
+    # ../../modules/nixos/cosmic.nix
   ];
 
   # Framework specific changes
@@ -152,11 +153,10 @@
 
     packages = with pkgs; [
       blightmud
-      mudlet
       # (calibre.override {
       #   unrarSupport = true;
       # })
-      nyxt
+      floorp
       rclone
     ];
   };
@@ -184,6 +184,7 @@
   environment.systemPackages = with pkgs; [
     gnumake
     powertop
+    kanata
 
     # Secure boot
     sbctl
