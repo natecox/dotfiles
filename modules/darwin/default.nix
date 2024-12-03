@@ -50,6 +50,7 @@
       "maccy"
       "muzzle"
       "proton-pass"
+      "postman"
 
       ## browsers
       # "librewolf"

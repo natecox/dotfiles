@@ -25,7 +25,7 @@
 
   home.packages = with pkgs; [
     (aspellWithDicts (d: [ d.en ]))
-    (nerdfonts.override { fonts = [ "Agave" ]; })
+    nerd-fonts.agave
     cmake
     coreutils
     delta
@@ -35,7 +35,7 @@
     gitoxide
     jq
     markdown-oxide
-    nerd-font-patcher
+    # nerd-font-patcher
     nil
     nixfmt-rfc-style
     nodePackages.yaml-language-server
