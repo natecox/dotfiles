@@ -49,6 +49,7 @@
       "gpg-suite-no-mail"
       "maccy"
       "muzzle"
+      "notion"
       "proton-pass"
       "postman"
 
