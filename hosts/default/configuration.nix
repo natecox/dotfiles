@@ -11,10 +11,10 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/hyprland.nix
+    # ../../modules/nixos/hyprland.nix
     ../../modules/nixos/suspend-then-hibernate.nix
     # ../../modules/nixos/sway.nix
-    # ../../modules/nixos/gnome.nix
+    ../../modules/nixos/gnome.nix
     # ../../modules/nixos/cosmic.nix
   ];
 
@@ -43,7 +43,8 @@
     loader.efi.canTouchEfiVariables = true;
 
     initrd.systemd.enable = true;
-    initrd.luks.devices."luks-ae91a3e1-56cb-49dc-8d33-adcf6a65dccf".device = "/dev/disk/by-uuid/ae91a3e1-56cb-49dc-8d33-adcf6a65dccf";
+    initrd.luks.devices."luks-ae91a3e1-56cb-49dc-8d33-adcf6a65dccf".device =
+      "/dev/disk/by-uuid/ae91a3e1-56cb-49dc-8d33-adcf6a65dccf";
 
     # Secure boot
     # https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md
@@ -129,13 +130,10 @@
   programs.fish.enable = true;
 
   fonts = {
+    enableDefaultPackages = true;
     packages = with pkgs; [
-      (nerdfonts.override {
-        fonts = [
-          "Agave"
-          "FantasqueSansMono"
-        ];
-      })
+      nerd-fonts.agave
+      nerd-fonts.fantasque-sans-mono
       font-awesome
     ];
   };
@@ -153,10 +151,12 @@
 
     packages = with pkgs; [
       blightmud
-      # (calibre.override {
-      #   unrarSupport = true;
-      # })
+      (calibre.override {
+        unrarSupport = true;
+      })
       floorp
+      openscad-unstable
+      orca-slicer
       rclone
     ];
   };

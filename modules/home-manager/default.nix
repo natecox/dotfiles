@@ -12,17 +12,18 @@
 
   home.packages = with pkgs; [
     (aspellWithDicts (d: [ d.en ]))
-    (nerdfonts.override { fonts = [ "Agave" ]; })
     cmake
     coreutils
     delta
     devenv
     exercism
+    fontconfig
     freecad-wayland
     gh
     gitoxide
     jq
     nerd-font-patcher
+    nerd-fonts.agave
     nil
     nixfmt-rfc-style
     tintin
