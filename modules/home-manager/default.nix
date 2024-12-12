@@ -18,7 +18,6 @@
     devenv
     exercism
     fontconfig
-    freecad-wayland
     gh
     gitoxide
     jq

@@ -2,20 +2,23 @@ HIBERNATE_FILE := /sys/firmware/efi/efivars/HibernateLocation-*
 
 .DEFAULT_GOAL: update
 
-.PHONY: update test collect_garbage clear_hibernate
+# .PHONY: update test collect_garbage clear_hibernate
 
+update: update_nixos update_darwin update_home_manager collect_garbage
 
 	
 # -- NixOS, the opterating system
 
-update: clear_hibernate update_flake collect_garbage
+NIXOS_REBUILD := $(shell command -v nixos-rebuild 2> /dev/null)
 
-update_flake:
+update_nixos: clear_hibernate
+ifdef NIXOS_REBUILD
 	sudo chown -R $$(whoami):users .git/objects/
 	nix flake update
 	sudo nixos-rebuild switch --flake .#default
+endif
 
-test:
+test_nixos:
 	sudo nixos-rebuild test --flake .#default 
 
 
@@ -61,6 +64,7 @@ endif
 update_darwin:
 ifdef DARWIN_REBUILD
 	$(info "Rebuilding darwin...")
+	@nix flake update
 	@darwin-rebuild switch --flake .
 endif
 

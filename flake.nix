@@ -58,7 +58,7 @@
             };
           }
           nixos-cosmic.nixosModules.default
-          ./hosts/default/configuration.nix
+          ./hosts/nixos/configuration.nix
         ];
       };
 
@@ -71,7 +71,7 @@
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
-            ./hosts/home.nix
+            ./hosts/darwin/home.nix
           ];
         };
 
@@ -83,18 +83,8 @@
           modules = [
             home-manager.darwinModules.home-manager
             ./modules/darwin
-            ./hosts/work.nix
+            ./hosts/darwin/work.nix
           ];
-        };
-      };
-
-      homeConfigurations = {
-        "natecox" = home-manager.lib.homeManagerConfiguration {
-          extraSpecialArgs = {
-            inherit inputs;
-          };
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./hosts/framework13.nix ];
         };
       };
     };

@@ -20,8 +20,9 @@
     ../../modules/home-manager/terminals/starship.nix
   ];
 
-  home.packages = [
-    pkgs.signal-desktop
+  home.packages = with pkgs; [
+    signal-desktop
+    freecad-wayland
 
     # # You can also create simple shell scripts directly inside your
     # # configuration. For example, this adds a command 'my-hello' to your
