@@ -18,7 +18,7 @@ ifdef NIXOS_REBUILD
 	sudo nixos-rebuild switch --flake .#default
 endif
 
-test_nixos:
+test_nixos: clear_hibernate
 	sudo nixos-rebuild test --flake .#default 
 
 
@@ -100,6 +100,7 @@ collect_garbage:
 
 # Fixes an issue where hibernation wakeup fails and leaves behind a file, which will prevent updates
 clear_hibernate:
+	$(info "Clearing hibernate file...")
 ifneq ("$(wildcard $(HIBERNATE_FILE))","")
 	sudo chattr -i $(HIBERNATE_FILE)
 	sudo rm $(HIBERNATE_FILE)
