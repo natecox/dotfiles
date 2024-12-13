@@ -40,6 +40,6 @@ in
         };
       };
 
-      home.file.".pypirc".source = ../modules/pypirc;
+      home.file.".pypirc".source = ../src/pypirc;
     };
 }
