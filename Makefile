@@ -5,6 +5,7 @@ HIBERNATE_FILE := /sys/firmware/efi/efivars/HibernateLocation-*
 # .PHONY: update test collect_garbage clear_hibernate
 
 update: update_nixos update_darwin update_home_manager collect_garbage
+test: test_nixos
 
 	
 # -- NixOS, the opterating system
@@ -19,8 +20,9 @@ ifdef NIXOS_REBUILD
 endif
 
 test_nixos: clear_hibernate
+ifdef NIXOS_REBUILD
 	sudo nixos-rebuild test --flake .#default 
-
+endif
 
 
 # -- Nix, the package manager
