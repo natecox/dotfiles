@@ -93,7 +93,7 @@ endif
 
 # -- Utilites 
 
-# Cleare unnecessary cruft
+# Clear unnecessary cruft
 collect_garbage:
 	sudo nix-collect-garbage --delete-older-than 14d
 	sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
