@@ -97,7 +97,7 @@ endif
 
 # Clear unnecessary cruft
 collect_garbage:
-	sudo nix-collect-garbage --delete-older-than 14d
+	nix-collect-garbage --delete-older-than 14d
 	sudo nix-env --delete-generations old --profile /nix/var/nix/profiles/system
 
 # Fixes an issue where hibernation wakeup fails and leaves behind a file, which will prevent updates
