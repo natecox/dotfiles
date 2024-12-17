@@ -11,11 +11,14 @@
 {
   imports = [
     ./hardware-configuration.nix
-    # ../../modules/nixos/hyprland.nix
     ../../modules/nixos/suspend-then-hibernate.nix
-    # ../../modules/nixos/sway.nix
-    ../../modules/nixos/gnome.nix
+    # ../../modules/nixos/budgie.nix
+    # ../../modules/nixos/cinnamon.nix
     # ../../modules/nixos/cosmic.nix
+    # ../../modules/nixos/gnome.nix
+    # ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/kde.nix
+    # ../../modules/nixos/sway.nix
   ];
 
   # Framework specific changes

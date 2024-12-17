@@ -13,6 +13,7 @@ test: test_nixos
 NIXOS_REBUILD := $(shell command -v nixos-rebuild 2> /dev/null)
 
 update_nixos: clear_hibernate
+	$(info "Updating NixOS...")
 ifdef NIXOS_REBUILD
 	sudo chown -R $$(whoami):users .git/objects/
 	nix flake update
@@ -86,7 +87,7 @@ else
 endif	
 
 update_home_manager:
-ifndef DARWIN_REBUILD
+ifdef DARWIN_REBUILD
 	$(info "Rebuilding home-manager...")
 	@home-manager switch --flake .
 endif
