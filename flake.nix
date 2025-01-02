@@ -16,7 +16,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin.url = "github:catppuccin/nix";
+    # catppuccin.url = "github:catppuccin/nix";
+    catppuccin.url = "git+file:///users/ncox/src/natecox/catppuccin-nix";
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";

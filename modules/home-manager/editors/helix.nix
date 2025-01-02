@@ -5,8 +5,6 @@
 
     package = pkgs.helix;
 
-    catppuccin.enable = true;
-
     settings = {
       editor = {
         line-number = "relative";

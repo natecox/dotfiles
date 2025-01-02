@@ -52,6 +52,7 @@
       "notion"
       "proton-pass"
       "postman"
+      "ghostty"
 
       ## browsers
       # "librewolf"

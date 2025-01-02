@@ -67,7 +67,7 @@ endif
 update_darwin:
 ifdef DARWIN_REBUILD
 	$(info "Rebuilding darwin...")
-	@nix flake update
+	@nix flake update --impure
 	@darwin-rebuild switch --flake .
 endif
 
@@ -87,7 +87,7 @@ else
 endif	
 
 update_home_manager:
-ifdef DARWIN_REBUILD
+ifdef HOME_MANAGER
 	$(info "Rebuilding home-manager...")
 	@home-manager switch --flake .
 endif
