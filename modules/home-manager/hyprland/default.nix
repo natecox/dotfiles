@@ -88,7 +88,6 @@
 
     yazi = {
       enable = true;
-      catppuccin.enable = true;
     };
 
     sioyek.enable = true;

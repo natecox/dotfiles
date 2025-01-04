@@ -2,7 +2,6 @@
 {
   wayland.windowManager.sway = {
     enable = true;
-    catppuccin.enable = true;
 
     config = {
       modifier = "Mod4";
@@ -52,7 +51,6 @@
 
     yazi = {
       enable = true;
-      catppuccin.enable = true;
     };
 
     sioyek.enable = true;

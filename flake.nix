@@ -17,8 +17,8 @@
     };
 
     # catppuccin.url = "github:catppuccin/nix";
-    catppuccin.url = "github:natecox/catppuccin-nix/add-ghostty";
-    # catppuccin.url = "git+file:///home/natecox/src/natecox/catppuccin-nix";
+    # catppuccin.url = "github:natecox/catppuccin-nix/add-ghostty";
+    catppuccin.url = "git+file:///home/natecox/src/natecox/catppuccin-nix";
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
