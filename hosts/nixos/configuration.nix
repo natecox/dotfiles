@@ -159,7 +159,7 @@
       })
       floorp
       openscad-unstable
-      orca-slicer
+      # orca-slicer
       rclone
     ];
   };
@@ -193,7 +193,9 @@
     sbctl
   ];
 
-  environment.sessionVariables = { };
+  environment.sessionVariables = {
+    MOZ_USE_XINPUT2 = "1";
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

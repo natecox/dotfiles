@@ -18,6 +18,7 @@
     ../../modules/home-manager/lazygit.nix
     ../../modules/home-manager/terminals/fish.nix
     ../../modules/home-manager/terminals/starship.nix
+    ../../modules/home-manager/terminals/ghostty.nix
   ];
 
   home.packages = with pkgs; [

@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
   programs.helix = {
     enable = true;
 
-    package = pkgs.helix;
+    package = inputs.helix-master.packages.${pkgs.system}.default;
 
     settings = {
       editor = {

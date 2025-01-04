@@ -17,7 +17,8 @@
     };
 
     # catppuccin.url = "github:catppuccin/nix";
-    catppuccin.url = "git+file:///users/ncox/src/natecox/catppuccin-nix";
+    catppuccin.url = "github:natecox/catppuccin-nix/add-ghostty";
+    # catppuccin.url = "git+file:///home/natecox/src/natecox/catppuccin-nix";
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
@@ -28,6 +29,8 @@
       url = "github:lilyinstarlight/nixos-cosmic";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    helix-master.url = "github:helix-editor/helix";
   };
 
   outputs =
@@ -40,6 +43,7 @@
       catppuccin,
       lanzaboote,
       nixos-cosmic,
+      helix-master,
       ...
     }@inputs:
     {
