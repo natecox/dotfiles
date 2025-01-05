@@ -203,7 +203,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    pinentryPackage = pkgs.pinentry-all;
+    pinentryPackage = lib.mkDefault pkgs.pinentry-all;
   };
   services.pcscd.enable = true;
 

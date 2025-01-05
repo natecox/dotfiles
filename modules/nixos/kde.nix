@@ -13,13 +13,13 @@
     desktopManager.plasma6.enable = true;
   };
 
-  security.pam.services.sddm.kwallet.enable = true;
-
-  qt = {
-    enable = true;
-    platformTheme = "gnome";
-    style = "adwaita-dark";
+  programs = {
+    gnupg.agent = {
+      pinentryPackage = pkgs.pinentry-qt;
+    };
   };
+
+  security.pam.services.sddm.kwallet.enable = true;
 
   environment.systemPackages = with pkgs; [
     kdePackages.kgpg
