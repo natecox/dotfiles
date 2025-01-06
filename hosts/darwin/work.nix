@@ -41,14 +41,6 @@ in
       catppuccin = {
         enable = true;
         flavor = "mocha";
-        cursors.enable = true;
-
-        gtk = {
-          enable = true;
-          icon.enable = true;
-        };
-
-        kvantum.enable = true;
       };
 
       programs.git.extraConfig = {
