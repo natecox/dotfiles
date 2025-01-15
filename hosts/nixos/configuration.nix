@@ -4,6 +4,7 @@
 
 {
   pkgs,
+  pkgs-stable,
   lib,
   inputs,
   ...
@@ -152,16 +153,20 @@
     ];
     shell = pkgs.fish;
 
-    packages = with pkgs; [
-      blightmud
-      (calibre.override {
-        unrarSupport = true;
-      })
-      floorp
-      openscad-unstable
-      # orca-slicer
-      rclone
-    ];
+    packages =
+      (with pkgs; [
+        blightmud
+        (calibre.override {
+          unrarSupport = true;
+        })
+        floorp
+        orca-slicer
+        openscad-unstable
+        rclone
+      ])
+      ++ (with pkgs-stable; [
+        # orca-slicer
+      ]);
   };
 
   home-manager = {

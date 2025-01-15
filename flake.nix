@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -37,6 +38,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-stable,
       home-manager,
       nixos-hardware,
       darwin,
@@ -47,9 +49,15 @@
       ...
     }@inputs:
     {
-      nixosConfigurations.default = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.default = nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+
         specialArgs = {
           inherit inputs;
+
+          pkgs-stable = import nixpkgs-stable {
+            inherit system;
+          };
         };
         modules = [
           nixos-hardware.nixosModules.framework-13th-gen-intel
