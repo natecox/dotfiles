@@ -4,7 +4,7 @@
     enable = true;
 
     font = {
-      name = "Agave Nerd Font";
+      name = "Monaspace Radon Var";
       size = 14;
     };
 

@@ -12,6 +12,7 @@
 
   home.packages = with pkgs; [
     (aspellWithDicts (d: [ d.en ]))
+    btop
     cmake
     coreutils
     delta
@@ -21,6 +22,7 @@
     gh
     gitoxide
     jq
+    monaspace
     nerd-font-patcher
     nerd-fonts.agave
     nil

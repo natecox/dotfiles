@@ -3,7 +3,8 @@
   programs.helix = {
     enable = true;
 
-    package = inputs.helix-master.packages.${pkgs.system}.default;
+    # package = inputs.helix-master.packages.${pkgs.system}.default;
+    package = pkgs.helix;
 
     settings = {
       editor = {

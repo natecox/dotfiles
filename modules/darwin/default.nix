@@ -30,10 +30,16 @@
   system.defaults.dock.orientation = "bottom";
   system.defaults.dock.showhidden = true;
 
+  security.pam.enableSudoTouchIdAuth = true;
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
+
+  environment.variables = {
+    EDITOR = "hx";
+  };
 
   homebrew = {
     enable = true;
