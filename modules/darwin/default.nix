@@ -51,11 +51,12 @@
     };
 
     casks = [
+      "affinity-photo"
       "betterdisplay"
       "gpg-suite-no-mail"
       "maccy"
       "muzzle"
-      "notion"
+      "plover"
       "proton-pass"
       "postman"
       "ghostty"
@@ -64,8 +65,6 @@
       # "librewolf"
       "arc"
       "firefox"
-      "floorp"
-      "zen-browser"
     ];
   };
 
