@@ -136,9 +136,10 @@
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
+      font-awesome
+      monaspace
       nerd-fonts.agave
       nerd-fonts.fantasque-sans-mono
-      font-awesome
     ];
   };
 
