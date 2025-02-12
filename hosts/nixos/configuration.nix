@@ -195,8 +195,23 @@
     powertop
     kanata
 
+    plover.dev
+    (vivaldi.overrideAttrs (oldAttrs: {
+      dontWrapQtApps = false;
+      dontPatchELF = true;
+      nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ pkgs.kdePackages.wrapQtAppsHook ];
+    }))
+    chromium
+    vial
+    via
+
     # Secure boot
     sbctl
+  ];
+
+  services.udev.packages = with pkgs; [
+    vial
+    via
   ];
 
   environment.sessionVariables = {
